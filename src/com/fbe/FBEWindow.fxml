@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/16">
+   <children>
+      <BorderPane>
+         <top>
+            <MenuBar BorderPane.alignment="CENTER">
+              <menus>
+                <Menu mnemonicParsing="false" text="ファイル">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="新規作成" />
+                        <MenuItem mnemonicParsing="false" text="インポート" />
+                        <MenuItem mnemonicParsing="false" text="保存" />
+                        <MenuItem mnemonicParsing="false" text="エクスポート" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="実行">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="一度に実行" />
+                        <MenuItem mnemonicParsing="false" text="一つずつ実行" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="コード変換">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Java" />
+                        <MenuItem mnemonicParsing="false" text="Python" />
+                        <MenuItem mnemonicParsing="false" text="JavaScript" />
+                  </items>
+                </Menu>
+                  <Menu mnemonicParsing="false" text="チェック">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="フローチャートをチェックする" />
+                    </items>
+                  </Menu>
+              </menus>
+            </MenuBar>
+         </top>
+         <center>
+            <ScrollPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+
+<AnchorPane maxWidth="1.7976931348623157E308" prefHeight="629.0" prefWidth="1202.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fbe.BaseController">
+   <children>
+      <BorderPane maxWidth="1.7976931348623157E308" prefHeight="629.0" prefWidth="1202.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <center>
+            <ScrollPane fx:id="mainSp" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <content>
+                  <AnchorPane fx:id="mainPane" maxWidth="-Infinity" />
+               </content></ScrollPane>
+         </center>
+         <top>
+            <AnchorPane maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+               <children>
+                  <MenuBar maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="227.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <menus>
+                      <Menu mnemonicParsing="false" text="ファイル">
+                        <items>
+                          <MenuItem fx:id="menu_new" mnemonicParsing="false" text="新規作成" />
+                              <MenuItem fx:id="menu_import" mnemonicParsing="false" text="インポート" />
+                              <MenuItem fx:id="menu_save" mnemonicParsing="false" text="保存" />
+                              <MenuItem fx:id="menu_print" mnemonicParsing="false" text="印刷" />
+                              <MenuItem fx:id="menu_toImage" mnemonicParsing="false" text="画像にして保存" />
+                        </items>
+                      </Menu>
+                      <Menu mnemonicParsing="false" text="実行">
+                        <items>
+                          <MenuItem fx:id="menu_exeAll" mnemonicParsing="false" text="一度に実行" />
+                              <MenuItem fx:id="menu_exeLine" mnemonicParsing="false" text="一つずつ実行" />
+                        </items>
+                      </Menu>
+                      <Menu mnemonicParsing="false" text="コード変換">
+                        <items>
+                          <MenuItem fx:id="menu_java" mnemonicParsing="false" text="Java" />
+                              <MenuItem fx:id="menu_python" mnemonicParsing="false" text="Python" />
+                              <MenuItem fx:id="menu_javascript" mnemonicParsing="false" text="JavaScript" />
+                        </items>
+                      </Menu>
+                        <Menu mnemonicParsing="false" text="チェック">
+                          <items>
+                            <MenuItem fx:id="menu_check" mnemonicParsing="false" text="フローチャートをチェックする" />
+                          </items>
+                        </Menu>
+                    </menus>
+                  </MenuBar>
+               </children>
+            </AnchorPane>
+         </top>
+      </BorderPane>
+   </children>
+</AnchorPane>
