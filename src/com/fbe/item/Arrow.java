@@ -5,15 +5,17 @@ import javafx.scene.paint.Color;
 
 public class Arrow extends Item {
 
-	Flow parent = null ;
-	public Arrow(Flow parent) {
-		this.parent = parent ;
+	//parentフロー
+
+	public static int cnt = 0 ;
+	public int id = 0 ;
+
+	public Arrow() {
 		setText("");
 		this.setHeight(baseHeight/4);
 		this.setPrefHeight(baseHeight/4);
 		this.setMaxHeight(baseHeight/4);
 		this.setMinHeight(baseHeight/4);
-		System.out.println("heightを初期化 sym:"+this+" hei:"+this.getHeight());
 	}
 
 	@Override

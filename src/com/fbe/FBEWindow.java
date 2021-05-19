@@ -1,12 +1,10 @@
 package com.fbe;
 
 import com.fbe.item.Flow;
-import com.fbe.item.Item;
 import com.fbe.sym.TestSym;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -79,13 +77,26 @@ public class FBEWindow extends Application {
 			vb.getChildren().add(ts);
 */
 
-			Flow f = new Flow();
+//			RoundFlow f = new RoundFlow();
+			Flow f = new Flow() ;
 			ap.getChildren().add(f);
 
-			for(int i = 0;i < 100;i++) {
-				TestSym ts = new TestSym() ;
-				f.addSym(i, ts);
-			}
+			int i = 0 ;
+			TestSym ts = new TestSym("test-"+i) ;
+			f.addSym(i, ts);
+
+			i = 1 ;
+			ts = new TestSym("test-"+i) ;
+			f.addSym(i, ts);
+
+			i = 2 ;
+			ts = new TestSym("test-"+i) ;
+			f.addSym(i, ts);
+
+			i = 3 ;
+			ts = new TestSym("test-"+i) ;
+			f.addSym(i, ts);
+
 
 			/*
 			VBox vb = new VBox();
@@ -133,12 +144,6 @@ public class FBEWindow extends Application {
 
 
 			primaryStage.show();
-			System.out.println("f.hei :"+f.getHeight());
-			System.out.println("f.vb.hei :"+f.vb.getHeight());
-			for(Node n:f.vb.getChildren()) {
-				System.out.println("  sym :"+n);
-				System.out.println("    hei :"+((Item)n).getHeight());
-			}
 
 
 

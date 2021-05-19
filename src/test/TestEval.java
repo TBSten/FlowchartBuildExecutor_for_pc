@@ -23,6 +23,7 @@ public class TestEval {
 		exp.setVariable(varMap);
 		long result = exp.evalLong();
 		System.out.println(" 結果　："+result);
+
 	}
 
 }
