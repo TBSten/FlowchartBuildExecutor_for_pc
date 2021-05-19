@@ -32,6 +32,7 @@ public abstract class Item extends AnchorPane {
 		this.setWidth(baseWidth);
 		this.setHeight(baseHeight);
 
+
 		this.getChildren().add(this.symCanvas);
 		this.getChildren().add(this.symLabel);
 
@@ -39,6 +40,10 @@ public abstract class Item extends AnchorPane {
 	}
 
 	public void redraw() {
+/*
+		this.setWidth(this.getPrefWidth());
+		this.setHeight(this.getPrefHeight());
+*/
 		draw();
 	}
 
@@ -53,6 +58,10 @@ public abstract class Item extends AnchorPane {
 
 	public abstract void draw() ;
 
+	//出力結果を返すメソッドを用意
 
+	@Override public String toString() {
+		return this.getClass().getName()+"["+symLabel.getText()+"]" ;
+	}
 
 }

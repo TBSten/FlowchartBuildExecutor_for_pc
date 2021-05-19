@@ -60,6 +60,7 @@ public class BaseController implements Initializable{
 				node.getChildren().add(new Button("test-"+i));
 			}
 */
+
 			System.out.println("EXPORT:"+node);
 			PrinterJob job = PrinterJob.createPrinterJob();
 			System.out.println("job:"+job);
