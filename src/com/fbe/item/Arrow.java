@@ -33,6 +33,7 @@ public class Arrow extends Item {
 		Button addB = new Button("＋") ;
 		pane.getChildren().add(addB);
 		addB.setOnAction( e -> {
+
 			//追加
 		});
 
