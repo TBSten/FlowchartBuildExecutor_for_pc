@@ -1,6 +1,9 @@
 package com.fbe.item;
 
+import javafx.geometry.Pos;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 
 public class Arrow extends Item {
@@ -12,10 +15,27 @@ public class Arrow extends Item {
 
 	public Arrow() {
 		setText("");
+		/*
 		this.setHeight(baseHeight/4);
 		this.setPrefHeight(baseHeight/4);
 		this.setMaxHeight(baseHeight/4);
 		this.setMinHeight(baseHeight/4);
+		 */
+
+
+		FlowPane pane = new FlowPane();
+		pane.setAlignment(Pos.CENTER);
+		this.getChildren().add(pane);
+		pane.maxWidthProperty().bind(this.widthProperty());
+		pane.minWidthProperty().bind(this.widthProperty());
+		pane.maxHeightProperty().bind(this.heightProperty());
+		pane.minHeightProperty().bind(this.heightProperty());
+		Button addB = new Button("＋") ;
+		pane.getChildren().add(addB);
+		addB.setOnAction( e -> {
+			//追加
+		});
+
 	}
 
 	@Override

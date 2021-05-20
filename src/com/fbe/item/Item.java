@@ -12,6 +12,8 @@ public abstract class Item extends AnchorPane {
 
 	protected Label symLabel = new Label("[DEFAULT]");
 	protected Canvas symCanvas = new Canvas();
+	protected Flow parentFlow = null ;
+
 
 	public Item() {
 
@@ -63,5 +65,13 @@ public abstract class Item extends AnchorPane {
 	@Override public String toString() {
 		return this.getClass().getName()+"["+symLabel.getText()+"]" ;
 	}
+
+	public void setParentFlow(Flow f) {
+		this.parentFlow = f ;
+	}
+	public Flow getParentFlow() {
+		return this.parentFlow ;
+	}
+
 
 }

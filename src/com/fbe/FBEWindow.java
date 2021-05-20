@@ -77,7 +77,6 @@ public class FBEWindow extends Application {
 			vb.getChildren().add(ts);
 */
 
-//			RoundFlow f = new RoundFlow();
 			Flow f = new Flow() ;
 			ap.getChildren().add(f);
 
@@ -92,11 +91,16 @@ public class FBEWindow extends Application {
 			i = 2 ;
 			ts = new TestSym("test-"+i) ;
 			f.addSym(i, ts);
+			TestSym work = ts ;
 
 			i = 3 ;
 			ts = new TestSym("test-"+i) ;
 			f.addSym(i, ts);
 
+			ts = new TestSym("first") ;
+			f.addSym(0, ts);
+
+			f.addSym(ts,new TestSym("second"));
 
 			/*
 			VBox vb = new VBox();

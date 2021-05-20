@@ -15,28 +15,51 @@ public class Flow extends Item {
 
 	public Flow() {
 		this.getChildren().add(vb);
+		this.setText("");
 	}
 
 	public void addSym(int index ,Sym sym) {
-		System.out.printf("addSym(%3d,%s)\n",index,sym);
+//		System.out.printf("addSym(%d , %s)\n",index,sym);
 		List<Node> child = vb.getChildren() ;
-
-		System.out.print(" before | ");
-		for(Node n:child) {
-			System.out.print(n+" | ");
+		Arrow ar = new Arrow() ;
+		int symIdx = index*2 ;
+		int arIdx = index*2 - 1;
+		if(symIdx == 0) {
+			arIdx = symIdx + 1;
 		}
-		System.out.println();
 
-		Arrow ar = new Arrow();
+		syms.add(symIdx /2, sym);
+		arrows.add(arIdx/2,ar);
 
-		System.out.print(" after  | ");
-		for(Node n:child) {
-			System.out.print(n+" | ");
+		if(syms.size() >= 2 && index >= 1) {
+			child.add(arIdx , ar);
 		}
-		System.out.println();
+		child.add(symIdx,sym);
+		if(syms.size() >= 2 && index == 0) {
+			child.add(arIdx , ar);
+		}
+
+		sym.setParentFlow(this);
 	}
-	public void addSym(Sym befSym ,Sym sym) {}
-	public void removeSym(Sym sym) {}
+	public void addSym(Sym befSym ,Sym sym) {
+		this.addSym(syms.indexOf(befSym)+1 , sym);
+	}
+	public void removeSym(Sym sym) {
+		int idx = syms.indexOf(sym) ;
+		this.syms.remove(sym);
+		vb.getChildren().remove(sym);
+
+		if(vb.getChildren().size() >= 1) {
+			if(idx <= 0) {
+				this.arrows.remove(idx);
+				vb.getChildren().remove(0);
+			}else if(this.arrows.size() > idx) {
+				this.arrows.remove(idx);
+				vb.getChildren().remove(idx*2-1);
+			}
+		}
+		sym.setParentFlow(null);
+	}
 
 	@Override public void redraw() {
 		this.autosize();
