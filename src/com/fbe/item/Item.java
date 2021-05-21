@@ -26,6 +26,8 @@ public abstract class Item extends AnchorPane {
 		this.heightProperty().addListener( e -> redraw() );
 		this.symLabel.prefWidthProperty().bind(this.widthProperty());
 		this.symLabel.prefHeightProperty().bind(this.heightProperty());
+		this.symLabel.minWidthProperty().bind(this.widthProperty());
+		this.symLabel.minHeightProperty().bind(this.heightProperty());
 		this.symCanvas.widthProperty().bind(this.widthProperty());
 		this.symCanvas.heightProperty().bind(this.heightProperty());
 //		this.widthProperty().addListener( e ->{redraw();});
@@ -46,6 +48,8 @@ public abstract class Item extends AnchorPane {
 		this.setWidth(this.getPrefWidth());
 		this.setHeight(this.getPrefHeight());
 */
+		this.requestParentLayout();
+		this.requestLayout();
 		draw();
 	}
 

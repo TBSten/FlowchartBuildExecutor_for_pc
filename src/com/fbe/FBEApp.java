@@ -29,7 +29,7 @@ public class FBEApp {
 		/**
 	      * アプリケーションを起動するAPIの引数に
 	      * プロジェクト作成時に自動作成されたMain.classを設定
-	       */
+	      */
 
 	    Application.launch(FBEWindow.class);
 /*

@@ -26,4 +26,6 @@ public class TestSym extends Sym {
 		System.out.println("["+this.symLabel.getText()+"]を実行しました");
 	}
 
+
+
 }

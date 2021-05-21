@@ -1,14 +1,20 @@
 package com.fbe.item;
 
+import com.fbe.FBEApp;
+import com.fbe.sym.factory.CalcSymFactory;
+
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class Arrow extends Item {
-
-	//parentフロー
 
 	public static int cnt = 0 ;
 	public int id = 0 ;
@@ -33,7 +39,34 @@ public class Arrow extends Item {
 		Button addB = new Button("＋") ;
 		pane.getChildren().add(addB);
 		addB.setOnAction( e -> {
-			//追加
+
+			try {
+				//Sym追加画面を表示
+				Stage st = new Stage();
+				st.initModality(Modality.WINDOW_MODAL);
+				st.initOwner(FBEApp.window);
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("FBEAddSym.fxml"));
+				Parent root = loader.load();
+
+				CalcSymFactory fact1 = new CalcSymFactory() ;
+				//((HBox)root.lookup("")).getChildren().add(fact1);
+				((AddSymController)loader.getController()).addZone.getChildren().add(fact1);
+				fact1.setOnAction((ev)->{
+					Flow f = this.getParentFlow() ;
+					//System.out.println(f);
+					//System.out.println(fact1);
+					f.addSym(f.getSymBeforeOf(Arrow.this), fact1.createSym());
+					st.hide();
+				});
+
+				Scene sc = new Scene(root);
+				st.setScene(sc);
+//				AddSymController cont = loader.getController();
+				st.showAndWait();
+			}catch(Exception exc) {
+				exc.printStackTrace();
+			}
+
 		});
 
 	}

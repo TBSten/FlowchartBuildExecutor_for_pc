@@ -18,10 +18,26 @@ public class Flow extends Item {
 		this.setText("");
 	}
 
+	public Sym getSymBeforeOf(Arrow ar) {
+		Sym ans = null ;
+		if(arrows.contains(ar)) {
+			ans = syms.get(arrows.indexOf(ar)) ;
+		}
+		return ans ;
+	}
+	public Sym getSymAfterOf(Arrow ar) {
+		Sym ans = null ;
+		if(arrows.contains(ar)) {
+			ans = syms.get(arrows.indexOf(ar)+1) ;
+		}
+		return ans ;
+	}
+
 	public void addSym(int index ,Sym sym) {
 //		System.out.printf("addSym(%d , %s)\n",index,sym);
 		List<Node> child = vb.getChildren() ;
 		Arrow ar = new Arrow() ;
+		ar.setParentFlow(this);
 		int symIdx = index*2 ;
 		int arIdx = index*2 - 1;
 		if(symIdx == 0) {
@@ -39,6 +55,7 @@ public class Flow extends Item {
 			child.add(arIdx , ar);
 		}
 
+//		System.out.println("log: sym:"+sym+"  parent:"+this);
 		sym.setParentFlow(this);
 	}
 	public void addSym(Sym befSym ,Sym sym) {

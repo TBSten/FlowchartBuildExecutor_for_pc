@@ -1,7 +1,7 @@
 package com.fbe;
 
 import com.fbe.item.Flow;
-import com.fbe.sym.TestSym;
+import com.fbe.sym.CalcSym;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -68,18 +68,19 @@ public class FBEWindow extends Application {
 		    tl.getKeyFrames().add(key_b2);
 		    tl.play();
 */
+			final int PAD = 300 ;
+
 			ap = FBEApp.controllers.get("Base").mainPane ;
 			root.getChildren().add(ap);
-/*
-			VBox vb = new VBox();
-			ap.getChildren().add(vb);
-			TestSym ts = new TestSym();
-			vb.getChildren().add(ts);
-*/
+			//ap.setStyle("-fx-background-color:red;");
+
 
 			Flow f = new Flow() ;
 			ap.getChildren().add(f);
+			f.setLayoutX(PAD);
+			f.setLayoutY(PAD*2/3);
 
+/*
 			int i = 0 ;
 			TestSym ts = new TestSym("test-"+i) ;
 			f.addSym(i, ts);
@@ -97,10 +98,15 @@ public class FBEWindow extends Application {
 			ts = new TestSym("test-"+i) ;
 			f.addSym(i, ts);
 
-			ts = new TestSym("first") ;
-			f.addSym(0, ts);
+			CalcSym cs = new CalcSym("1+2+3+4+5","test") ;
+			f.addSym(0, cs);
 
 			f.addSym(ts,new TestSym("second"));
+*/
+			CalcSym cs1 = new CalcSym("1+2+3+4+5","test1") ;
+			f.addSym(0, cs1);
+			CalcSym cs2 = new CalcSym("1*2*3*4*5","test2") ;
+			f.addSym(cs1, cs2);
 
 			/*
 			VBox vb = new VBox();
