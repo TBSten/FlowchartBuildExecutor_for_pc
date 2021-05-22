@@ -5,8 +5,10 @@ import java.util.List;
 
 import com.fbe.sym.Sym;
 
+import javafx.animation.FadeTransition;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class Flow extends Item {
 	ArrayList<Sym> syms = new ArrayList<>();
@@ -16,6 +18,16 @@ public class Flow extends Item {
 	public Flow() {
 		this.getChildren().add(vb);
 		this.setText("");
+		this.setOnMouseClicked(e->{
+			double x = e.getX() ;
+			double y = e.getY() ;
+			for(Sym n:syms) {
+				if(x >= n.getLayoutX() && x <= n.getLayoutX()+n.getWidth() &&
+						y >= n.getLayoutY() && y <= n.getLayoutY()+n.getHeight() ) {
+					n.requestFocus();
+				}
+			}
+		});
 	}
 
 	public Sym getSymBeforeOf(Arrow ar) {
@@ -57,11 +69,22 @@ public class Flow extends Item {
 
 //		System.out.println("log: sym:"+sym+"  parent:"+this);
 		sym.setParentFlow(this);
+
+		//symにアニメーション
+		FadeTransition animation = new FadeTransition(Duration.seconds(0.2), sym);
+		animation.setFromValue(0);
+		animation.setToValue(1);
+		animation.play();
+		sym.requestFocus();
+
+	//	this.test();
+
 	}
 	public void addSym(Sym befSym ,Sym sym) {
 		this.addSym(syms.indexOf(befSym)+1 , sym);
 	}
 	public void removeSym(Sym sym) {
+/*
 		int idx = syms.indexOf(sym) ;
 		this.syms.remove(sym);
 		vb.getChildren().remove(sym);
@@ -76,13 +99,58 @@ public class Flow extends Item {
 			}
 		}
 		sym.setParentFlow(null);
+
+	//	this.test();
+*/
+		//symにアニメーション
+		FadeTransition animation = new FadeTransition(Duration.seconds(0.2), sym);
+		animation.setFromValue(1);
+		animation.setToValue(0);
+		animation.play();
+		animation.setOnFinished(e->{
+			//外す処理
+			int idx = syms.indexOf(sym) ;
+			syms.remove(idx);
+			vb.getChildren().remove(sym);
+			if(idx < arrows.size() ) {
+				Arrow ar = arrows.remove(idx);
+				vb.getChildren().remove(ar);
+			}else {
+				Arrow ar = arrows.remove(idx-1);
+				vb.getChildren().remove(ar);
+			}
+		});
+
+
+
 	}
 
 	@Override public void redraw() {
 		this.autosize();
 		super.redraw();
+
+	//	this.test();
 	}
 	@Override public void draw() {
+	}
+
+	public void test() {
+		System.out.println("=====================");
+		if(syms != null) {
+			System.out.printf("%6s :","syms");
+			for(int i = 0;i < syms.size();i++) {
+				System.out.printf("  %20s |",syms.get(i));
+			}
+			System.out.println();
+		}
+		if(arrows != null) {
+			System.out.printf("%6s :","arrows");
+			for(int i = 0;i < arrows.size();i++) {
+				System.out.printf("  %20s |",arrows.get(i));
+			}
+			System.out.println();
+		}
+		System.out.println("=====================");
 	}
 
 }

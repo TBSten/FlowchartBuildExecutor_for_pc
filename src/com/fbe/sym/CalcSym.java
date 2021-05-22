@@ -3,7 +3,6 @@ package com.fbe.sym;
 import com.fbe.FBEExecutor;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 public class CalcSym extends Sym {
 
@@ -25,12 +24,12 @@ public class CalcSym extends Sym {
 		}
 
 		GraphicsContext gc = this.symCanvas.getGraphicsContext2D() ;
-		gc.setFill(Color.WHITE);
-		gc.setStroke(Color.BLACK);
-		gc.setLineWidth(baseLineWidth);
+		gc.setFill(itemFillColor);
+		gc.setStroke(itemLineColor);
+		gc.setLineWidth(itemLineWidth);
 
 		gc.fillRect(0,0, getWidth(), getHeight());
-		gc.strokeRect(0 + baseLineWidth/2, 0 + baseLineWidth/2, getWidth() - baseLineWidth, getHeight() - baseLineWidth);
+		gc.strokeRect(0 + itemLineWidth/2, 0 + itemLineWidth/2, getWidth() - itemLineWidth, getHeight() - itemLineWidth);
 	}
 
 }

@@ -62,6 +62,7 @@ public class BaseController implements Initializable{
 */
 
 
+
 			System.out.println("EXPORT:"+node);
 			PrinterJob job = PrinterJob.createPrinterJob();
 			System.out.println("job:"+job);

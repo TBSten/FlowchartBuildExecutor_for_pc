@@ -1,8 +1,12 @@
 package com.fbe;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.fbe.item.Flow;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -81,6 +85,13 @@ public class FBEApp {
 			e.printStackTrace();
 		}
 	}
-
+	public static void saveFBE(List<Flow> flows,String path) throws Exception{
+		BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+		for(Flow f :flows) {
+			bw.write( "" /* f.toFBE() または symToFBE(f)  */);
+			bw.newLine();
+		}
+		bw.flush();
+	}
 
 }

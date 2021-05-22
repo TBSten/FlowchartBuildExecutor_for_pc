@@ -1,11 +1,16 @@
 package com.fbe;
 
+import java.util.ArrayList;
+
 import com.fbe.item.Flow;
 import com.fbe.sym.CalcSym;
+import com.fbe.sym.Sym;
+import com.fbe.sym.TerminalSym;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -13,6 +18,7 @@ import javafx.stage.Stage;
 public class FBEWindow extends Application {
 
 	AnchorPane ap ;
+	ArrayList<Flow> flows = new ArrayList<>();
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -71,85 +77,32 @@ public class FBEWindow extends Application {
 			final int PAD = 300 ;
 
 			ap = FBEApp.controllers.get("Base").mainPane ;
+			ScrollPane sp = FBEApp.controllers.get("Base").mainSp ;
 			root.getChildren().add(ap);
-			//ap.setStyle("-fx-background-color:red;");
+//			ap.setStyle("-fx-background-color:red;");
 
 
 			Flow f = new Flow() ;
 			ap.getChildren().add(f);
 			f.setLayoutX(PAD);
+			flows.add(f);
+
 			f.setLayoutY(PAD*2/3);
 
-/*
-			int i = 0 ;
-			TestSym ts = new TestSym("test-"+i) ;
-			f.addSym(i, ts);
-
-			i = 1 ;
-			ts = new TestSym("test-"+i) ;
-			f.addSym(i, ts);
-
-			i = 2 ;
-			ts = new TestSym("test-"+i) ;
-			f.addSym(i, ts);
-			TestSym work = ts ;
-
-			i = 3 ;
-			ts = new TestSym("test-"+i) ;
-			f.addSym(i, ts);
-
-			CalcSym cs = new CalcSym("1+2+3+4+5","test") ;
-			f.addSym(0, cs);
-
-			f.addSym(ts,new TestSym("second"));
-*/
-			CalcSym cs1 = new CalcSym("1+2+3+4+5","test1") ;
-			f.addSym(0, cs1);
-			CalcSym cs2 = new CalcSym("1*2*3*4*5","test2") ;
-			f.addSym(cs1, cs2);
-
-			/*
-			VBox vb = new VBox();
-			vb.setPadding(new Insets(0));
-			ap.getChildren().add(vb);
-
-			for(int i = 0;i < 20;i++) {
-				vb.getChildren().add(new TestSym());
-				vb.getChildren().add(new Allow());
+			Sym[] syms = {
+					new TerminalSym(TerminalSym.Type.START),
+					new CalcSym("1+2+3+4+5","test1") ,
+					new CalcSym("1*2*3*4*5","test2") ,
+					new TerminalSym(TerminalSym.Type.END),
+			};
+			for(int i = 0;i < syms.length;i++) {
+				f.addSym(i, syms[i]);
 			}
-			vb.getChildren().add(new TestSym());
-			*/
+			syms[0].requestFocus();
 
 
-			/*
-			VBox vb = new VBox();
-			ap.getChildren().add(vb);
-			for(int i = 0;i < 10;i++) {
-				if(i%4 == 3) {
-					HBox hb = new HBox();
-					for(int j = 0;j < 4;j++) {
-						VBox vb2 = new VBox();
-						Button b = new Button("よこ"+i+"-"+j) ;
-						b.setPrefWidth(100);
-						vb2.getChildren().add(b);
-						hb.getChildren().add(vb2);
-						if(j % 2 == 0) {
-							for(int k = 0;k < Math.random()*10;k++) {
-								b = new Button("ついか"+j+"-"+k);
-								b.setPrefWidth(100);
-								vb2.getChildren().add(b);
-							}
-						}
-					}
-					vb.getChildren().add(hb);
-				}else {
-					Button b = new Button("ぼたん"+(i+1)) ;
-					b.setPrefWidth(100);
-					vb.getChildren().add(b);
-				}
-			}
 
-*/
+
 
 
 

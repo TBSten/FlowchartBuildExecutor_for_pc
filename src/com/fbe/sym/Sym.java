@@ -17,12 +17,28 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+/*
+ * sym:hover{
+ *     -fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );
+ * }
+ */
 public abstract class Sym extends Item {
+
 
 	ContextMenu menu = new ContextMenu() ;
 	public final Map<String,String> options = new LinkedHashMap<>();
 
+
+
 	public Sym() {
+		this.setOnKeyPressed(e->{
+			switch(e.getCode()) {
+			case ENTER:
+			case SPACE:
+				//ENTER,SPACEがおされたとき
+				break;
+			}
+		});
 		this.setOnMousePressed((e)->{
 			if(e.getClickCount() == 2) {
 				//設定を開く
@@ -32,6 +48,9 @@ public abstract class Sym extends Item {
 			if(e.isSecondaryButtonDown()) {
 				menu.show(this,e.getScreenX() , e.getScreenY());
 			}
+			Sym.this.requestFocus();
+//			System.out.println("requestFocus:"+isFocused());
+			redraw();
 		});
 		ArrayList<MenuItem> items = new ArrayList<>();
 		MenuItem i = new MenuItem("削除");
@@ -46,6 +65,12 @@ public abstract class Sym extends Item {
 			openSettingWindow();
 		});
 		items.add(i);
+		i = new MenuItem("再読み込み");
+		i.setOnAction(e ->{
+			//オプションを開く
+			redraw();
+		});
+		items.add(i);
 		menu.getItems().addAll(items);
 
 		symLabel.prefWidthProperty().unbind();
@@ -54,6 +79,10 @@ public abstract class Sym extends Item {
 		symLabel.setPrefWidth(baseWidth);
 		symLabel.setPrefHeight(baseHeight);
 		symLabel.getParent().layout();
+
+		this.getStyleClass().add("sym");
+		this.setFocusTraversable(true);
+
 
 	}
 	public abstract void execute(FBEExecutor exe);
@@ -66,12 +95,16 @@ public abstract class Sym extends Item {
 		showExportViewWindow(this);
 	}
 	public Node getExportView() {
+		changeUnfocusedDesign();
+		redraw();
 		WritableImage wi = this.snapshot(new SnapshotParameters(), null);
 		ImageView iv = new ImageView(wi);
 		return iv ;
 	}
 
 	public static void showExportViewWindow(Sym sym) {
+
+
 		sym.requestLayout();
 
 		Stage st = new Stage();

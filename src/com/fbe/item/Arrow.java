@@ -10,7 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -55,6 +54,12 @@ public class Arrow extends Item {
 					Flow f = this.getParentFlow() ;
 					//System.out.println(f);
 					//System.out.println(fact1);
+
+					System.out.println(f.arrows.contains(Arrow.this));
+					System.out.println(f.arrows.indexOf(Arrow.this));
+					System.out.println(f.vb.getChildren().indexOf(Arrow.this));
+					System.out.println(f.getSymBeforeOf(Arrow.this));
+					System.out.println(f.arrows.contains(Arrow.this));
 					f.addSym(f.getSymBeforeOf(Arrow.this), fact1.createSym());
 					st.hide();
 				});
@@ -78,8 +83,8 @@ public class Arrow extends Item {
 		gc.setFill(Color.BLUE);
 		gc.fillRect(0,0,getWidth(),getHeight());
 */
-		gc.setStroke(Color.BLACK);
-		gc.setLineWidth(baseLineWidth);
+		gc.setStroke(itemLineColor);
+		gc.setLineWidth(itemLineWidth);
 		gc.strokeLine(getWidth()/2, 0, getWidth()/2, getHeight());
 	}
 

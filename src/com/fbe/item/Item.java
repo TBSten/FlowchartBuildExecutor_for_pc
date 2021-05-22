@@ -4,15 +4,24 @@ import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 
 public abstract class Item extends AnchorPane {
 	public static double baseWidth = 180 ;
 	public static double baseHeight = 40 ;
 	public static double baseLineWidth = 3 ;
+	public static Color baseLineColor = Color.BLACK ;
+	public static Color baseFillColor = Color.WHITE ;
+	public static Color focusedLineColor = Color.web("#bad3ff");
+	public static Color focusedFillColor = baseFillColor;
+
 
 	protected Label symLabel = new Label("[DEFAULT]");
 	protected Canvas symCanvas = new Canvas();
 	protected Flow parentFlow = null ;
+	public double itemLineWidth = baseLineWidth ;
+	public Color itemLineColor = baseLineColor ;
+	public Color itemFillColor = baseFillColor ;
 
 
 	public Item() {
@@ -40,9 +49,29 @@ public abstract class Item extends AnchorPane {
 		this.getChildren().add(this.symCanvas);
 		this.getChildren().add(this.symLabel);
 
+		this.focusedProperty().addListener(e->{
+			if(isFocused()) {
+				changeFocusedDesign();
+//				System.out.println("focused:"+this);
+			}else {
+				changeUnfocusedDesign();
+//				System.out.println("unfocused:"+this);
+			}
+			redraw();
+		});
+
 		redraw();
 	}
 
+	protected void changeFocusedDesign() {
+		this.itemLineColor = focusedLineColor;
+		this.itemFillColor = focusedFillColor;
+	}
+	protected void changeUnfocusedDesign() {
+		this.itemLineColor = baseLineColor;
+		this.itemFillColor = baseFillColor;
+
+	}
 	public void redraw() {
 /*
 		this.setWidth(this.getPrefWidth());
