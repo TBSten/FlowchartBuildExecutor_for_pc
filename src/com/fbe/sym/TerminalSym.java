@@ -1,6 +1,6 @@
 package com.fbe.sym;
 
-import com.fbe.FBEExecutor;
+import com.fbe.exe.FBEExecutor;
 
 import javafx.scene.canvas.GraphicsContext;
 
@@ -19,6 +19,8 @@ public class TerminalSym extends Sym {
 		this.type = t ;
 		this.getMenu().getItems().remove(0);	//削除できない
 
+		options.put("タイプ", t == Type.START ? "start" :"end");
+
 		redraw();
 	}
 	public TerminalSym() {
@@ -26,14 +28,32 @@ public class TerminalSym extends Sym {
 	}
 	@Override
 	public void execute(FBEExecutor exe) {
-		//なし
+		//type == Type.ENDの時は戻り値を返す
+	}
+
+	@Override public void reflectOption() {
+		String type = options.get("タイプ");
+
+
+		if("start".equals(type)) {
+			this.type = Type.START ;
+		}else if("end".equals(type)) {
+			this.type = Type.END ;
+		}else {
+			System.out.println("不正なオプション: タイプ="+type);
+			this.type = Type.START ;
+			options.put("タイプ","start");
+		}
+
+
+		if(this.type != null) {
+			setText(this.type.txt);
+		}
+
 	}
 
 	@Override
 	public void draw() {
-		if(this.type != null) {
-			setText(this.type.txt);
-		}
 
 		GraphicsContext gc = symCanvas.getGraphicsContext2D();
 		gc.setStroke(itemLineColor);

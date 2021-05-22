@@ -79,6 +79,7 @@ public abstract class Item extends AnchorPane {
 */
 		this.requestParentLayout();
 		this.requestLayout();
+
 		draw();
 	}
 

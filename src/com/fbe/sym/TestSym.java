@@ -1,6 +1,6 @@
 package com.fbe.sym;
 
-import com.fbe.FBEExecutor;
+import com.fbe.exe.FBEExecutor;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

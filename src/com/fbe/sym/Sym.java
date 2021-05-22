@@ -1,20 +1,32 @@
 package com.fbe.sym;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.fbe.FBEExecutor;
+import com.fbe.FBEApp;
+import com.fbe.exe.FBEExecutable;
+import com.fbe.exe.FBEExecutor;
 import com.fbe.item.Item;
 
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /*
@@ -22,7 +34,7 @@ import javafx.stage.Stage;
  *     -fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );
  * }
  */
-public abstract class Sym extends Item {
+public abstract class Sym extends Item implements FBEExecutable{
 
 
 	ContextMenu menu = new ContextMenu() ;
@@ -31,6 +43,7 @@ public abstract class Sym extends Item {
 
 
 	public Sym() {
+
 		this.setOnKeyPressed(e->{
 			switch(e.getCode()) {
 			case ENTER:
@@ -48,7 +61,9 @@ public abstract class Sym extends Item {
 			if(e.isSecondaryButtonDown()) {
 				menu.show(this,e.getScreenX() , e.getScreenY());
 			}
-			Sym.this.requestFocus();
+			if(this.isFocused()) {
+				Sym.this.requestFocus();
+			}
 //			System.out.println("requestFocus:"+isFocused());
 			redraw();
 		});
@@ -91,15 +106,94 @@ public abstract class Sym extends Item {
 	}
 	public void openSettingWindow() {
 		//設定ウィンドウ
-		System.out.println("設定ウィンドウを開くよ");
-		showExportViewWindow(this);
+//		System.out.println("設定ウィンドウを開くよ");
+//		showExportViewWindow(this);
+		Stage st = new Stage();
+		st.setTitle(Sym.this.getClass().getSimpleName()+"の設定");
+		st.initModality(Modality.WINDOW_MODAL);
+		st.initOwner(FBEApp.window);
+		BorderPane root = new BorderPane();
+		Scene sc = new Scene(root);
+		st.setScene(sc);
+
+		root.setPrefWidth(300);
+
+		Label titleL = new Label("設定") ;
+		titleL.setStyle(titleL.getStyle()+"; -fx-font-size:20;-fx-padding:5;");
+		root.setTop(titleL);
+
+		Map<String,TextField> tfs = new HashMap<>();
+		//root.centerに一覧を表示
+		VBox vb = new VBox();
+		vb.prefWidthProperty().bind(root.widthProperty());
+		root.setCenter(vb);
+		if(options.size() > 0) {
+			for(Map.Entry<String, String> ent:options.entrySet()) {
+			//	System.out.println(ent.getKey()+":"+ent.getValue());
+				HBox hb = new HBox();
+				hb.prefWidthProperty().bind(vb.widthProperty());
+				vb.getChildren().add(hb);
+
+				Label name = new Label(ent.getKey());
+				name.prefWidthProperty().bind(hb.widthProperty().multiply(0.3));
+				TextField value = new TextField(ent.getValue());
+				value.prefWidthProperty().bind(hb.widthProperty().multiply(0.7));
+				hb.getChildren().addAll(name,value);
+
+				tfs.put(ent.getKey(),value);
+			}
+		}else {
+			vb.getChildren().add(new Label("設定可能なオプションはありません"));
+		}
+		Button saveB = new Button("保存して戻る");
+		saveB.setOnAction(e->{
+			//保存処理
+			for(Map.Entry<String , TextField> ent:tfs.entrySet()) {
+				options.put(ent.getKey(), ent.getValue().getText());
+			}
+
+			st.close();
+		});
+		Button returnB = new Button("保存せずに戻る");
+		returnB.setOnAction(e->{
+			st.hide();
+		});
+		ButtonBar bb = new ButtonBar();
+		bb.setPadding(new Insets(30,0,0,0));
+		bb.getButtons().addAll(saveB,returnB);
+		root.setBottom(bb);
+
+		root.autosize();
+
+		st.sizeToScene();
+		st.showAndWait();
+
+		requestFocus();
+		redraw();
+
+
 	}
+
+
 	public Node getExportView() {
 		changeUnfocusedDesign();
 		redraw();
 		WritableImage wi = this.snapshot(new SnapshotParameters(), null);
 		ImageView iv = new ImageView(wi);
 		return iv ;
+	}
+
+	/**
+	 * optionの値をこの記号に反映します。
+	 */
+	public void reflectOption() {
+	}
+
+	public void redraw() {
+		if(options != null) {
+			reflectOption();
+		}
+		super.redraw();
 	}
 
 	public static void showExportViewWindow(Sym sym) {

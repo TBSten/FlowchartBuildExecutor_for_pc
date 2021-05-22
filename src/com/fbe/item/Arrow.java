@@ -1,7 +1,11 @@
 package com.fbe.item;
 
+import java.util.ArrayList;
+
 import com.fbe.FBEApp;
+import com.fbe.sym.Sym;
 import com.fbe.sym.factory.CalcSymFactory;
+import com.fbe.sym.factory.SymFactory;
 
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -14,6 +18,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class Arrow extends Item {
+
+
+	public static ArrayList<SymFactory<? extends Sym>> factorys = new ArrayList<>();
+	static {
+		factorys.add(new CalcSymFactory());
+	}
 
 	public static int cnt = 0 ;
 	public int id = 0 ;
@@ -47,22 +57,22 @@ public class Arrow extends Item {
 				FXMLLoader loader = new FXMLLoader(getClass().getResource("FBEAddSym.fxml"));
 				Parent root = loader.load();
 
-				CalcSymFactory fact1 = new CalcSymFactory() ;
-				//((HBox)root.lookup("")).getChildren().add(fact1);
-				((AddSymController)loader.getController()).addZone.getChildren().add(fact1);
-				fact1.setOnAction((ev)->{
-					Flow f = this.getParentFlow() ;
-					//System.out.println(f);
-					//System.out.println(fact1);
-
-					System.out.println(f.arrows.contains(Arrow.this));
-					System.out.println(f.arrows.indexOf(Arrow.this));
-					System.out.println(f.vb.getChildren().indexOf(Arrow.this));
-					System.out.println(f.getSymBeforeOf(Arrow.this));
-					System.out.println(f.arrows.contains(Arrow.this));
-					f.addSym(f.getSymBeforeOf(Arrow.this), fact1.createSym());
-					st.hide();
-				});
+				for(SymFactory<? extends Sym> fact:factorys) {
+					//((HBox)root.lookup("")).getChildren().add(fact1);
+					((AddSymController)loader.getController()).addZone.getChildren().add(fact);
+					fact.setOnAction((ev)->{
+						Flow f = this.getParentFlow() ;
+/*
+						System.out.println(f.arrows.contains(Arrow.this));
+						System.out.println(f.arrows.indexOf(Arrow.this));
+						System.out.println(f.vb.getChildren().indexOf(Arrow.this));
+						System.out.println(f.getSymBeforeOf(Arrow.this));
+						System.out.println(f.arrows.contains(Arrow.this));
+*/
+						f.addSym(f.getSymBeforeOf(Arrow.this), fact.createSym());
+						st.hide();
+					});
+				}
 
 				Scene sc = new Scene(root);
 				st.setScene(sc);

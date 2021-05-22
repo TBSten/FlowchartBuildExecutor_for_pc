@@ -1,8 +1,18 @@
 package test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jp.hishidama.eval.ExpRuleFactory;
 import jp.hishidama.eval.Expression;
 import jp.hishidama.eval.Rule;
+import jp.hishidama.eval.exp.AbstractExpression;
+import jp.hishidama.eval.exp.LetPowerExpression;
+import jp.hishidama.eval.exp.PowerExpression;
+import jp.hishidama.eval.lex.LexFactory;
+import jp.hishidama.eval.lex.comment.CommentLex;
+import jp.hishidama.eval.lex.comment.LineComment;
+import jp.hishidama.eval.oper.JavaExOperator;
 import jp.hishidama.eval.var.MapVariable;
 
 public class TestEval {
@@ -11,19 +21,109 @@ public class TestEval {
 		//変数定義
 		MapVariable<String,Long> varMap = new MapVariable<>(String.class,Long.class);
 		varMap.put("x", 2L);
-		varMap.put("y", 100L);
+		varMap.put("y", 10L);
 
 
-		//式解析
-		String str = "x*y" ;
+
+		//通常の式解析
+		String str = "x**10" ;
 		System.out.println("式　："+str);
 		Rule rule = ExpRuleFactory.getDefaultRule();
 		Expression exp = rule.parse(str);
 		//式に変数を適用
 		exp.setVariable(varMap);
-		long result = exp.evalLong();
+		Object result = exp.eval();
 		System.out.println(" 結果　："+result);
 
-	}
+/*
+		//BasicPowerRuleFactoryでの式解析
+		String str = "'aaa'" ;
+		System.out.println("式　："+str);
+		BasicPowerRuleFactory factory = new BasicPowerRuleFactory() ;
+		Rule rule = factory.getRule();
+		Expression exp = rule.parse(str);
+		//式に変数を適用
+		exp.setVariable(varMap);
+		long result = exp.evalLong();
+		System.out.println(" 結果　："+result);
+*/
+/*
+		//StringOperatorでの''および""の独自設定
+		MapVariable<String, String> var = new MapVariable<String, String>();
+		Rule rule = ExpRuleFactory.getDefaultRule();
+//		Expression exp = rule.parse("v1='ABC', v2=\"DEF\"");
+		Expression exp = rule.parse("'ABC'+'DEF'");
+		exp.setVariable(var);
+		System.out.println("結果:"+exp.eval());
 
+		// デフォルトでは、シングルクォーテーションで囲んだ文字列は、解釈時は先頭1文字を切り出している
+		exp.eval();
+		System.out.println("デフォルト：" + var.getMap());
+
+		exp.setOperator(new StringOperator());
+		exp.eval();
+		System.out.println("変更後　　：" + var.getMap());
+ */
+
+
+	}
+	static class StringOperator extends JavaExOperator {
+
+		//シングルクォーテーションで囲まれた文字列
+		@Override
+		public Object character(String word, AbstractExpression exp) {
+			return word;
+		}
+
+		//ダブルクォーテーションで囲まれた文字列
+		@Override
+		public Object string(String word, AbstractExpression exp) {
+			return word;
+		}
+	}
+	static class BasicPowerRuleFactory extends ExpRuleFactory {
+
+		public BasicPowerRuleFactory() {
+			super();
+		}
+
+		@Override
+		protected AbstractExpression createBitXorExpression() {
+			// 「^」を排他的論理和では使わないようにする
+			return null;
+		}
+
+		@Override
+		protected AbstractExpression createLetXorExpression() {
+			// 「^=」を排他的論理和では使わないようにする
+			return null;
+		}
+
+		@Override
+		protected AbstractExpression createPowerExpression() {
+			// 「^」を指数演算子とする
+			AbstractExpression e = new PowerExpression();
+			e.setOperator("^");
+			return e;
+		}
+
+		@Override
+		protected AbstractExpression createLetPowerExpression() {
+			// 「^=」を指数演算の代入演算子とする
+			AbstractExpression e = new LetPowerExpression();
+			e.setOperator("^=");
+			return e;
+		}
+
+		@Override
+		protected LexFactory getLexFactory() {
+			// 「'」を行コメントとする
+			List<CommentLex> list = new ArrayList<CommentLex>();
+			list.add(new LineComment("'"));
+
+			LexFactory factory = super.getLexFactory();
+			factory.setDefaultCommentLexList(list);
+			return factory;
+		}
+	}
 }

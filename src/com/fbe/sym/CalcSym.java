@@ -1,6 +1,6 @@
 package com.fbe.sym;
 
-import com.fbe.FBEExecutor;
+import com.fbe.exe.FBEExecutor;
 
 import javafx.scene.canvas.GraphicsContext;
 
@@ -17,11 +17,14 @@ public class CalcSym extends Sym {
 		//
 	}
 
-	@Override
-	public void draw() {
+	@Override public void reflectOption() {
 		if(this.options != null) {
 			this.setText(options.get("式")+" → "+options.get("代入先変数"));
 		}
+	}
+
+	@Override
+	public void draw() {
 
 		GraphicsContext gc = this.symCanvas.getGraphicsContext2D() ;
 		gc.setFill(itemFillColor);

@@ -35,6 +35,13 @@
                               <MenuItem fx:id="menu_toImage" mnemonicParsing="false" text="画像にして保存" />
                         </items>
                       </Menu>
+                        <Menu mnemonicParsing="false" text="編集">
+                           <items>
+                              <MenuItem fx:id="menu_newFlow" mnemonicParsing="false" text="フローを追加する" />
+                              <MenuItem fx:id="menu_copy" mnemonicParsing="false" text="コピー" />
+                              <MenuItem fx:id="menu_paste" mnemonicParsing="false" text="貼り付け" />
+                           </items>
+                        </Menu>
                       <Menu mnemonicParsing="false" text="実行">
                         <items>
                           <MenuItem fx:id="menu_exeAll" mnemonicParsing="false" text="一度に実行" />

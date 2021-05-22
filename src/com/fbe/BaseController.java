@@ -28,7 +28,9 @@ public class BaseController implements Initializable{
 	@FXML MenuItem menu_save ;
 	@FXML MenuItem menu_print ;
 	@FXML MenuItem menu_toImage ;
-	@FXML MenuItem menu_exeAll ;
+	@FXML MenuItem menu_newFlow ;
+	@FXML MenuItem menu_copy ;
+	@FXML MenuItem menu_paste ;
 	@FXML MenuItem menu_exeLine ;
 	@FXML MenuItem menu_java ;
 	@FXML MenuItem menu_python ;
