@@ -1,22 +1,22 @@
 package com.fbe.sym;
 
+import java.util.Arrays;
+
 import com.fbe.exe.FBEExecutor;
 
 import javafx.scene.canvas.GraphicsContext;
 
 public class DataSym extends Sym {
 
+	public DataSym(String type,String target) {
+		this.options.put("タイプ",type);
+		this.optionsValueList.put("タイプ",Arrays.asList("キーボード入力","ファイル入力","出力","表示"));
+		this.options.put("対象",target);
+
+		redraw();
+	}
 	public DataSym() {
-		/*
-			type…”in”または”out”、タイプ
-			target...代入先または出力元、対象
-			(inType)...”keyboard”または”file”、入力タイプ
-		 */
-
-		this.options.put("タイプ","入力");
-		this.options.put("対象","");
-		this.options.put("入力タイプ","キーボード");
-
+		this("キーボード入力","");
 	}
 
 	@Override
@@ -24,15 +24,19 @@ public class DataSym extends Sym {
 		//
 		System.out.println("exe :"+this);
 		String tar = this.options.get("対象");
-		exe.output(exe.eval(tar).toString());
+		exe.msgBox(exe.eval(tar).toString());
 	}
 
 	@Override
 	public void reflectOption() {
 		String target = this.options.get("対象") ;
-		if(this.options.get("タイプ").equals("入力")) {
+		if(this.options.get("タイプ").equals("キーボード入力")) {
 			this.setText(target+"を入力");
+		}else if(this.options.get("タイプ").equals("ファイル入力")){
+			this.setText("ファイルから"+target+"を読む");
 		}else if(this.options.get("タイプ").equals("出力")){
+			this.setText(target+"を出力");
+		}else if(this.options.get("タイプ").equals("表示")){
 			this.setText(target+"を表示");
 		}else {
 			this.setText("#ERROR :タイプが不正です");

@@ -7,6 +7,7 @@ public class CalcSymFactory extends SymFactory<CalcSym> {
 	public CalcSymFactory(){
 		super(new CalcSym("式","代入先変数"));
 		this.setText("計算");
+		this.setOpenSetting(true);
 
 	}
 

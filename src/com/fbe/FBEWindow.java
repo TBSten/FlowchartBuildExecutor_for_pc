@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.fbe.item.Flow;
 import com.fbe.sym.CalcSym;
+import com.fbe.sym.DataSym;
 import com.fbe.sym.Sym;
 import com.fbe.sym.TerminalSym;
 
@@ -41,26 +42,25 @@ public class FBEWindow extends Application {
 			ScrollPane sp = FBEApp.controllers.get("Base").mainSp ;
 			root.getChildren().add(ap);
 
-
 			Flow f = new Flow() ;
 			ap.getChildren().add(f);
 			f.setLayoutX(PAD);
+			f.setLayoutY(PAD*2/3);
 			flows.add(f);
 
-			f.setLayoutY(PAD*2/3);
+			ap.prefWidthProperty().bind(f.widthProperty().add(root.widthProperty()));
+			ap.prefHeightProperty().bind(f.heightProperty().add(root.heightProperty()));
 
 			Sym[] syms = {
 					new TerminalSym(TerminalSym.Type.START),
 					new CalcSym("0","total") ,
-					new CalcSym("\"開発中\"","status") ,
+					new DataSym("表示","total") ,
 					new TerminalSym(TerminalSym.Type.END),
 			};
 			for(int i = 0;i < syms.length;i++) {
 				f.addSym(i, syms[i]);
 			}
 			syms[0].requestFocus();
-
-
 
 			primaryStage.show();
 

@@ -1,5 +1,7 @@
 package com.fbe.sym;
 
+import java.util.Arrays;
+
 import com.fbe.exe.FBEExecutor;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -20,8 +22,10 @@ public class TerminalSym extends Sym {
 		this.getMenu().getItems().remove(0);	//削除できない
 
 
-		options.put("タイプ", t == Type.START ? "start" :"end");
+		options.put("タイプ", t == Type.START ? "はじめ" :"おわり");
+		optionsValueList.put("タイプ",Arrays.asList("はじめ","おわり"));
 		options.put("戻り値", "");
+
 
 		redraw();
 	}
@@ -38,14 +42,14 @@ public class TerminalSym extends Sym {
 		String type = options.get("タイプ");
 
 
-		if("start".equals(type)) {
+		if("はじめ".equals(type)) {
 			this.type = Type.START ;
-		}else if("end".equals(type)) {
+		}else if("おわり".equals(type)) {
 			this.type = Type.END ;
 		}else {
 			System.out.println("不正なオプション: タイプ="+type);
 			this.type = Type.START ;
-			options.put("タイプ","start");
+			options.put("タイプ","はじめ");
 		}
 
 

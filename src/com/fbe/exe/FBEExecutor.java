@@ -133,8 +133,7 @@ public class FBEExecutor extends FBERunnable {
 	}
 
 	//出力
-	public void output(String data) {
-		//本来は出力タイプによって出力方式を変える
+	public void msgBox(String data) {
 		System.out.println("表示:"+data);
 
 		Stage st = new Stage();

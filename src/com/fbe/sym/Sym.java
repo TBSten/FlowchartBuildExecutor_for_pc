@@ -3,6 +3,7 @@ package com.fbe.sym;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fbe.FBEApp;
@@ -10,12 +11,14 @@ import com.fbe.exe.FBEExecutable;
 import com.fbe.exe.FBEExecutor;
 import com.fbe.item.Item;
 
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -39,6 +42,7 @@ public abstract class Sym extends Item implements FBEExecutable{
 
 	ContextMenu menu = new ContextMenu() ;
 	public final Map<String,String> options = new LinkedHashMap<>();
+	public final Map<String,List<String>> optionsValueList = new LinkedHashMap<>();
 
 
 
@@ -122,7 +126,7 @@ public abstract class Sym extends Item implements FBEExecutable{
 		titleL.setStyle(titleL.getStyle()+"; -fx-font-size:20;-fx-padding:5;");
 		root.setTop(titleL);
 
-		Map<String,TextField> tfs = new HashMap<>();
+		Map<String,Node> tfs = new HashMap<>();
 		//root.centerに一覧を表示
 		VBox vb = new VBox();
 		vb.prefWidthProperty().bind(root.widthProperty());
@@ -136,10 +140,21 @@ public abstract class Sym extends Item implements FBEExecutable{
 
 				Label name = new Label(ent.getKey());
 				name.prefWidthProperty().bind(hb.widthProperty().multiply(0.3));
-				TextField value = new TextField(ent.getValue());
-				value.prefWidthProperty().bind(hb.widthProperty().multiply(0.7));
-				hb.getChildren().addAll(name,value);
 
+				Node value = null ;
+				if(optionsValueList.containsKey(ent.getKey())) {
+					value = new ComboBox() ;
+					ComboBox cb = (ComboBox)value ;
+					cb.setItems(FXCollections.observableArrayList(optionsValueList.get(ent.getKey())));
+					cb.setValue(ent.getValue());
+					cb.prefWidthProperty().bind(hb.widthProperty().multiply(0.7));
+				}else {
+					value = new TextField(ent.getValue());
+					TextField tf =(TextField) value ;
+					tf.prefWidthProperty().bind(hb.widthProperty().multiply(0.7));
+				}
+
+				hb.getChildren().addAll(name,value);
 				tfs.put(ent.getKey(),value);
 			}
 		}else {
@@ -148,8 +163,16 @@ public abstract class Sym extends Item implements FBEExecutable{
 		Button saveB = new Button("保存して戻る");
 		saveB.setOnAction(e->{
 			//保存処理
-			for(Map.Entry<String , TextField> ent:tfs.entrySet()) {
-				options.put(ent.getKey(), ent.getValue().getText());
+			for(Map.Entry<String , Node> entry :tfs.entrySet()) {
+				Node n = entry.getValue() ;
+				if(n instanceof TextField) {
+					options.put(entry.getKey(), ((TextField)n).getText());
+				}else if(n instanceof ComboBox) {
+					options.put(entry.getKey(), (String)((ComboBox)n).getValue());
+				}else {
+					//エラー
+					System.out.println("#ERROR");
+				}
 			}
 
 			st.close();
@@ -169,8 +192,12 @@ public abstract class Sym extends Item implements FBEExecutable{
 //		st.showAndWait();
 		st.show();
 
-		requestFocus();
-		redraw();
+
+		st.setOnHidden(e->{
+			requestFocus();
+			redraw();
+		});
+
 
 
 	}
