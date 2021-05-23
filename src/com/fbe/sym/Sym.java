@@ -166,7 +166,8 @@ public abstract class Sym extends Item implements FBEExecutable{
 		root.autosize();
 
 		st.sizeToScene();
-		st.showAndWait();
+//		st.showAndWait();
+		st.show();
 
 		requestFocus();
 		redraw();
@@ -209,6 +210,8 @@ public abstract class Sym extends Item implements FBEExecutable{
 		st.show();
 
 	}
+
+
 }
 
 

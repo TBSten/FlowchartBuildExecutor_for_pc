@@ -19,7 +19,9 @@ public class TerminalSym extends Sym {
 		this.type = t ;
 		this.getMenu().getItems().remove(0);	//削除できない
 
+
 		options.put("タイプ", t == Type.START ? "start" :"end");
+		options.put("戻り値", "");
 
 		redraw();
 	}
@@ -29,6 +31,7 @@ public class TerminalSym extends Sym {
 	@Override
 	public void execute(FBEExecutor exe) {
 		//type == Type.ENDの時は戻り値を返す
+		System.out.println("exe:"+this);
 	}
 
 	@Override public void reflectOption() {

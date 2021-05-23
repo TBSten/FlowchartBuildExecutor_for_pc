@@ -19,14 +19,32 @@ public class TestEval {
 
 	public static void main(String[] args) {
 		//変数定義
+		/*
 		MapVariable<String,Long> varMap = new MapVariable<>(String.class,Long.class);
 		varMap.put("x", 2L);
 		varMap.put("y", 10L);
+		 */
 
-
+		MapVariable<String,Object> varMap = new MapVariable<>(String.class,Object.class);
+		varMap.put("S1", "TEST1");
+		varMap.put("S2", "TEST2");
+		varMap.put("L1", 1L);
+		varMap.put("L2", 10L);
+		varMap.put("D1", 0.1);
+		varMap.put("D2", 6.5);
 
 		//通常の式解析
-		String str = "x**10" ;
+		String str = "S1*S2+(L1+L2)+(D1+D2)" ;
+		BasicPowerRuleFactory factory = new BasicPowerRuleFactory() ;
+		Rule rule = factory.getRule();
+		Expression exp = rule.parse(str);
+		exp.setVariable(varMap);
+		exp.setOperator(new StringOperator());
+		Object result = exp.eval();
+		System.out.println(str+" = "+result);
+		/*
+		//通常の式解析
+		String str = "x+y" ;
 		System.out.println("式　："+str);
 		Rule rule = ExpRuleFactory.getDefaultRule();
 		Expression exp = rule.parse(str);
@@ -34,7 +52,7 @@ public class TestEval {
 		exp.setVariable(varMap);
 		Object result = exp.eval();
 		System.out.println(" 結果　："+result);
-
+*/
 /*
 		//BasicPowerRuleFactoryでの式解析
 		String str = "'aaa'" ;

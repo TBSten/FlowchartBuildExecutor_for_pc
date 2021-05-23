@@ -1,8 +1,12 @@
 package com.fbe.item;
 
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 
@@ -97,7 +101,7 @@ public abstract class Item extends AnchorPane {
 	//出力結果を返すメソッドを用意
 
 	@Override public String toString() {
-		return this.getClass().getName()+"["+symLabel.getText()+"]" ;
+		return this.getClass().getSimpleName()+"["+symLabel.getText()+"]" ;
 	}
 
 	public void setParentFlow(Flow f) {
@@ -107,5 +111,12 @@ public abstract class Item extends AnchorPane {
 		return this.parentFlow ;
 	}
 
+	public Node getExportView() {
+		changeUnfocusedDesign();
+		redraw();
+		WritableImage wi = this.snapshot(new SnapshotParameters(), null);
+		ImageView iv = new ImageView(wi);
+		return iv ;
+	}
 
 }

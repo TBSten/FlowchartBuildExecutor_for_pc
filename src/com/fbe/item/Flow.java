@@ -157,8 +157,18 @@ public class Flow extends Item implements FBEExecutable{
 
 	@Override public void execute(FBEExecutor exe) {
 		for(Sym s :this.syms) {
+			exe.setExeCursor(s);
+			s.requestFocus();
 			s.execute(exe);
 		}
+	}
+
+	public ArrayList<Sym> getSyms() {
+		return syms;
+	}
+
+	public ArrayList<Arrow> getArrows() {
+		return arrows;
 	}
 
 }

@@ -6,6 +6,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 
 public abstract class SymFactory<TYPE extends Sym> extends Button {
+
+	boolean openSetting = false ;
 	public SymFactory(Sym sym) {
 		super("",sym);
 		Button b = this ;
@@ -15,4 +17,12 @@ public abstract class SymFactory<TYPE extends Sym> extends Button {
 		b.setGraphic(n);
 	}
 	public abstract TYPE createSym() ;
+
+	public boolean isOpenSetting() {
+		return openSetting;
+	}
+	public void setOpenSetting(boolean openSetting) {
+		this.openSetting = openSetting;
+	}
+
 }

@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import com.fbe.FBEApp;
 import com.fbe.sym.Sym;
 import com.fbe.sym.factory.CalcSymFactory;
+import com.fbe.sym.factory.OutputDataSymFactory;
 import com.fbe.sym.factory.SymFactory;
 
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
@@ -23,6 +26,7 @@ public class Arrow extends Item {
 	public static ArrayList<SymFactory<? extends Sym>> factorys = new ArrayList<>();
 	static {
 		factorys.add(new CalcSymFactory());
+		factorys.add(new OutputDataSymFactory());
 	}
 
 	public static int cnt = 0 ;
@@ -69,9 +73,16 @@ public class Arrow extends Item {
 						System.out.println(f.getSymBeforeOf(Arrow.this));
 						System.out.println(f.arrows.contains(Arrow.this));
 */
-						f.addSym(f.getSymBeforeOf(Arrow.this), fact.createSym());
+						Sym newSym = fact.createSym() ;
+						f.addSym(f.getSymBeforeOf(Arrow.this), newSym);
 						st.hide();
+						if(fact.isOpenSetting() ) {
+							newSym.openSettingWindow();
+						}
+
 					});
+
+
 				}
 
 				Scene sc = new Scene(root);
@@ -96,6 +107,17 @@ public class Arrow extends Item {
 		gc.setStroke(itemLineColor);
 		gc.setLineWidth(itemLineWidth);
 		gc.strokeLine(getWidth()/2, 0, getWidth()/2, getHeight());
+	}
+
+	//未検証
+	@Override
+	public Node getExportView() {
+		Canvas ans = new Canvas(this.getWidth() , this.getHeight());
+		GraphicsContext gc = this.symCanvas.getGraphicsContext2D();
+		gc.setStroke(itemLineColor) ;
+		gc.setLineWidth(itemLineWidth);
+		gc.strokeLine(getWidth()/2, 0, getWidth()/2, getHeight());
+		return ans ;
 	}
 
 }

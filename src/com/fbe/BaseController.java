@@ -31,6 +31,7 @@ public class BaseController implements Initializable{
 	@FXML MenuItem menu_newFlow ;
 	@FXML MenuItem menu_copy ;
 	@FXML MenuItem menu_paste ;
+	@FXML MenuItem menu_exeAll ;
 	@FXML MenuItem menu_exeLine ;
 	@FXML MenuItem menu_java ;
 	@FXML MenuItem menu_python ;
@@ -106,6 +107,11 @@ public class BaseController implements Initializable{
 		      System.out.println(ex);
 		    }
 		    System.out.println("OK");
+		});
+
+		menu_exeAll.setOnAction( e ->{
+			//
+			FBEApp.executeFlows(FBEApp.app.flows);
 		});
 
 //		mainPane.getChildren().add(new EditPane());

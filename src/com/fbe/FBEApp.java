@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.fbe.exe.FBEExecutor;
 import com.fbe.item.Flow;
 
 import javafx.application.Application;
@@ -93,7 +94,11 @@ public class FBEApp {
 		}
 		bw.flush();
 	}
+	public static void executeFlows(List<Flow> flows) {
+		//flowsを実行
+		FBEExecutor exe = new FBEExecutor(flows.get(0),flows) ;
+		exe.executeAll();
+	}
 
 }
-/*test comment*/
 

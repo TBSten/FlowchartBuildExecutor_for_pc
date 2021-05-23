@@ -1,5 +1,6 @@
 package com.fbe.sym;
 
+import com.fbe.exe.Constant;
 import com.fbe.exe.FBEExecutor;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -15,6 +16,8 @@ public class CalcSym extends Sym {
 	@Override
 	public void execute(FBEExecutor exe) {
 		//
+		System.out.println("exe:"+this);
+		exe.putVar(this.options.get("代入先変数"),  new Constant(exe.eval(this.options.get("式"))) );
 	}
 
 	@Override public void reflectOption() {
