@@ -13,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -20,6 +21,7 @@ public class Flow extends Item implements FBEExecutable{
 	ArrayList<Sym> syms = new ArrayList<>();
 	ArrayList<Arrow> arrows = new ArrayList<>();
 	VBox vb = new VBox();
+	Label label = new Label("") ;
 
 	public Flow() {
 		this.getChildren().add(vb);
@@ -145,7 +147,6 @@ public class Flow extends Item implements FBEExecutable{
 		}
 		*/
 
-		//symにアニメーション
 		FadeTransition animation = new FadeTransition(Duration.seconds(0.6), this);
 		animation.setFromValue(1);
 		animation.setToValue(0);
@@ -201,6 +202,14 @@ public class Flow extends Item implements FBEExecutable{
 
 	public ArrayList<Arrow> getArrows() {
 		return arrows;
+	}
+
+	public String getLabel() {
+		return label.getText();
+	}
+
+	public void setLabel(String label) {
+		this.label.setText(label);
 	}
 
 }

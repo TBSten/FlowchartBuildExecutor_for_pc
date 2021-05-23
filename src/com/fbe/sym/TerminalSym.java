@@ -21,7 +21,9 @@ public class TerminalSym extends Sym {
 	public TerminalSym(Type t) {
 		this.type = t ;
 
-//		this.getMenu().getItems().remove(0);	//削除できない
+		if(this.type == Type.END) {
+			this.getMenu().getItems().remove(0);	//削除できない
+		}
 
 
 		options.put("タイプ", t == Type.START ? "はじめ" :"おわり");
