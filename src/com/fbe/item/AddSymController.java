@@ -6,11 +6,11 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 
 public class AddSymController implements Initializable{
 	@FXML Button cancelB ;
-	@FXML HBox addZone ;
+	@FXML FlowPane addZone ;
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {

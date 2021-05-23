@@ -11,8 +11,12 @@ import com.fbe.sym.Sym;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import jp.hishidama.eval.ExpRuleFactory;
 import jp.hishidama.eval.Expression;
@@ -54,9 +58,11 @@ public class FBEExecutor extends FBERunnable {
 		//変数定義
 		MapVariable<String,Object> varMap = new MapVariable<>(String.class,Object.class);
 		for(Map.Entry<String,Variable> ent :vars.entrySet()) {
-			varMap.put(ent.getKey(), ent.getValue().parse());
+			Object v = ent.getValue().parse() ;
+			v = Double.parseDouble(String.valueOf(v)) ;
+
+			varMap.put(ent.getKey(), v);
 		}
-		//通常の式解析
 		String str = formula ;
 		BasicPowerRuleFactory factory = new BasicPowerRuleFactory() ;
 		Rule rule = factory.getRule();
@@ -85,13 +91,17 @@ public class FBEExecutor extends FBERunnable {
 		public Object string(String word, AbstractExpression exp) {
 			return word;
 		}
+		//数値はすべてdoubleで返す
+		public Object number(String word, AbstractExpression exp) {
+			return Double.parseDouble(word) ;
+		}
 	}
+
 	private static class BasicPowerRuleFactory extends ExpRuleFactory {
 
 		public BasicPowerRuleFactory() {
 			super();
 		}
-
 		@Override
 		protected AbstractExpression createBitXorExpression() {
 			// 「^」を排他的論理和では使わないようにする
@@ -138,16 +148,32 @@ public class FBEExecutor extends FBERunnable {
 
 		Stage st = new Stage();
 		st.setTitle("データの表示");
-		AnchorPane root = new AnchorPane();
-		root.setMinSize(300, 100);
+		VBox root = new VBox();
+		root.setMinSize(300, 50);
 		Scene sc = new Scene(root);
 		st.setScene(sc);
+		Label tit = new Label("表示") ;
+		tit.setFont(Font.font(20));
+		tit.setAlignment(Pos.CENTER);
+		tit.prefWidthProperty().bind(root.widthProperty());
+		root.getChildren().add(tit);
 		Label mes = new Label(data) ;
+		mes.setFont(Font.font(25));
 		mes.setAlignment(Pos.CENTER);
 		mes.prefWidthProperty().bind(root.widthProperty());
-		mes.prefHeightProperty().bind(root.heightProperty());
+		mes.setMinHeight(30);
 		root.getChildren().add(mes);
+		ButtonBar bb = new ButtonBar();
+		Button okB = new Button("OK");
+		okB.setOnAction(e->{
+			st.close();
+		});
+		bb.getButtons().add(okB);
+		root.getChildren().add(bb);
 		st.showAndWait();
+	}
+	public void output(String data) {
+		//ファイルなどに出力する
 	}
 
 
@@ -174,6 +200,8 @@ public class FBEExecutor extends FBERunnable {
 
 	//流れ図実行
 	public void executeAll() {
+		//ここで実行ウィンドウ（停止ボタンなどを含める）を表示
+
 		if(this.status == Status.BEFORE_START) {
 			try {
 				System.out.println("実行-開始");
@@ -186,10 +214,50 @@ public class FBEExecutor extends FBERunnable {
 			}catch(Throwable t) {
 				this.status = Status.ERROR_FINISHED ;
 				System.out.println("エラー");
+				t.printStackTrace();
+				msgBox("エラー");
 			}
 		}
 	}
 
+	//入力
+	public String inputKeyboard(String msg,String defaultText) {
+		Stage st = new Stage();
+		st.setTitle("データの入力");
+		VBox root = new VBox();
+		root.setMinWidth(300);
+		Scene sc = new Scene(root);
+		st.setScene(sc);
+		Label mesL = new Label(msg) ;
+		mesL.setAlignment(Pos.TOP_LEFT);
+		root.getChildren().add(mesL);
+		TextField inputTf = new TextField(defaultText);
+		inputTf.prefWidthProperty().bind(root.widthProperty());
+		root.getChildren().add(inputTf);
+		ButtonBar bb = new ButtonBar();
+		Button okB = new Button("OK");
+		okB.setOnAction(e->{
+			st.close();
+		});
+		bb.getButtons().add(okB);
+		root.getChildren().add(bb);
+		st.showAndWait();
+		if(inputTf.getText() != null) {
+			return inputTf.getText();
+		}else {
+			return "" ;
+		}
+	}
+	public String inputKeyboard(String name) {
+		return this.inputKeyboard(name+"を入力してください", "");
+	}
+	public String inputFile() {
+		return "DEPLOYING..." ;
+	}
+
+
+
+	//ゲッター・セッター
 	public Flow getMainFlow() {
 		return mainFlow;
 	}

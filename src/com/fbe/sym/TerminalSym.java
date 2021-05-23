@@ -7,6 +7,7 @@ import com.fbe.exe.FBEExecutor;
 import javafx.scene.canvas.GraphicsContext;
 
 public class TerminalSym extends Sym {
+
 	public enum Type{
 		START("はじめ"),
 		END("おわり");
@@ -19,12 +20,15 @@ public class TerminalSym extends Sym {
 	protected Type type ;
 	public TerminalSym(Type t) {
 		this.type = t ;
-		this.getMenu().getItems().remove(0);	//削除できない
+
+//		this.getMenu().getItems().remove(0);	//削除できない
 
 
 		options.put("タイプ", t == Type.START ? "はじめ" :"おわり");
 		optionsValueList.put("タイプ",Arrays.asList("はじめ","おわり"));
+		options.put("テキスト", "");
 		options.put("戻り値", "");
+
 
 
 		redraw();
@@ -52,10 +56,18 @@ public class TerminalSym extends Sym {
 			options.put("タイプ","はじめ");
 		}
 
-
 		if(this.type != null) {
-			setText(this.type.txt);
+			this.setText(this.type.txt);
 		}
+
+		if(!this.options.get("テキスト").matches("\\s*")) {
+			this.setText(this.options.get("テキスト"));
+		}
+
+		if(this.options.get("タイプ").equals("おわり") && !this.options.get("戻り値").matches("\\s*")) {
+			this.setText(this.options.get("戻り値")+" を返す");
+		}
+
 
 	}
 

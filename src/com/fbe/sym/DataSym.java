@@ -21,10 +21,22 @@ public class DataSym extends Sym {
 
 	@Override
 	public void execute(FBEExecutor exe) {
-		//
-		System.out.println("exe :"+this);
+
 		String tar = this.options.get("対象");
-		exe.msgBox(exe.eval(tar).toString());
+		if(this.options.get("タイプ").equals("表示")) {
+			//
+			System.out.println("exe :"+this);
+			exe.msgBox(exe.eval(tar).toString());
+		}else if(this.options.get("タイプ").equals("出力")) {
+			System.out.println("exe :"+this);
+			exe.output(exe.eval(tar).toString());
+		}else if(this.options.get("タイプ").equals("キーボード入力")) {
+			String input = exe.inputKeyboard(tar);
+			exe.putVar(tar, input);
+		}else if(this.options.get("タイプ").equals("ファイル入力")) {
+			String input = exe.inputFile();
+			exe.putVar(tar, input);
+		}
 	}
 
 	@Override

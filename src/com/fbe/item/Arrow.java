@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.fbe.FBEApp;
 import com.fbe.sym.Sym;
 import com.fbe.sym.factory.CalcSymFactory;
+import com.fbe.sym.factory.InputDataSymFactory;
 import com.fbe.sym.factory.OutputDataSymFactory;
 import com.fbe.sym.factory.SymFactory;
 
@@ -27,6 +28,7 @@ public class Arrow extends Item {
 	static {
 		factorys.add(new CalcSymFactory());
 		factorys.add(new OutputDataSymFactory());
+		factorys.add(new InputDataSymFactory());
 	}
 
 	public static int cnt = 0 ;

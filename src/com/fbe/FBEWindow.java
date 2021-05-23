@@ -3,6 +3,7 @@ package com.fbe;
 import java.util.ArrayList;
 
 import com.fbe.item.Flow;
+import com.fbe.item.GettableFlow;
 import com.fbe.sym.CalcSym;
 import com.fbe.sym.DataSym;
 import com.fbe.sym.Sym;
@@ -13,12 +14,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 
-public class FBEWindow extends Application {
+public class FBEWindow extends Application implements GettableFlow{
 
 	AnchorPane ap ;
+	HBox flowHb = new HBox(10);
+
 	/**
 	 * 最初と最後が必ずTerminalSymの1処理（関数）を表すフローの集まり。実行時はflows.get(0)を実行する。
 	 */
@@ -36,25 +40,36 @@ public class FBEWindow extends Application {
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.sizeToScene();
-			final int PAD = 300 ;
+			final int PADX = 200 ;
+			final int PADY = PADX*1/4 ;
 
 			ap = FBEApp.controllers.get("Base").mainPane ;
 			ScrollPane sp = FBEApp.controllers.get("Base").mainSp ;
 			root.getChildren().add(ap);
 
-			Flow f = new Flow() ;
-			ap.getChildren().add(f);
-			f.setLayoutX(PAD);
-			f.setLayoutY(PAD*2/3);
-			flows.add(f);
+			flowHb.setLayoutX(PADX);
+			flowHb.setLayoutY(PADY);
+			ap.getChildren().add(flowHb);
 
-			ap.prefWidthProperty().bind(f.widthProperty().add(root.widthProperty()));
-			ap.prefHeightProperty().bind(f.heightProperty().add(root.heightProperty()));
+			Flow f = new Flow() ;
+			addFlow(f);
+
+
+/*
+			ap.prefWidthProperty().bind(f.widthProperty().add(sp.widthProperty().multiply(2)));
+			ap.prefHeightProperty().bind(f.heightProperty().add(sp.heightProperty().multiply(2)));
+*/
+			ap.prefWidthProperty().bind(flowHb.widthProperty().add(PADX*2));
+			ap.prefHeightProperty().bind(flowHb.heightProperty().add(PADY*2));
+
+
+//			flows.add(f);
 
 			Sym[] syms = {
 					new TerminalSym(TerminalSym.Type.START),
-					new CalcSym("0","total") ,
-					new DataSym("表示","total") ,
+					new DataSym("キーボード入力","変数") ,
+					new CalcSym("変数*3","変数") ,
+					new DataSym("表示","\"3倍は\"+変数") ,
 					new TerminalSym(TerminalSym.Type.END),
 			};
 			for(int i = 0;i < syms.length;i++) {
@@ -70,6 +85,16 @@ public class FBEWindow extends Application {
 			e.printStackTrace();
 		}
 	}
+
+	public void addFlow(Flow f) {
+		flowHb.getChildren().add(f);
+		flows.add(f);
+	}
+	public void removeFlow(Flow f) {
+		flowHb.getChildren().remove(f);
+		flows.remove(f);
+	}
+
 
 	public static void main(String[] args) {
 //		launch(args);

@@ -7,6 +7,9 @@ import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 
+import com.fbe.item.Flow;
+import com.fbe.sym.TerminalSym;
+
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -114,14 +117,19 @@ public class BaseController implements Initializable{
 			FBEApp.executeFlows(FBEApp.app.flows);
 		});
 
-//		mainPane.getChildren().add(new EditPane());
-/*
-		for(int i = 1;i <= 300;i++) {
-			Button b = new Button("テストボタン"+i);
-			b.setLayoutY(50*i);
-			mainPane.getChildren().add(b);
-		}
-*/
+		menu_newFlow.setOnAction(e->{
+			TerminalSym ssym = new TerminalSym(TerminalSym.Type.START);
+			int num = FBEApp.app.flows.size() ;		//すでに同じ処理名があったら使わないような配慮ができるといいな
+			ssym.options.put("テキスト", "処理"+num);
+			TerminalSym esym = new TerminalSym(TerminalSym.Type.END);
+			Flow f = new Flow() ;
+			f.addSym(0, ssym);
+			f.addSym(1, esym);
+			FBEApp.app.addFlow(f);
+
+			ssym.openSettingWindow();
+		});
+
 	}
 
 
