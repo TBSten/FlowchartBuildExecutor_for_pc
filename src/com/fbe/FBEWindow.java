@@ -54,6 +54,8 @@ public class FBEWindow extends Application implements GettableFlow{
 			Flow f = new Flow() ;
 			addFlow(f);
 
+//			RoundFlow f2 = new RoundFlow();
+//			addFlow(f2);
 
 /*
 			ap.prefWidthProperty().bind(f.widthProperty().add(sp.widthProperty().multiply(2)));
@@ -75,11 +77,10 @@ public class FBEWindow extends Application implements GettableFlow{
 			for(int i = 0;i < syms.length;i++) {
 				f.addSym(i, syms[i]);
 			}
-			syms[0].requestFocus();
+//			syms[0].requestFocus();
+
 
 			primaryStage.show();
-
-
 
 		} catch(Exception e) {
 			e.printStackTrace();

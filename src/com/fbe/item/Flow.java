@@ -22,6 +22,7 @@ public class Flow extends Item implements FBEExecutable{
 	ArrayList<Arrow> arrows = new ArrayList<>();
 	VBox vb = new VBox();
 	Label label = new Label("") ;
+	boolean nonSymDelete = true ;
 
 	public Flow() {
 		this.getChildren().add(vb);
@@ -36,6 +37,17 @@ public class Flow extends Item implements FBEExecutable{
 				}
 			}
 		});
+
+//		this.setStyle("-fx-background-color:red;");
+		this.maxWidthProperty().bind(vb.widthProperty());
+		this.maxHeightProperty().bind(vb.heightProperty());
+		this.prefWidthProperty().bind(vb.widthProperty());
+		this.prefHeightProperty().bind(vb.heightProperty());
+		this.minWidthProperty().bind(vb.widthProperty());
+		this.minHeightProperty().bind(vb.heightProperty());
+
+
+
 	}
 
 	public Sym getSymBeforeOf(Arrow ar) {
@@ -84,6 +96,8 @@ public class Flow extends Item implements FBEExecutable{
 
 	//	this.test();
 
+		redraw();
+
 	}
 	public void addSym(Sym befSym ,Sym sym) {
 		this.addSym(syms.indexOf(befSym)+1 , sym);
@@ -98,7 +112,8 @@ public class Flow extends Item implements FBEExecutable{
 	}
 	public void removeSym(Sym sym) {
 		int idx = syms.indexOf(sym) ;
-		if(idx <= 0) {
+//		System.out.println("isNonSymDelete() :"+isNonSymDelete());
+		if(idx <= 0 && isNonSymDelete()) {
 			Alert dialog = new Alert(AlertType.CONFIRMATION);
 			dialog.setTitle("先頭の記号の削除");
 			dialog.setHeaderText(null);
@@ -162,31 +177,28 @@ public class Flow extends Item implements FBEExecutable{
 
 	@Override public void redraw() {
 		this.autosize();
+		if(vb != null) {
+			this.vb.autosize();
+			this.vb.requestLayout();
+		}
 		super.redraw();
+
+		if(syms != null) {
+			for(Sym sy:syms) {
+				sy.redraw();
+			}
+			for(Arrow arr: arrows) {
+				arr.redraw();
+			}
+		}
 
 	//	this.test();
 	}
+
 	@Override public void draw() {
+//		System.out.println("flow w*h :"+getWidth()+"*"+getHeight());
 	}
 
-	public void test() {
-		System.out.println("=====================");
-		if(syms != null) {
-			System.out.printf("%6s :","syms");
-			for(int i = 0;i < syms.size();i++) {
-				System.out.printf("  %20s |",syms.get(i));
-			}
-			System.out.println();
-		}
-		if(arrows != null) {
-			System.out.printf("%6s :","arrows");
-			for(int i = 0;i < arrows.size();i++) {
-				System.out.printf("  %20s |",arrows.get(i));
-			}
-			System.out.println();
-		}
-		System.out.println("=====================");
-	}
 
 	@Override public void execute(FBEExecutor exe) {
 		for(Sym s :this.syms) {
@@ -210,6 +222,14 @@ public class Flow extends Item implements FBEExecutable{
 
 	public void setLabel(String label) {
 		this.label.setText(label);
+	}
+
+	public boolean isNonSymDelete() {
+		return nonSymDelete;
+	}
+
+	public void setNonSymDelete(boolean nonSymDelete) {
+		this.nonSymDelete = nonSymDelete;
 	}
 
 }

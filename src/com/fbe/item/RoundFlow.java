@@ -11,10 +11,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.util.Duration;
 
-/**
- * 非推奨。追加処理など上手くいかない。
- *
- */
 public class RoundFlow extends Flow {
 
 	public RoundFlow() {
@@ -23,7 +19,13 @@ public class RoundFlow extends Flow {
 		sa.setParentFlow(this);
 		arrows.add(sa);
 		vb.getChildren().add(sa);
+		setNonSymDelete(false);
 
+/*
+		this.heightProperty().addListener(e->{
+			System.out.println("roundflow height :"+getHeight());
+		});
+*/
 	}
 
 	@Override
@@ -67,23 +69,33 @@ public class RoundFlow extends Flow {
 	@Override
 	public void removeSym(Sym sym) {
 		int idx = syms.indexOf(sym);
-		if(idx > 0) {
 
-			//symにアニメーション
-			FadeTransition animation = new FadeTransition(Duration.seconds(0.2), sym);
-			animation.setFromValue(1);
-			animation.setToValue(0);
-			animation.play();
-			animation.setOnFinished(e->{
-				Arrow ar = arrows.get(idx+1);
+		//symにアニメーション
+		FadeTransition animation = new FadeTransition(Duration.seconds(0.2), sym);
+		animation.setFromValue(1);
+		animation.setToValue(0.8);
+		animation.play();
+		animation.setOnFinished(e->{
+			Arrow ar = arrows.get(idx+1);
 
-				syms.remove(sym);
-				arrows.remove(ar);
-				List<Node> child = this.vb.getChildren() ;
-				child.remove(sym);
-				child.remove(ar);
-			});
-		}else {
+			syms.remove(sym);
+			arrows.remove(ar);
+			List<Node> child = this.vb.getChildren() ;
+			child.remove(sym);
+			child.remove(ar);
+
+			this.redraw();
+
+/*
+																	//sym *3
+			System.out.println("vb.height :"+vb.getHeight());		//40
+			System.out.println("this.height :"+this.getHeight());	//120
+			System.out.println(" max :"+this.getMaxHeight());		//40
+			System.out.println(" min :"+this.getMinHeight());		//40
+			System.out.println(" pre :"+this.getPrefHeight());		//40
+*/
+		});
+		if(idx <= 1 && this.isNonSymDelete()) {
 			Alert dialog = new Alert(AlertType.CONFIRMATION);
 			dialog.setTitle("先頭の記号の削除");
 			dialog.setHeaderText(null);

@@ -8,6 +8,7 @@ import com.fbe.sym.factory.CalcSymFactory;
 import com.fbe.sym.factory.InputDataSymFactory;
 import com.fbe.sym.factory.OutputDataSymFactory;
 import com.fbe.sym.factory.SymFactory;
+import com.fbe.sym.factory.WhileSymFactory;
 
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -29,6 +30,7 @@ public class Arrow extends Item {
 		factorys.add(new CalcSymFactory());
 		factorys.add(new OutputDataSymFactory());
 		factorys.add(new InputDataSymFactory());
+		factorys.add(new WhileSymFactory());
 	}
 
 	public static int cnt = 0 ;
@@ -78,6 +80,9 @@ public class Arrow extends Item {
 						Sym newSym = fact.createSym() ;
 						f.addSym(f.getSymBeforeOf(Arrow.this), newSym);
 						st.hide();
+						if(this.parentFlow != null) {
+							this.parentFlow.redraw();
+						}
 						if(fact.isOpenSetting() ) {
 							newSym.openSettingWindow();
 						}

@@ -25,6 +25,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -45,8 +46,15 @@ public abstract class Sym extends Item implements FBEExecutable{
 	public final Map<String,List<String>> optionsValueList = new LinkedHashMap<>();
 
 
-
+	public AnchorPane clickPane = new AnchorPane() ;
 	public Sym() {
+
+
+		clickPane.prefWidthProperty().bind(this.widthProperty());
+		clickPane.prefHeightProperty().bind(this.heightProperty());
+//		clickPane.setStyle("-fx-background-color:yellow;");
+		this.getChildren().add(clickPane);
+
 
 		this.setOnKeyPressed(e->{
 			switch(e.getCode()) {
@@ -56,6 +64,7 @@ public abstract class Sym extends Item implements FBEExecutable{
 				break;
 			}
 		});
+		/*
 		this.setOnMousePressed((e)->{
 			if(e.getClickCount() == 2) {
 				//設定を開く
@@ -70,6 +79,26 @@ public abstract class Sym extends Item implements FBEExecutable{
 			}
 //			System.out.println("requestFocus:"+isFocused());
 			redraw();
+		});
+		*/
+//		this.symLabel.setOnMousePressed((e)->{
+//		this.setOnMousePressed((e)->{
+		this.clickPane.setOnMouseClicked((e)->{
+
+			if(e.getTarget() == this.clickPane) {
+			//	System.out.println("mouse pressed :"+this);
+				if(e.getClickCount() == 2) {
+					//設定を開く
+					openSettingWindow();
+				}
+				if(e.getButton() == MouseButton.SECONDARY) {
+					menu.show(this,e.getScreenX() , e.getScreenY());
+				}
+				redraw();
+
+			//	System.out.println("w*h :"+getWidth()+"*"+getHeight());
+			}
+
 		});
 		ArrayList<MenuItem> items = new ArrayList<>();
 		MenuItem i = new MenuItem("削除");
@@ -204,7 +233,7 @@ public abstract class Sym extends Item implements FBEExecutable{
 
 
 	public Node getExportView() {
-		changeUnfocusedDesign();
+//		changeUnfocusedDesign();
 		redraw();
 		WritableImage wi = this.snapshot(new SnapshotParameters(), null);
 		ImageView iv = new ImageView(wi);

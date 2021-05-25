@@ -22,6 +22,7 @@ import jp.hishidama.eval.ExpRuleFactory;
 import jp.hishidama.eval.Expression;
 import jp.hishidama.eval.Rule;
 import jp.hishidama.eval.exp.AbstractExpression;
+import jp.hishidama.eval.exp.EqualExpression;
 import jp.hishidama.eval.exp.LetPowerExpression;
 import jp.hishidama.eval.exp.PowerExpression;
 import jp.hishidama.eval.lex.LexFactory;
@@ -59,9 +60,11 @@ public class FBEExecutor extends FBERunnable {
 		MapVariable<String,Object> varMap = new MapVariable<>(String.class,Object.class);
 		for(Map.Entry<String,Variable> ent :vars.entrySet()) {
 			Object v = ent.getValue().parse() ;
-			v = Double.parseDouble(String.valueOf(v)) ;
+
+		//	v = Double.parseDouble(String.valueOf(v)) ;
 
 			varMap.put(ent.getKey(), v);
+
 		}
 		String str = formula ;
 		BasicPowerRuleFactory factory = new BasicPowerRuleFactory() ;
@@ -102,6 +105,15 @@ public class FBEExecutor extends FBERunnable {
 		public BasicPowerRuleFactory() {
 			super();
 		}
+
+
+		@Override
+		protected AbstractExpression createEqualExpression() {
+			AbstractExpression e = new EqualExpression() ;
+			e.setOperator("=");
+			return e ;
+		}
+
 		@Override
 		protected AbstractExpression createBitXorExpression() {
 			// 「^」を排他的論理和では使わないようにする

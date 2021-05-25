@@ -4,20 +4,28 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 
 public abstract class Item extends AnchorPane {
+	/**
+	 * デザイン関連をまとめたクラスつくる？--------------------------------------------------------------------------------
+	 */
+
 	public static double baseWidth = 180 ;
 	public static double baseHeight = 40 ;
 	public static double baseLineWidth = 3 ;
+
 	public static Color baseLineColor = Color.BLACK ;
 	public static Color baseFillColor = Color.WHITE ;
-	public static Color focusedLineColor = Color.web("#bad3ff");
-	public static Color focusedFillColor = baseFillColor;
+//	public static Color focusedLineColor = Color.web("#bad3ff");
+//	public static Color focusedFillColor = baseFillColor;
+
 
 
 	protected Label symLabel = new Label("[DEFAULT]");
@@ -28,15 +36,21 @@ public abstract class Item extends AnchorPane {
 	public Color itemFillColor = baseFillColor ;
 
 
+
 	public Item() {
 
 		//子の設定
 		this.symLabel.setWrapText(true);
 		this.symLabel.setAlignment(Pos.CENTER);
+		this.symLabel.setTextAlignment(TextAlignment.CENTER);
 
 		//サイズ設定
-		this.widthProperty().addListener( e -> redraw() );
-		this.heightProperty().addListener( e -> redraw() );
+		this.widthProperty().addListener( e -> {
+			redraw();
+		} );
+		this.heightProperty().addListener( e -> {
+			redraw();
+		} );
 		this.symLabel.prefWidthProperty().bind(this.widthProperty());
 		this.symLabel.prefHeightProperty().bind(this.heightProperty());
 		this.symLabel.minWidthProperty().bind(this.widthProperty());
@@ -53,38 +67,52 @@ public abstract class Item extends AnchorPane {
 		this.getChildren().add(this.symCanvas);
 		this.getChildren().add(this.symLabel);
 
+		/*
 		this.focusedProperty().addListener(e->{
-			if(isFocused()) {
+			if(isFocused() && this.isFocusTraversable() ) {
 				changeFocusedDesign();
-//				System.out.println("focused:"+this);
+				System.out.println("focused:"+this);
 			}else {
 				changeUnfocusedDesign();
-//				System.out.println("unfocused:"+this);
+				System.out.println("unfocused:"+this);
 			}
 			redraw();
 		});
+		*/
 
-		redraw();
+	//	redraw();
 	}
-
+/*
 	protected void changeFocusedDesign() {
 		this.itemLineColor = focusedLineColor;
 		this.itemFillColor = focusedFillColor;
 	}
+
 	protected void changeUnfocusedDesign() {
 		this.itemLineColor = baseLineColor;
 		this.itemFillColor = baseFillColor;
 
 	}
+*/
 	public void redraw() {
 /*
 		this.setWidth(this.getPrefWidth());
 		this.setHeight(this.getPrefHeight());
 */
-		this.requestParentLayout();
+		if(this.getParent() != null) {
+			this.getParent().requestLayout();
+			this.requestParentLayout();
+		}
+		if(this.parentFlow != null) {
+			this.parentFlow.requestLayout();
+		}
 		this.requestLayout();
 
+		GraphicsContext gc = symCanvas.getGraphicsContext2D() ;
+		gc.clearRect(0, 0, getWidth(), getHeight());
 		draw();
+
+
 	}
 
 	protected void setText(String text) {
@@ -112,7 +140,7 @@ public abstract class Item extends AnchorPane {
 	}
 
 	public Node getExportView() {
-		changeUnfocusedDesign();
+//		changeUnfocusedDesign();
 		redraw();
 		WritableImage wi = this.snapshot(new SnapshotParameters(), null);
 		ImageView iv = new ImageView(wi);
