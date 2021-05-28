@@ -2,21 +2,24 @@ package com.fbe.sym.factory;
 
 import com.fbe.sym.Sym;
 
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.image.ImageView;
 
 public abstract class SymFactory<TYPE extends Sym> extends Button {
 
 	boolean openSetting = true ;
 	public SymFactory(Sym sym) {
-		super("記号",sym);
+		//本当はsymのスナップイメージ
+		super("記号");
 		Button b = this ;
 		b.setEllipsisString("???");
 		b.setMinHeight( 80);
-/*
-		Node n = sym.getExportView() ;
-//		b.setGraphic(n);
- */
+
+		Node n = new ImageView(sym.snapshot()) ;
+		b.setGraphic(n);
+
 		b.setWrapText(true);
 		b.setContentDisplay(ContentDisplay.TOP);
 	}

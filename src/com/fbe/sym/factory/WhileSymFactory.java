@@ -6,7 +6,7 @@ public class WhileSymFactory extends SymFactory<WhileSym> {
 
 	public WhileSymFactory(){
 		super(new WhileSym("変数 < 10"));
-		this.setText("繰り返し");
+		this.setText("繰り返し１");
 		this.setOpenSetting(true);
 
 	}

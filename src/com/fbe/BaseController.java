@@ -8,23 +8,43 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 
 import com.fbe.item.Flow;
+import com.fbe.item.Item;
+import com.fbe.option.Inputable;
+import com.fbe.option.InputableCheckBox;
+import com.fbe.option.InputableComboBox;
+import com.fbe.option.InputableFileChooser;
+import com.fbe.option.InputableSlider;
+import com.fbe.option.InputableSpinButton;
+import com.fbe.option.InputableTextArea;
+import com.fbe.option.InputableTextField;
+import com.fbe.option.OptionTable;
 import com.fbe.sym.TerminalSym;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.print.PrinterJob;
+import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 
 
 public class BaseController implements Initializable{
+
+	@FXML MenuItem menu_test1 ;
+	@FXML MenuItem menu_test2 ;
+	@FXML MenuItem menu_test3 ;
+	@FXML MenuItem menu_test4 ;
+	@FXML MenuItem menu_test5 ;
+	@FXML MenuItem menu_test6 ;
 
 	@FXML MenuItem menu_new ;
 	@FXML MenuItem menu_import ;
@@ -128,6 +148,83 @@ public class BaseController implements Initializable{
 			FBEApp.app.addFlow(f);
 
 			ssym.openSettingWindow();
+		});
+
+		menu_test1.setOnAction(e->{
+			double w = Item.baseWidthProperty.get();
+			double h = Item.baseHeightProperty.get();
+			double lw = Item.baseLineWidthProperty.get();
+			System.out.println(" up ================");
+			Item.baseWidthProperty.set(w+10);
+			Item.baseHeightProperty.set(h+10);
+			Item.baseLineWidthProperty.set(lw+1);
+			System.out.println(w+"*"+h+" "+lw);
+		});
+		menu_test2.setOnAction(e->{
+			//現在のサイズよりは小さくならない？-----------------------------------------------------
+			double w = Item.baseWidthProperty.get();
+			double h = Item.baseHeightProperty.get();
+			double lw = Item.baseLineWidthProperty.get();
+			if(w-10 > 10 && h-10> 10) {
+				System.out.println(" down ================");
+				Item.baseWidthProperty.set(w-10);
+				Item.baseHeightProperty.set(h-10);
+				Item.baseLineWidthProperty.set(lw-1);
+			}
+			System.out.println(w+"*"+h+" "+lw);
+		});
+		menu_test3.setOnAction(e->{
+			double w = Item.baseWidthProperty.get();
+			double h = Item.baseHeightProperty.get();
+			double lw = Item.baseLineWidthProperty.get();
+			System.out.println(" default ================");
+			Item.baseWidthProperty.set(180);
+			Item.baseHeightProperty.set(40);
+			Item.baseLineWidthProperty.set(3);
+			System.out.println(w+"*"+h+" "+lw);
+		});
+
+		menu_test4.setOnAction(e->{
+			Stage st = new Stage() ;
+			VBox vb = new VBox() ;
+			Scene sc = new Scene(vb);
+			vb.getChildren().addAll(
+					new InputableTextField(),
+					new InputableComboBox<String>(),
+					new InputableCheckBox(),
+					new InputableTextArea(),
+					new InputableSlider(),
+					new InputableSpinButton<String>(),
+					new InputableFileChooser()
+				);
+			st.setScene(sc);
+			st.show();
+		});
+
+		menu_test5.setOnAction(e->{
+			Stage st = new Stage() ;
+			OptionTable table = new OptionTable();
+			Scene sc = new Scene(table);
+			Inputable i1 = table.put("TF","夕暮れ空を飛んで真下次第に小さくなっていくのは君のいた町だ", OptionTable.Type.TEXTFIELD, "text");
+			Inputable i2 = table.put("タイプあああ","aa", OptionTable.Type.COMBOBOX, "combo");
+			Inputable i3 = table.put("TA","aa", OptionTable.Type.TEXTAREA, "area");
+			Inputable i4 = table.put("CB","aa", OptionTable.Type.CHECKBOX, true);
+			Inputable i5 = table.put("SL","aa", OptionTable.Type.SLIDER, 0);
+			Inputable i6 = table.put("SP","aa", OptionTable.Type.SPIN, 0);
+			Inputable i7 = table.put("FI","aa", OptionTable.Type.FILE, "");
+			Inputable i8 = table.put("DI","aa", OptionTable.Type.DIRECTORY, "");
+			i2.args("そらにうたえば");
+			i2.args("必然　必然");
+			i2.args("未来へ、足掻け");
+			i7.args(new FileChooser.ExtensionFilter("HTML", "*.html"));
+			i7.args(new FileChooser.ExtensionFilter("CSS", "*.css"));
+			i7.args(new FileChooser.ExtensionFilter("XML", "*.xml"));
+			i7.args(new FileChooser.ExtensionFilter("JavaScript", "*.js"));
+			i7.args(new FileChooser.ExtensionFilter("JSON", "*.json"));
+
+			st.setScene(sc);
+			table.autosize();
+			st.show();
 		});
 
 	}

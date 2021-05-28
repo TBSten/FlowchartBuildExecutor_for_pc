@@ -11,6 +11,7 @@ import com.fbe.sym.factory.SymFactory;
 import com.fbe.sym.factory.WhileSymFactory;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -54,6 +55,11 @@ public class Arrow extends Item {
 		pane.maxHeightProperty().bind(this.heightProperty());
 		pane.minHeightProperty().bind(this.heightProperty());
 		Button addB = new Button("＋") ;
+		addB.setEllipsisString("");
+		addB.prefWidthProperty().bind(this.heightProperty().multiply(0.7));
+		addB.prefHeightProperty().bind(this.heightProperty().multiply(0.7));
+		addB.setGraphicTextGap(0);
+		addB.setPadding(new Insets(0,0,0,0));
 		pane.getChildren().add(addB);
 		addB.setOnAction( e -> {
 

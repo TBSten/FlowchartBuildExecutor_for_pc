@@ -17,8 +17,10 @@ public class TestSym extends Sym {
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0,0,getWidth(),getHeight());
 		gc.setStroke(Color.BLACK);
-		gc.setLineWidth(baseLineWidth);
-		gc.strokeRect(0+baseLineWidth/2, 0+baseLineWidth/2, getWidth()-baseLineWidth, getHeight()-baseLineWidth);
+		gc.setLineWidth(baseLineWidthProperty.get());
+		gc.strokeRect(0+baseLineWidthProperty.get()/2, 0+baseLineWidthProperty.get()/2, getWidth()-baseLineWidthProperty.get(), getHeight()-baseLineWidthProperty.get());
+//		gc.setLineWidth(baseLineWidth);
+//		gc.strokeRect(0+baseLineWidth/2, 0+baseLineWidth/2, getWidth()-baseLineWidth, getHeight()-baseLineWidth);
 	}
 
 	@Override

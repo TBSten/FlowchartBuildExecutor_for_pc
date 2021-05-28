@@ -32,7 +32,7 @@ public class WhileSym extends Sym {
 
 
 
-//		this.setStyle("-fx-background-color:red;");
+		//		this.setStyle("-fx-background-color:red;");
 //		this.flow.setStyle("-fx-background-color:yellow;");
 //		this.symLabel.setStyle("-fx-background-color:gray;");
 //		flow.addSym(0, new CalcSym("0","x"));
@@ -43,22 +43,37 @@ public class WhileSym extends Sym {
 		this.symLabel.heightProperty().addListener(e->{
 			redraw();
 		});
-		this.symLabel.setMaxWidth(baseWidth) ;
-		this.symLabel.setMaxHeight(baseHeight) ;
-		this.symLabel.setLayoutX(0);
-		this.symLabel.setLayoutY(0);
 
 		this.symLabel.prefWidthProperty().unbind();
 		this.symLabel.prefHeightProperty().unbind();
 		this.symLabel.minWidthProperty().unbind();
 		this.symLabel.minHeightProperty().unbind();
 
-		this.bottomLabel.setPrefWidth(baseWidth);
-		this.bottomLabel.setPrefHeight(baseHeight);
-		this.bottomLabel.setMinWidth(baseWidth);
-		this.bottomLabel.setMinHeight(baseHeight);
-		this.bottomLabel.setMaxWidth(baseWidth);
-		this.bottomLabel.setMaxHeight(baseHeight);
+
+		this.symLabel.maxWidthProperty().bind(baseWidthProperty);
+		this.symLabel.maxHeightProperty().bind(baseHeightProperty);
+		this.symLabel.minWidthProperty().bind(baseWidthProperty);
+		this.symLabel.minHeightProperty().bind(baseHeightProperty);
+		this.symLabel.prefWidthProperty().bind(baseWidthProperty);
+		this.symLabel.prefHeightProperty().bind(baseHeightProperty);
+//		this.symLabel.setMaxWidth(baseWidth) ;
+//		this.symLabel.setMaxHeight(baseHeight) ;
+		this.symLabel.setLayoutX(0);
+		this.symLabel.setLayoutY(0);
+
+
+		this.bottomLabel.prefWidthProperty().bind(baseWidthProperty);
+		this.bottomLabel.prefHeightProperty().bind(baseHeightProperty);
+		this.bottomLabel.minWidthProperty().bind(baseWidthProperty);
+		this.bottomLabel.minHeightProperty().bind(baseHeightProperty);
+		this.bottomLabel.maxWidthProperty().bind(baseWidthProperty);
+		this.bottomLabel.maxHeightProperty().bind(baseHeightProperty);
+//		this.bottomLabel.setPrefWidth(baseWidth);
+//		this.bottomLabel.setPrefHeight(baseHeight);
+//		this.bottomLabel.setMinWidth(baseWidth);
+//		this.bottomLabel.setMinHeight(baseHeight);
+//		this.bottomLabel.setMaxWidth(baseWidth);
+//		this.bottomLabel.setMaxHeight(baseHeight);
 		this.bottomLabel.setWrapText(true);
 		this.bottomLabel.setAlignment(Pos.CENTER);
 		this.bottomLabel.setTextAlignment(TextAlignment.CENTER);
@@ -70,16 +85,23 @@ public class WhileSym extends Sym {
 		this.prefWidthProperty().unbind();
 		this.prefHeightProperty().unbind();
 		this.prefWidthProperty().bind(flow.widthProperty());
-		this.prefHeightProperty().bind(flow.heightProperty().add(baseHeight*2));
-		this.maxHeightProperty().bind(flow.heightProperty().add(baseHeight*2));
-		this.minHeightProperty().bind(flow.heightProperty().add(baseHeight*2));
+		this.prefHeightProperty().bind(flow.heightProperty().add(baseHeightProperty.multiply(2)));
+		this.maxHeightProperty().bind(flow.heightProperty().add(baseHeightProperty.multiply(2)));
+		this.minHeightProperty().bind(flow.heightProperty().add(baseHeightProperty.multiply(2)));
+//		this.prefHeightProperty().bind(flow.heightProperty().add(baseHeight*2));
+//		this.maxHeightProperty().bind(flow.heightProperty().add(baseHeight*2));
+//		this.minHeightProperty().bind(flow.heightProperty().add(baseHeight*2));
 		this.flow.heightProperty().addListener(e->{
 		//	System.out.println("flow.height changed::");
 			redraw() ;
 		});
 
 		flow.setLayoutX(0);
-		flow.setLayoutY(baseHeight);
+//		flow.layoutYProperty().bind(baseHeightProperty);
+//		flow.setLayoutY(baseHeightProperty.get());
+//		flow.layoutYProperty().bind(baseHeightProperty);		//おそらくここでlayoutYの変更エラーが出る
+		flow.translateYProperty().bind(baseHeightProperty);
+//		flow.setLayoutY(baseHeight);
 		this.getChildren().add(flow);
 		this.setFocusTraversable(false);
 /*
@@ -105,9 +127,18 @@ public class WhileSym extends Sym {
 	@Override
 	public void execute(FBEExecutor exe) {
 		Object con = exe.eval(this.options.get("条件"));
-		while((boolean) con) {
-			flow.execute(exe);
-			con = exe.eval(this.options.get("条件"));
+		if(options.get("タイプ").equals("前判定")) {
+			while((boolean) con) {
+				flow.execute(exe);
+				con = exe.eval(this.options.get("条件"));
+			}
+		}else if(options.get("タイプ").equals("後判定")) {
+			do {
+				flow.execute(exe);
+				con = exe.eval(this.options.get("条件"));
+			}while((boolean) con);
+		}else {
+
 		}
 	}
 
@@ -121,7 +152,7 @@ public class WhileSym extends Sym {
 			this.symLabel.setText(lbText);
 			this.bottomLabel.setText("ループ"+this.num);
 		}
-		this.bottomLabel.setLayoutY(this.getHeight()-baseHeight);
+		this.bottomLabel.setLayoutY(this.getHeight()-baseHeightProperty.get());
 	}
 
 	@Override
@@ -152,10 +183,10 @@ public class WhileSym extends Sym {
 			gc.setFill(itemFillColor);
 			gc.setStroke(itemLineColor);
 			gc.setLineWidth(itemLineWidth);
-			double w = baseHeight*1/3;
-			double bw = baseWidth ;
-			double bh = baseHeight ;
-			double blw = baseLineWidth ;
+			double w = baseHeightProperty.get()*1/3;
+			double bw = baseWidthProperty.get() ;
+			double bh = baseHeightProperty.get() ;
+			double blw = baseLineWidthProperty.get() ;
 
 			/*0,0 baseWidth*baseHeight に上向き台形を描画*/
 			double[] arrx = new double[]{w,bw-w,bw-blw,bw-blw,0+blw/2 ,0+blw/2} ;
@@ -169,7 +200,7 @@ public class WhileSym extends Sym {
 */
 			/*0,getHeight()-baseHeight baseWidth*baseHeight に上向き台形を描画*/
 			arrx = new double[]{0+blw/2,bw-blw,bw-blw,bw-w,w,0+blw/2} ;
-			arry = new double[]{0+blw/2+getHeight()-baseHeight,0+blw/2+getHeight()-baseHeight,bh-w+getHeight()-baseHeight,bh-blw+getHeight()-baseHeight,bh-blw+getHeight()-baseHeight,bh-w+getHeight()-baseHeight} ;
+			arry = new double[]{0+blw/2+getHeight()-bh,0+blw/2+getHeight()-bh,bh-w+getHeight()-bh,bh-blw+getHeight()-bh,bh-blw+getHeight()-bh,bh-w+getHeight()-bh} ;
 			gc.fillPolygon(arrx, arry, 6);
 			gc.strokePolygon(arrx,arry,6);
 

@@ -15,7 +15,6 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ComboBox;
@@ -124,8 +123,11 @@ public abstract class Sym extends Item implements FBEExecutable{
 		symLabel.prefWidthProperty().unbind();
 		symLabel.prefHeightProperty().unbind();
 		symLabel.prefHeightProperty().unbind();
-		symLabel.setPrefWidth(baseWidth);
-		symLabel.setPrefHeight(baseHeight);
+
+		symLabel.prefWidthProperty().bind(baseWidthProperty);
+		symLabel.prefHeightProperty().bind(baseHeightProperty);
+//		symLabel.setPrefWidth(baseWidth);
+//		symLabel.setPrefHeight(baseHeight);
 		symLabel.getParent().layout();
 
 		this.getStyleClass().add("sym");
@@ -235,10 +237,11 @@ public abstract class Sym extends Item implements FBEExecutable{
 	public Node getExportView() {
 //		changeUnfocusedDesign();
 		redraw();
-		WritableImage wi = this.snapshot(new SnapshotParameters(), null);
+		WritableImage wi = this.snapshot();
 		ImageView iv = new ImageView(wi);
 		return iv ;
 	}
+
 
 	/**
 	 * optionの値をこの記号に反映します。

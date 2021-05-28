@@ -7,7 +7,6 @@ import java.util.Map;
 
 import com.fbe.FBERunnable;
 import com.fbe.item.Flow;
-import com.fbe.sym.Sym;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -47,7 +46,7 @@ public class FBEExecutor extends FBERunnable {
 	protected Flow mainFlow ;
 	protected List<Flow> flows ;
 	protected Status status = Status.BEFORE_START ;
-	protected Sym exeCursor = null ;
+	protected FBEExecutable exeCursor = null ;
 
 	public FBEExecutor(Flow mainFlow,List<Flow> flows ){
 		this.mainFlow = mainFlow ;
@@ -154,10 +153,9 @@ public class FBEExecutor extends FBERunnable {
 		}
 	}
 
-	//出力
+	//メッセージボックスで表示
 	public void msgBox(String data) {
 		System.out.println("表示:"+data);
-
 		Stage st = new Stage();
 		st.setTitle("データの表示");
 		VBox root = new VBox();
@@ -210,18 +208,18 @@ public class FBEExecutor extends FBERunnable {
 		return getVar(name).parse() ;
 	}
 
-	//流れ図実行
+	//テスト用流れ図実行
 	public void executeAll() {
-		//ここで実行ウィンドウ（停止ボタンなどを含める）を表示
-
 		if(this.status == Status.BEFORE_START) {
 			try {
 				System.out.println("実行-開始");
-				this.setExeCursor(mainFlow.getSyms().get(0));
-				mainFlow.execute(this);
+//				this.setExeCursor(mainFlow.getSyms().get(0));
+//				mainFlow.execute(this);
+				executeItem(mainFlow);
 				if(this.status == Status.EXECUTING) {
 					this.status = Status.SAFE_FINISHED ;
 				}
+				setExeCursor(null);
 				System.out.println("実行-終了");
 			}catch(Throwable t) {
 				this.status = Status.ERROR_FINISHED ;
@@ -230,6 +228,11 @@ public class FBEExecutor extends FBERunnable {
 				msgBox("エラー");
 			}
 		}
+	}
+	public void executeItem(FBEExecutable executableItem) {
+		System.out.println("execute :"+executableItem);
+		this.setExeCursor(executableItem);
+		executableItem.execute(this);
 	}
 
 	//入力
@@ -286,11 +289,11 @@ public class FBEExecutor extends FBERunnable {
 		this.status = status;
 	}
 
-	public Sym getExeCursor() {
+	public FBEExecutable getExeCursor() {
 		return exeCursor;
 	}
 
-	public void setExeCursor(Sym exeCursor) {
+	public void setExeCursor(FBEExecutable exeCursor) {
 		this.exeCursor = exeCursor;
 	}
 
