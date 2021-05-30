@@ -13,8 +13,8 @@ public class OutputDataSymFactory extends SymFactory<DataSym> {
 	@Override
 	public DataSym createSym() {
 		DataSym ans = new DataSym() ;
-		ans.options.put("タイプ","表示");
-		ans.options.put("対象","");
+		ans.optionPut("タイプ","表示");
+		ans.optionPut("対象","");
 		return ans;
 	}
 

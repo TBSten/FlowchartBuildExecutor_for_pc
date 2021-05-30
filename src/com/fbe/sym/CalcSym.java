@@ -2,14 +2,17 @@ package com.fbe.sym;
 
 import com.fbe.exe.Constant;
 import com.fbe.exe.FBEExecutor;
+import com.fbe.option.OptionTable;
 
 import javafx.scene.canvas.GraphicsContext;
 
 public class CalcSym extends Sym {
 
 	public CalcSym(String formula,String variable){
-		this.options.put("式", formula);
-		this.options.put("代入先変数", variable);
+//		this.options.put("式", formula);
+//		this.options.put("代入先変数", variable);
+		this.optionPut("式","式に代入する値を指定します。",OptionTable.Type.TEXTAREA,formula);
+		this.optionPut("代入先変数","式を代入する変数を指定します。",OptionTable.Type.TEXTFIELD,formula);
 		redraw();
 	}
 
@@ -17,12 +20,16 @@ public class CalcSym extends Sym {
 	public void execute(FBEExecutor exe) {
 		//
 		System.out.println("exe:"+this);
-		exe.putVar(this.options.get("代入先変数"),  new Constant(exe.eval(this.options.get("式"))) );
+		String variable = this.optionGet("代入先変数");
+		String formula = this.optionGet("式");
+		exe.putVar(variable,  new Constant(exe.eval(formula)) );
 	}
 
 	@Override public void reflectOption() {
-		if(this.options != null) {
-			this.setText(options.get("式")+" → "+options.get("代入先変数"));
+		if(this.getOptions() != null) {
+			String formula = optionGet("式");
+			String variable = optionGet("代入先変数");
+			this.setText(formula+" → "+variable);
 		}
 	}
 

@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import com.fbe.exe.FBEExecutor;
 import com.fbe.item.RoundFlow;
+import com.fbe.option.OptionTable;
 
 import javafx.geometry.Pos;
 import javafx.scene.canvas.GraphicsContext;
@@ -26,9 +27,12 @@ public class WhileSym extends Sym {
 
 		this.num = cnt ;
 		cnt ++;
-		this.options.put("条件",condition);
-		this.options.put("タイプ","前判定");
-		this.optionsValueList.put("タイプ",Arrays.asList("前判定","後判定"));
+//		this.options.put("条件",condition);
+//		this.options.put("タイプ","前判定");
+//		this.optionsValueList.put("タイプ",Arrays.asList("前判定","後判定"));
+		this.optionPut("条件", "繰り返し処理の条件式を指定します。", OptionTable.Type.TEXTFIELD, condition);
+		this.optionPut("タイプ", "どのタイミングで条件を判定するかを指定します。", OptionTable.Type.COMBOBOX, "前判定");
+		this.getOptionsValueList().put("タイプ",Arrays.asList("前判定","後判定"));
 
 
 
@@ -126,16 +130,16 @@ public class WhileSym extends Sym {
 
 	@Override
 	public void execute(FBEExecutor exe) {
-		Object con = exe.eval(this.options.get("条件"));
-		if(options.get("タイプ").equals("前判定")) {
+		Object con = exe.eval(this.optionGet("条件"));
+		if(optionGet("タイプ").equals("前判定")) {
 			while((boolean) con) {
 				flow.execute(exe);
-				con = exe.eval(this.options.get("条件"));
+				con = exe.eval(this.optionGet("条件"));
 			}
-		}else if(options.get("タイプ").equals("後判定")) {
+		}else if(optionGet("タイプ").equals("後判定")) {
 			do {
 				flow.execute(exe);
-				con = exe.eval(this.options.get("条件"));
+				con = exe.eval(this.optionGet("条件"));
 			}while((boolean) con);
 		}else {
 
@@ -144,8 +148,8 @@ public class WhileSym extends Sym {
 
 	@Override
 	public void reflectOption() {
-		String lbText = String.format("ループ%d\n %s の間", this.num, this.options.get("条件")) ;
-		if(this.options.get("タイプ").equals("後判定")) {
+		String lbText = String.format("ループ%d\n %s の間", this.num, this.optionGet("条件")) ;
+		if(this.optionGet("タイプ").equals("後判定")) {
 			this.symLabel.setText("ループ"+this.num);
 			this.bottomLabel.setText(lbText);
 		}else {

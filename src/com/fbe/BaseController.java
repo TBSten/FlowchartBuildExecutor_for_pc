@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 
+import com.fbe.exe.FBEExecutor;
 import com.fbe.item.Flow;
 import com.fbe.item.Item;
 import com.fbe.option.Inputable;
@@ -54,8 +55,8 @@ public class BaseController implements Initializable{
 	@FXML MenuItem menu_newFlow ;
 	@FXML MenuItem menu_copy ;
 	@FXML MenuItem menu_paste ;
-	@FXML MenuItem menu_exeAll ;
-	@FXML MenuItem menu_exeLine ;
+	@FXML MenuItem menu_exe ;
+	@FXML MenuItem menu_exeSetting ;
 	@FXML MenuItem menu_java ;
 	@FXML MenuItem menu_python ;
 	@FXML MenuItem menu_check ;
@@ -132,15 +133,28 @@ public class BaseController implements Initializable{
 		    System.out.println("OK");
 		});
 
-		menu_exeAll.setOnAction( e ->{
+		menu_exe.setOnAction( e ->{
 			//
-			FBEApp.executeFlows(FBEApp.app.flows);
+//			FBEApp.executeFlows(FBEApp.app.flows);
+//			ExeApp.execute();
+			/*
+			FBEExecutor exe = new FBEExecutor(FBEApp.app.flows.get(0), FBEApp.app.flows ) ;
+			exe.openSettingWindow() ;
+			exe.execute_Test();
+			*/
+			//実行モードにする(実行用ウィンドウを表示)
+			FBEExecutor.toExecuteMode(FBEApp.app.flows.get(0), FBEApp.app.flows);
+		});
+		menu_exeSetting.setOnAction(e->{
+			FBEExecutor exe = new FBEExecutor(FBEApp.app.flows.get(0), FBEApp.app.flows ) ;
+			exe.openSettingWindow() ;
 		});
 
 		menu_newFlow.setOnAction(e->{
 			TerminalSym ssym = new TerminalSym(TerminalSym.Type.START);
 			int num = FBEApp.app.flows.size() ;		//すでに同じ処理名があったら使わないような配慮ができるといいな
-			ssym.options.put("テキスト", "処理"+num);
+//			ssym.options.put("テキスト", "処理"+num);
+			ssym.optionPut("テキスト", "（説明文）", OptionTable.Type.TEXTFIELD, "処理"+num);
 			TerminalSym esym = new TerminalSym(TerminalSym.Type.END);
 			Flow f = new Flow() ;
 			f.addSym(0, ssym);
@@ -157,7 +171,7 @@ public class BaseController implements Initializable{
 			System.out.println(" up ================");
 			Item.baseWidthProperty.set(w+10);
 			Item.baseHeightProperty.set(h+10);
-			Item.baseLineWidthProperty.set(lw+1);
+//			Item.baseLineWidthProperty.set(lw+1);
 			System.out.println(w+"*"+h+" "+lw);
 		});
 		menu_test2.setOnAction(e->{
@@ -169,7 +183,7 @@ public class BaseController implements Initializable{
 				System.out.println(" down ================");
 				Item.baseWidthProperty.set(w-10);
 				Item.baseHeightProperty.set(h-10);
-				Item.baseLineWidthProperty.set(lw-1);
+//				Item.baseLineWidthProperty.set(lw-1);
 			}
 			System.out.println(w+"*"+h+" "+lw);
 		});

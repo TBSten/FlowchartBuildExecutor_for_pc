@@ -2,6 +2,7 @@ package com.fbe.option;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -14,13 +15,20 @@ import javafx.scene.layout.VBox;
 public class OptionTable extends AnchorPane {
 	public enum Type{
 		TEXTFIELD,
-		COMBOBOX,
+		COMBOBOX(true),
 		TEXTAREA,
 		CHECKBOX,
 		SLIDER,
 		SPIN,
 		FILE,
 		DIRECTORY;
+		public boolean haveList = false ;
+		Type(){
+			this(false);
+		}
+		Type(boolean haveList){
+			this.haveList = haveList ;
+		}
 	}
 
 	private VBox vb = new VBox() ;
@@ -31,6 +39,8 @@ public class OptionTable extends AnchorPane {
 	private DoubleProperty descPer = new SimpleDoubleProperty(0.40);
 	private DoubleProperty inpPer = new SimpleDoubleProperty(0.45);
 	public OptionTable() {
+//		vb.setStyle("-fx-background-color:green;");
+
 		this.getChildren().add(vb);
 		vb.prefWidthProperty().bind(this.widthProperty());
 		vb.prefHeightProperty().bind(this.heightProperty());
@@ -53,15 +63,19 @@ public class OptionTable extends AnchorPane {
 		l2.setStyle("-fx-border-style: none none solid none; -fx-border-width: 2; -fx-border-color: black;");
 		l3.setStyle("-fx-border-style: none none solid none; -fx-border-width: 2; -fx-border-color: black;");
 		vb.getChildren().add(hb);
+
+
 	}
 
 	public Inputable put(String name,String desc,Type type,Object defValue) {
 		HBox hb = new HBox();
+//		hb.setStyle("-fx-background-color:blue;");
 		Label nlb = new Label(name);
 		nlb.setWrapText(true);
 		Label dlb = new Label(desc);
 		dlb.setWrapText(true);
 		Inputable inp = null ;
+
 		switch(type) {
 		case TEXTFIELD:
 			inp = new InputableTextField();
@@ -95,7 +109,7 @@ public class OptionTable extends AnchorPane {
 		dlb.prefWidthProperty().bind(hb.widthProperty().multiply(descPer));
 		inp.getRegion().prefWidthProperty().bind(hb.widthProperty().multiply(inpPer));
 
-		nlb.prefHeightProperty().bind(hb.heightProperty());
+//		nlb.prefHeightProperty().bind(hb.heightProperty());
 //		dlb.prefHeightProperty().bind(hb.heightProperty());
 //		inp.getRegion().prefHeightProperty().bind(hb.heightProperty());
 		hb.getChildren().addAll(nlb,dlb,inp.getRegion());
@@ -108,6 +122,8 @@ public class OptionTable extends AnchorPane {
 		vb.getChildren().remove(this.inp2HBox.get(inp));
 		inp.put(defValue);
 
+
+
 		return inp ;
 	}
 
@@ -116,6 +132,10 @@ public class OptionTable extends AnchorPane {
 	}
 	public String getAsString(String name) {
 		return this.inputNodes.get(name).getString();
+	}
+
+	public Set<String> namesSet(){
+		return this.inputNodes.keySet();
 	}
 
 	public Inputable remove(String name) {

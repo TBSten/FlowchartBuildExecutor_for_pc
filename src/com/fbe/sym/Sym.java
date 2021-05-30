@@ -1,7 +1,6 @@
 package com.fbe.sym;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,24 +9,20 @@ import com.fbe.FBEApp;
 import com.fbe.exe.FBEExecutable;
 import com.fbe.exe.FBEExecutor;
 import com.fbe.item.Item;
+import com.fbe.option.Inputable;
+import com.fbe.option.OptionTable;
 
-import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -41,8 +36,10 @@ public abstract class Sym extends Item implements FBEExecutable{
 
 
 	ContextMenu menu = new ContextMenu() ;
-	public final Map<String,String> options = new LinkedHashMap<>();
-	public final Map<String,List<String>> optionsValueList = new LinkedHashMap<>();
+	private final Map<String,String> options = new LinkedHashMap<>();
+	private final Map<String,OptionTable.Type> optionTypes = new LinkedHashMap<>();
+	private final Map<String,String> optionDescriptions = new LinkedHashMap<>();
+	private final Map<String,List<String>> optionsValueList = new LinkedHashMap<>();
 
 
 	public AnchorPane clickPane = new AnchorPane() ;
@@ -141,71 +138,48 @@ public abstract class Sym extends Item implements FBEExecutable{
 	}
 	public void openSettingWindow() {
 		//設定ウィンドウ
-//		System.out.println("設定ウィンドウを開くよ");
-//		showExportViewWindow(this);
 		Stage st = new Stage();
+		st.setMinWidth(200);
+		st.setMinHeight(200);
 		st.setTitle(Sym.this.getClass().getSimpleName()+"の設定");
 		st.initModality(Modality.WINDOW_MODAL);
 		st.initOwner(FBEApp.window);
-		BorderPane root = new BorderPane();
+//		BorderPane root = new BorderPane() ;
+		VBox root = new VBox() ;
 		Scene sc = new Scene(root);
 		st.setScene(sc);
 
-		root.setPrefWidth(300);
+
 
 		Label titleL = new Label("設定") ;
-		titleL.setStyle(titleL.getStyle()+"; -fx-font-size:20;-fx-padding:5;");
-		root.setTop(titleL);
 
-		Map<String,Node> tfs = new HashMap<>();
-		//root.centerに一覧を表示
-		VBox vb = new VBox();
-		vb.prefWidthProperty().bind(root.widthProperty());
-		root.setCenter(vb);
+		OptionTable table = new OptionTable();
+//		table.setStyle("-fx-background-color:red;");
+
 		if(options.size() > 0) {
+
 			for(Map.Entry<String, String> ent:options.entrySet()) {
-			//	System.out.println(ent.getKey()+":"+ent.getValue());
-				HBox hb = new HBox();
-				hb.prefWidthProperty().bind(vb.widthProperty());
-				vb.getChildren().add(hb);
+				String name = ent.getKey();
+				String value = ent.getValue();
+				String desc = this.optionDescriptions.get(name);
+				OptionTable.Type type = this.optionTypes.get(name);
+				List<String> list = this.optionsValueList.get(name) ;
 
-				Label name = new Label(ent.getKey());
-				name.prefWidthProperty().bind(hb.widthProperty().multiply(0.3));
-
-				Node value = null ;
-				if(optionsValueList.containsKey(ent.getKey())) {
-					value = new ComboBox() ;
-					ComboBox cb = (ComboBox)value ;
-					cb.setItems(FXCollections.observableArrayList(optionsValueList.get(ent.getKey())));
-					cb.setValue(ent.getValue());
-					cb.prefWidthProperty().bind(hb.widthProperty().multiply(0.7));
-				}else {
-					value = new TextField(ent.getValue());
-					TextField tf =(TextField) value ;
-					tf.prefWidthProperty().bind(hb.widthProperty().multiply(0.7));
+				Inputable inputable = table.put(name,desc,type,value);
+				if(type.haveList) {
+					for(String item:this.optionsValueList.get(name)) {
+						inputable.args(item);
+					}
 				}
-
-				hb.getChildren().addAll(name,value);
-				tfs.put(ent.getKey(),value);
 			}
 		}else {
-			vb.getChildren().add(new Label("設定可能なオプションはありません"));
+		//	vb.getChildren().add(new Label("設定可能なオプションはありません"));
 		}
 		Button saveB = new Button("保存して戻る");
 		saveB.setOnAction(e->{
-			//保存処理
-			for(Map.Entry<String , Node> entry :tfs.entrySet()) {
-				Node n = entry.getValue() ;
-				if(n instanceof TextField) {
-					options.put(entry.getKey(), ((TextField)n).getText());
-				}else if(n instanceof ComboBox) {
-					options.put(entry.getKey(), (String)((ComboBox)n).getValue());
-				}else {
-					//エラー
-					System.out.println("#ERROR");
-				}
+			for(String name:table.namesSet()) {
+				optionPut(name,table.getAsString(name));
 			}
-
 			st.close();
 		});
 		Button returnB = new Button("保存せずに戻る");
@@ -213,16 +187,60 @@ public abstract class Sym extends Item implements FBEExecutable{
 			st.hide();
 		});
 		ButtonBar bb = new ButtonBar();
-		bb.setPadding(new Insets(30,0,0,0));
 		bb.getButtons().addAll(saveB,returnB);
-		root.setBottom(bb);
 
-		root.autosize();
+		titleL.prefWidthProperty().bind(root.widthProperty());
+		titleL.minWidthProperty().bind(root.widthProperty());
+		titleL.maxWidthProperty().bind(root.widthProperty());
+		titleL.setPrefHeight(USE_COMPUTED_SIZE);
+		titleL.setMaxHeight(USE_COMPUTED_SIZE);
+		titleL.setMinHeight(USE_COMPUTED_SIZE);
+		table.prefWidthProperty().bind(root.widthProperty());
+		table.minWidthProperty().bind(root.widthProperty());
+		table.maxWidthProperty().bind(root.widthProperty());
+		table.prefHeightProperty().bind(root.heightProperty().subtract(titleL.heightProperty()).subtract(bb.heightProperty()));
+		table.minHeightProperty().bind(root.heightProperty().subtract(titleL.heightProperty()).subtract(bb.heightProperty()));
+		table.maxHeightProperty().bind(root.heightProperty().subtract(titleL.heightProperty()).subtract(bb.heightProperty()));
+		bb.prefWidthProperty().bind(root.widthProperty());
+		bb.minWidthProperty().bind(root.widthProperty());
+		bb.maxWidthProperty().bind(root.widthProperty());
+		bb.setPrefHeight(USE_COMPUTED_SIZE);
+		bb.setMaxHeight(USE_COMPUTED_SIZE);
+		bb.setMinHeight(USE_COMPUTED_SIZE);
+
+		root.getChildren().add(titleL);
+		root.getChildren().add(table);
+		root.getChildren().add(bb);
+/*
+		root.setTop(titleL);
+		root.setCenter(table);
+		root.setBottom(bb);
+*/
+
+
+/*
+		table.widthProperty().addListener(e->{
+			System.out.println("  table.width :"+table.getWidth());
+			System.out.println("    prefwidth :"+table.getPrefWidth());
+			System.out.println("     maxwidth :"+table.getMaxWidth());
+			System.out.println("     minwidth :"+table.getMinWidth());
+		});
+		table.heightProperty().addListener(e->{
+			System.out.println("  table.height :"+table.getHeight());
+			System.out.println("    prefheight :"+table.getPrefHeight());
+			System.out.println("     maxheight :"+table.getMaxHeight());
+			System.out.println("     minheight :"+table.getMinHeight());
+		});
+*/
+
+
+//		root.prefWidthProperty().bind(sc.widthProperty());
+//		root.prefHeightProperty().bind(sc.heightProperty());
+		root.setPrefSize(400, 300);
+//		root.autosize();
 
 		st.sizeToScene();
-//		st.showAndWait();
 		st.show();
-
 
 		st.setOnHidden(e->{
 			requestFocus();
@@ -231,6 +249,27 @@ public abstract class Sym extends Item implements FBEExecutable{
 
 
 
+	}
+
+	public void optionPut(String name,String defValue) {
+		this.options.put(name, defValue);
+	}
+	public void optionPut(String name,String desc,OptionTable.Type type,String defValue) {
+		this.options.put(name, defValue);
+		this.optionDescriptions.put(name, desc);
+		this.optionTypes.put(name, type);
+		if(type.haveList) {
+			this.optionsValueList.put(name, new ArrayList<>());
+		}
+	}
+	public String optionGet(String name) {
+		return this.options.get(name);
+	}
+	public String optionDescriptionGet(String name) {
+		return this.optionDescriptions.get(name);
+	}
+	public OptionTable.Type optionTypeGet(String name) {
+		return this.optionTypes.get(name);
 	}
 
 
@@ -268,6 +307,18 @@ public abstract class Sym extends Item implements FBEExecutable{
 		root.getChildren().add(sym.getExportView());
 		st.show();
 
+	}
+	public Map<String, String> getOptions() {
+		return options;
+	}
+	public Map<String, OptionTable.Type> getOptionTypes() {
+		return optionTypes;
+	}
+	public Map<String, String> getOptionDescriptions() {
+		return optionDescriptions;
+	}
+	public Map<String, List<String>> getOptionsValueList() {
+		return optionsValueList;
 	}
 
 

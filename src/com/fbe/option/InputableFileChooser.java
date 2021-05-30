@@ -71,9 +71,9 @@ public class InputableFileChooser extends HBox implements Inputable {
 	}
 
 	@Override
-	public void args(Object obj) {
-		if(obj instanceof FileChooser.ExtensionFilter) {
-			this.filters.add((FileChooser.ExtensionFilter)obj);
+	public void args(Object...obj) {
+		if(obj[0] instanceof FileChooser.ExtensionFilter) {
+			this.filters.add((FileChooser.ExtensionFilter)obj[0]);
 		}
 	}
 }

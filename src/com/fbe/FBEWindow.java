@@ -26,7 +26,7 @@ public class FBEWindow extends Application implements GettableFlow{
 	/**
 	 * 最初と最後が必ずTerminalSymの1処理（関数）を表すフローの集まり。実行時はflows.get(0)を実行する。
 	 */
-	ArrayList<Flow> flows = new ArrayList<>();
+	public final ArrayList<Flow> flows = new ArrayList<>();
 
 	@Override
 	public void start(Stage primaryStage) {

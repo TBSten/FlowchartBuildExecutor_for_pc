@@ -30,8 +30,10 @@ public class InputableComboBox<T> extends ComboBox<T> implements Inputable {
 	}
 
 	@Override
-	public void args(Object arg) {
-		this.getItems().add((T)arg);
+	public void args(Object...arg) {
+		for(Object ar:arg) {
+			this.getItems().add((T)ar);
+		}
 	}
 
 }

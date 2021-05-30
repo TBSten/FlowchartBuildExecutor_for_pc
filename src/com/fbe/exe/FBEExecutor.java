@@ -5,15 +5,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fbe.FBEApp;
 import com.fbe.FBERunnable;
 import com.fbe.item.Flow;
 
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -32,13 +36,19 @@ import jp.hishidama.eval.var.MapVariable;
 
 /**
  * メモ 手軽さを重視するため、型は全面不採用。
+ *
+ * フローチャートを実行するためのクラス。
+ * 表示や入力はすべてメッセージボックスが出てきてそれを使う。
+ * 表示や入力の方法をカスタマイズしたい場合はprint,inputメソッドを使う。
  */
 public class FBEExecutor extends FBERunnable {
 	public enum Status{
-		BEFORE_START,
-		EXECUTING,
-		SAFE_FINISHED,
-		ERROR_FINISHED;
+		BEFORE_START,		//実行前
+		EXECUTING,			//実行中
+		STOPPING,			//一時停止中
+		SAFE_FINISHED,		//通常終了時
+		ERROR_FINISHED,	//エラーで終了時
+		WARN_FINISHED;		//警告付き終了時（停止ボタンで停止など）
 	}
 
 	//変数一覧
@@ -47,6 +57,7 @@ public class FBEExecutor extends FBERunnable {
 	protected List<Flow> flows ;
 	protected Status status = Status.BEFORE_START ;
 	protected FBEExecutable exeCursor = null ;
+	protected boolean executeAll = true ;
 
 	public FBEExecutor(Flow mainFlow,List<Flow> flows ){
 		this.mainFlow = mainFlow ;
@@ -153,8 +164,108 @@ public class FBEExecutor extends FBERunnable {
 		}
 	}
 
+
+
+	//オーバーライド可能なメソッド群
+
+	//Executor初期化時の挙動
+	public void onInit() {
+	}
+	//Executor終了時の挙動
+	public void onDiscard() {
+	}
+	//プログラム実行中の表示
+	public void print(String formula,Object...args) {
+		String data = String.valueOf(this.eval(formula)) ;
+		this.msgBox(data);
+	}
+	//プログラム実行中の入力
+	public String input(Object...msg) {
+		return this.inputMsgBox(msg[0].toString());
+	}
+	//ファイルに書き込む
+	public void outputFile(String formula) {
+		//ファイルなどに出力する
+	}
+	//ファイルから読み込む
+	public void inputFile(String fileName) {
+		//ファイルなどから入力する
+	}
+
+
+
+	//実行制御（コントロール）メソッド。ControlController等から呼ばれる。
+	//実行モード起動処理
+	public static void toExecuteMode(Flow mainFlow,List<Flow> flows) {
+
+
+		Platform.runLater( () ->{
+			try {
+				FBEExecutor exe = new FBEExecutor(mainFlow, flows) ;
+				FXMLLoader loader_control = new FXMLLoader(exe.getClass().getResource("ExeControl.fxml"));
+				FXMLLoader loader_setting = new FXMLLoader(exe.getClass().getResource("ExeSetting.fxml"));
+				AnchorPane ap_control = (AnchorPane)loader_control.load() ;
+				AnchorPane ap_setting = (AnchorPane)loader_setting.load();
+				ControlController con_control = loader_control.getController() ;
+				SettingController con_setting = loader_setting.getController() ;
+				con_control.exe = exe ;
+				con_setting.exe = exe ;
+					Stage st_control = new Stage();
+				Scene sc_control = new Scene(ap_control);
+				st_control.setScene(sc_control);
+				st_control.show();
+				Stage st_setting = new Stage();
+				Scene sc_setting = new Scene(ap_setting);
+				st_setting.setScene(sc_setting);
+				st_setting.show();
+			}catch(Exception exc) {
+				exc.printStackTrace();
+			}
+		});
+
+	}
+	//開始ボタン押下時
+	public void start() {
+		if(this.status == Status.BEFORE_START) {
+			//開始前(初回開始時)-----------------------------------------------------EDTがブロックされるけど非同期にはできない？じゃあどうする？
+			onInit();
+			FBEExecutor.this.status = Status.EXECUTING ;
+			FBEExecutor.this.executeItem(mainFlow);
+
+		}else if(this.status == Status.STOPPING){
+			//一時停止中に再開始
+			this.status = Status.EXECUTING ;
+//			this.executeItem(this.getExeCursor());
+		}else{
+			//エラー
+			this.msgBox("エラー:実行制御エラー(statusが"+this.status+"の時にstartされました。)");
+		}
+	}
+	//一時停止ボタン押下時
+	public void stop() {
+		if(this.status == Status.EXECUTING || this.status == Status.STOPPING ){
+			//実行中
+			this.status = Status.STOPPING ;
+		}else{
+			//エラー
+			this.msgBox("エラー:実行制御エラー(status:"+this.status+")");
+		}
+	}
+	//終了ボタン押下時
+	public void finish() {
+		if(this.status == Status.EXECUTING || this.status == Status.STOPPING ){
+			//実行中
+			this.status = Status.WARN_FINISHED ;
+			this.msgBox("強制終了しました");
+		}else{
+			//エラー
+			this.msgBox("エラー:実行制御エラー(status:"+this.status+")");
+		}
+	}
+
+
 	//メッセージボックスで表示
-	public void msgBox(String data) {
+	protected void msgBox(String data) {
 		System.out.println("表示:"+data);
 		Stage st = new Stage();
 		st.setTitle("データの表示");
@@ -182,9 +293,7 @@ public class FBEExecutor extends FBERunnable {
 		root.getChildren().add(bb);
 		st.showAndWait();
 	}
-	public void output(String data) {
-		//ファイルなどに出力する
-	}
+
 
 
 	//変数設定
@@ -208,8 +317,12 @@ public class FBEExecutor extends FBERunnable {
 		return getVar(name).parse() ;
 	}
 
+	public void openSettingWindow() {
+		//設定ウィンドウを開く
+	}
+
 	//テスト用流れ図実行
-	public void executeAll() {
+	public void execute_Test() {
 		if(this.status == Status.BEFORE_START) {
 			try {
 				System.out.println("実行-開始");
@@ -232,11 +345,24 @@ public class FBEExecutor extends FBERunnable {
 	public void executeItem(FBEExecutable executableItem) {
 		System.out.println("execute :"+executableItem);
 		this.setExeCursor(executableItem);
+		//ここでストップ中なら待機する
+		while(this.status == Status.STOPPING) {
+			System.out.println("executeItem:"+Thread.currentThread().getName());
+			FBEApp.sleep(100);
+		}
 		executableItem.execute(this);
+		//ここでexecuteAllがfalseなら（1行ずつ実行なら）EXECUTINGになるまで待機する
+		if(executeAll == false) {
+			this.status = Status.STOPPING;
+			while(this.status == Status.STOPPING) {
+				System.out.println("status が Status STOPPING なので待機しています");
+				FBEApp.sleep(100);
+			}
+		}
 	}
 
-	//入力
-	public String inputKeyboard(String msg,String defaultText) {
+	//キーボードから入力
+	protected String inputMsgBox(String msg,String defaultText) {
 		Stage st = new Stage();
 		st.setTitle("データの入力");
 		VBox root = new VBox();
@@ -256,16 +382,19 @@ public class FBEExecutor extends FBERunnable {
 		});
 		bb.getButtons().add(okB);
 		root.getChildren().add(bb);
+		System.out.println("keyborad inputing ...");
 		st.showAndWait();
+		System.out.println("keyborad inputed ...");
 		if(inputTf.getText() != null) {
 			return inputTf.getText();
 		}else {
 			return "" ;
 		}
 	}
-	public String inputKeyboard(String name) {
-		return this.inputKeyboard(name+"を入力してください", "");
+	protected String inputMsgBox(String name) {
+		return this.inputMsgBox(name+"を入力してください", "");
 	}
+
 	public String inputFile() {
 		return "DEPLOYING..." ;
 	}

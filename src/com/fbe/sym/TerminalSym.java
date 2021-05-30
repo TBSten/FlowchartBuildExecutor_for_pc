@@ -3,6 +3,7 @@ package com.fbe.sym;
 import java.util.Arrays;
 
 import com.fbe.exe.FBEExecutor;
+import com.fbe.option.OptionTable;
 
 import javafx.scene.canvas.GraphicsContext;
 
@@ -26,10 +27,15 @@ public class TerminalSym extends Sym {
 		}
 
 
-		options.put("タイプ", t == Type.START ? "はじめ" :"おわり");
-		optionsValueList.put("タイプ",Arrays.asList("はじめ","おわり"));
-		options.put("テキスト", "");
-		options.put("戻り値", "");
+//		options.put("タイプ", t == Type.START ? "はじめ" :"おわり");
+//		optionsValueList.put("タイプ",Arrays.asList("はじめ","おわり"));
+//		options.put("テキスト", "");
+//		options.put("戻り値", "");
+		optionPut("タイプ","はじめまたはおわりを指定します。",OptionTable.Type.COMBOBOX,t == Type.START ? "はじめ" :"おわり");
+		getOptionsValueList().put("タイプ",Arrays.asList("はじめ","おわり"));
+		optionPut("テキスト","タイプがはじめの場合に表示されるテキストを指定します。",OptionTable.Type.TEXTFIELD,"");
+		optionPut("戻り値","タイプが終わりの場合に返す値を式で指定します。",OptionTable.Type.TEXTFIELD,"");
+
 
 
 
@@ -45,7 +51,7 @@ public class TerminalSym extends Sym {
 	}
 
 	@Override public void reflectOption() {
-		String type = options.get("タイプ");
+		String type = optionGet("タイプ");
 
 
 		if("はじめ".equals(type)) {
@@ -55,19 +61,19 @@ public class TerminalSym extends Sym {
 		}else {
 			System.out.println("不正なオプション: タイプ="+type);
 			this.type = Type.START ;
-			options.put("タイプ","はじめ");
+			optionPut("タイプ","はじめ");
 		}
 
 		if(this.type != null) {
 			this.setText(this.type.txt);
 		}
 
-		if(!this.options.get("テキスト").matches("\\s*")) {
-			this.setText(this.options.get("テキスト"));
+		if(!this.optionGet("テキスト").matches("\\s*")) {
+			this.setText(this.optionGet("テキスト"));
 		}
 
-		if(this.options.get("タイプ").equals("おわり") && !this.options.get("戻り値").matches("\\s*")) {
-			this.setText(this.options.get("戻り値")+" を返す");
+		if(this.optionGet("タイプ").equals("おわり") && !this.optionGet("戻り値").matches("\\s*")) {
+			this.setText(this.optionGet("戻り値")+" を返す");
 		}
 
 

@@ -9,7 +9,7 @@ public interface Inputable {
 	public default Region getRegion() {
 		return (Region) this ;
 	}
-	public default void args(Object arg) {
+	public default void args(Object...arg) {
 	}
 }
 
