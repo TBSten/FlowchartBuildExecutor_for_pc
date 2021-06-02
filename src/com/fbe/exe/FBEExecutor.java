@@ -198,7 +198,6 @@ public class FBEExecutor extends FBERunnable {
 	//実行モード起動処理
 	public static void toExecuteMode(Flow mainFlow,List<Flow> flows) {
 
-
 		Platform.runLater( () ->{
 			try {
 				FBEExecutor exe = new FBEExecutor(mainFlow, flows) ;
@@ -253,6 +252,7 @@ public class FBEExecutor extends FBERunnable {
 	}
 	//終了ボタン押下時
 	public void finish() {
+
 		if(this.status == Status.EXECUTING || this.status == Status.STOPPING ){
 			//実行中
 			this.status = Status.WARN_FINISHED ;
@@ -343,20 +343,23 @@ public class FBEExecutor extends FBERunnable {
 		}
 	}
 	public void executeItem(FBEExecutable executableItem) {
-		System.out.println("execute :"+executableItem);
-		this.setExeCursor(executableItem);
-		//ここでストップ中なら待機する
-		while(this.status == Status.STOPPING) {
-			System.out.println("executeItem:"+Thread.currentThread().getName());
-			FBEApp.sleep(100);
-		}
-		executableItem.execute(this);
-		//ここでexecuteAllがfalseなら（1行ずつ実行なら）EXECUTINGになるまで待機する
-		if(executeAll == false) {
-			this.status = Status.STOPPING;
+		if(this.status != Status.WARN_FINISHED && this.status != Status.SAFE_FINISHED && this.status != Status.ERROR_FINISHED ) {
+
+			System.out.println("execute :"+executableItem);
+			this.setExeCursor(executableItem);
+			//ここでストップ中なら待機する
 			while(this.status == Status.STOPPING) {
-				System.out.println("status が Status STOPPING なので待機しています");
+				System.out.println("executeItem:"+Thread.currentThread().getName());
 				FBEApp.sleep(100);
+			}
+			executableItem.execute(this);
+			//ここでexecuteAllがfalseなら（1行ずつ実行なら）EXECUTINGになるまで待機する
+			if(executeAll == false) {
+				this.status = Status.STOPPING;
+				while(this.status == Status.STOPPING) {
+					System.out.println("status が Status STOPPING なので待機しています");
+					FBEApp.sleep(100);
+				}
 			}
 		}
 	}
