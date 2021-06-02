@@ -47,6 +47,7 @@ public class FBEWindow extends Application implements GettableFlow{
 			ScrollPane sp = FBEApp.controllers.get("Base").mainSp ;
 			root.getChildren().add(ap);
 
+
 			flowHb.setLayoutX(PADX);
 			flowHb.setLayoutY(PADY);
 			ap.getChildren().add(flowHb);

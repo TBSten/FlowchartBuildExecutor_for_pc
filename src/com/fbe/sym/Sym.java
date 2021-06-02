@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.fbe.FBEApp;
-import com.fbe.exe.FBEExecutable;
 import com.fbe.exe.FBEExecutor;
 import com.fbe.item.Item;
 import com.fbe.option.Inputable;
@@ -32,7 +31,7 @@ import javafx.stage.Stage;
  *     -fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );
  * }
  */
-public abstract class Sym extends Item implements FBEExecutable{
+public abstract class Sym extends Item {
 
 
 	ContextMenu menu = new ContextMenu() ;
@@ -40,7 +39,7 @@ public abstract class Sym extends Item implements FBEExecutable{
 	private final Map<String,OptionTable.Type> optionTypes = new LinkedHashMap<>();
 	private final Map<String,String> optionDescriptions = new LinkedHashMap<>();
 	private final Map<String,List<String>> optionsValueList = new LinkedHashMap<>();
-
+	private boolean isSkip = false ;
 
 	public AnchorPane clickPane = new AnchorPane() ;
 	public Sym() {
@@ -90,6 +89,7 @@ public abstract class Sym extends Item implements FBEExecutable{
 				if(e.getButton() == MouseButton.SECONDARY) {
 					menu.show(this,e.getScreenX() , e.getScreenY());
 				}
+				FBEApp.selectItem(this);
 				redraw();
 
 			//	System.out.println("w*h :"+getWidth()+"*"+getHeight());
@@ -319,6 +319,12 @@ public abstract class Sym extends Item implements FBEExecutable{
 	}
 	public Map<String, List<String>> getOptionsValueList() {
 		return optionsValueList;
+	}
+	public boolean isSkip() {
+		return isSkip;
+	}
+	public void setSkip(boolean isSkip) {
+		this.isSkip = isSkip;
 	}
 
 

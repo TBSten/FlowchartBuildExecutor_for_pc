@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fbe.FBEApp;
-import com.fbe.exe.FBEExecutable;
-import com.fbe.exe.FBEExecutor;
 import com.fbe.sym.Sym;
 
 import javafx.animation.FadeTransition;
@@ -18,7 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-public class Flow extends Item implements FBEExecutable{
+public class Flow extends Item {
 	ArrayList<Sym> syms = new ArrayList<>();
 	ArrayList<Arrow> arrows = new ArrayList<>();
 	VBox vb = new VBox();
@@ -203,13 +201,13 @@ public class Flow extends Item implements FBEExecutable{
 //		System.out.println("flow w*h :"+getWidth()+"*"+getHeight());
 	}
 
-
+/*
 	@Override public void execute(FBEExecutor exe) {
 		for(Sym s :this.syms) {
 			exe.executeItem(s);
 		}
 	}
-
+*/
 	public ArrayList<Sym> getSyms() {
 		return syms;
 	}

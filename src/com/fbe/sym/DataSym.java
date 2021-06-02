@@ -41,7 +41,7 @@ public class DataSym extends Sym {
 			String input = exe.input(tar);
 			exe.putVar(tar, input);
 		}else if(typ.equals("ファイル入力")) {
-			String input = exe.inputFile();
+			String input = exe.inputFile(tar);
 			exe.putVar(tar, input);
 		}
 	}

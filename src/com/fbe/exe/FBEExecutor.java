@@ -8,8 +8,8 @@ import java.util.Map;
 import com.fbe.FBEApp;
 import com.fbe.FBERunnable;
 import com.fbe.item.Flow;
+import com.fbe.sym.Sym;
 
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -40,24 +40,36 @@ import jp.hishidama.eval.var.MapVariable;
  * フローチャートを実行するためのクラス。
  * 表示や入力はすべてメッセージボックスが出てきてそれを使う。
  * 表示や入力の方法をカスタマイズしたい場合はprint,inputメソッドを使う。
+ *
+ * このクラスを継承してオリジナルの出力方法（例えば事前に設定された配列を使って2D表示をするなど）を実装する。
+ * 後々各表示タイプをFactory(extends Button)で生成できるようにする。→設定ウィンドウで選択できる。
+ *
  */
 public class FBEExecutor extends FBERunnable {
 	public enum Status{
-		BEFORE_START,		//実行前
-		EXECUTING,			//実行中
-		STOPPING,			//一時停止中
-		SAFE_FINISHED,		//通常終了時
-		ERROR_FINISHED,	//エラーで終了時
-		WARN_FINISHED;		//警告付き終了時（停止ボタンで停止など）
+		BEFORE_START(false),		//実行前
+		EXECUTING(false),			//実行中
+		STOPPING(false),			//一時停止中
+		SAFE_FINISHED(true),		//通常終了時
+		ERROR_FINISHED(true),	//エラーで終了時
+		WARN_FINISHED(true);		//警告付き終了時（停止ボタンで停止など）
+
+
+		boolean finish = false ;
+		Status(boolean finish){
+			this.finish = finish ;
+		}
 	}
 
+	public static FBEExecutor runningExecutor = null ;
+
 	//変数一覧
-	protected Map<String,Variable> vars = new LinkedHashMap<>();
+	protected Map<String,Object> vars = new LinkedHashMap<>();
+	protected List<Sym> executeList = new ArrayList<>() ;
 	protected Flow mainFlow ;
 	protected List<Flow> flows ;
 	protected Status status = Status.BEFORE_START ;
-	protected FBEExecutable exeCursor = null ;
-	protected boolean executeAll = true ;
+	protected boolean executeAll = false ;
 
 	public FBEExecutor(Flow mainFlow,List<Flow> flows ){
 		this.mainFlow = mainFlow ;
@@ -68,13 +80,8 @@ public class FBEExecutor extends FBERunnable {
 	public Object eval(String formula) {
 		//変数定義
 		MapVariable<String,Object> varMap = new MapVariable<>(String.class,Object.class);
-		for(Map.Entry<String,Variable> ent :vars.entrySet()) {
-			Object v = ent.getValue().parse() ;
-
-		//	v = Double.parseDouble(String.valueOf(v)) ;
-
-			varMap.put(ent.getKey(), v);
-
+		for(Map.Entry<String,Object> ent:vars.entrySet()) {
+			varMap.put(ent.getKey(), ent.getValue());
 		}
 		String str = formula ;
 		BasicPowerRuleFactory factory = new BasicPowerRuleFactory() ;
@@ -84,6 +91,19 @@ public class FBEExecutor extends FBERunnable {
 		exp.setOperator(new StringOperator());
 		Object result = exp.eval();
 		return result ;
+	}
+	public Object toValidType(String str) {
+		if(str != null) {
+			if(str.matches("(\\d)*(.(\\d)+)??")) {
+				//Double
+				return Double.parseDouble(str);
+			}else {
+				//String
+				return str ;
+			}
+		}else {
+			return null ;
+		}
 	}
 	public boolean isAbleToEval(String formula) {
 		try {
@@ -188,8 +208,9 @@ public class FBEExecutor extends FBERunnable {
 		//ファイルなどに出力する
 	}
 	//ファイルから読み込む
-	public void inputFile(String fileName) {
+	public String inputFile(String fileName) {
 		//ファイルなどから入力する
+		return "#DEVELOPPING..." ;
 	}
 
 
@@ -197,69 +218,123 @@ public class FBEExecutor extends FBERunnable {
 	//実行制御（コントロール）メソッド。ControlController等から呼ばれる。
 	//実行モード起動処理
 	public static void toExecuteMode(Flow mainFlow,List<Flow> flows) {
-
-		Platform.runLater( () ->{
-			try {
-				FBEExecutor exe = new FBEExecutor(mainFlow, flows) ;
-				FXMLLoader loader_control = new FXMLLoader(exe.getClass().getResource("ExeControl.fxml"));
-				FXMLLoader loader_setting = new FXMLLoader(exe.getClass().getResource("ExeSetting.fxml"));
-				AnchorPane ap_control = (AnchorPane)loader_control.load() ;
-				AnchorPane ap_setting = (AnchorPane)loader_setting.load();
-				ControlController con_control = loader_control.getController() ;
-				SettingController con_setting = loader_setting.getController() ;
-				con_control.exe = exe ;
-				con_setting.exe = exe ;
-					Stage st_control = new Stage();
-				Scene sc_control = new Scene(ap_control);
-				st_control.setScene(sc_control);
-				st_control.show();
-				Stage st_setting = new Stage();
-				Scene sc_setting = new Scene(ap_setting);
-				st_setting.setScene(sc_setting);
-				st_setting.show();
-			}catch(Exception exc) {
-				exc.printStackTrace();
-			}
-		});
-
+		if(FBEExecutor.runningExecutor == null) {
+			FBEExecutor exe = new FBEExecutor(mainFlow,flows) ;
+			FBEExecutor.runningExecutor = exe ;
+			exe.initExecutor();
+		}else {
+			FBEExecutor.runningExecutor.msgBox("新しく実行し始めるには現在の実行を中止してください。");
+		}
 	}
+
+	protected Stage controlStage = null ;
+	protected Stage settingStage = null ;
+	public void initExecutor() {
+		//--実行制御・設定ウィンドウ表示
+		try {
+			FBEExecutor exe = this ;
+			FXMLLoader loader_control = new FXMLLoader(exe.getClass().getResource("ExeControl.fxml"));
+			FXMLLoader loader_setting = new FXMLLoader(exe.getClass().getResource("ExeSetting.fxml"));
+			AnchorPane ap_control = (AnchorPane)loader_control.load() ;
+			AnchorPane ap_setting = (AnchorPane)loader_setting.load();
+			ControlController con_control = loader_control.getController() ;
+			SettingController con_setting = loader_setting.getController() ;
+			con_control.exe = exe ;
+			con_setting.exe = exe ;
+			Stage st_control = new Stage();
+			Scene sc_control = new Scene(ap_control);
+			st_control.setX(0);
+			st_control.setY(0);
+			st_control.setWidth(250);
+			st_control.initOwner(FBEApp.window);
+			st_control.setScene(sc_control);
+			Stage st_setting = new Stage();
+			Scene sc_setting = new Scene(ap_setting);
+			System.out.println(FBEApp.window.getWidth());
+			st_setting.setX(0);
+			st_setting.setY(st_control.getY()+st_control.getHeight()+10);
+//			st_setting.initOwner(FBEApp.window);
+			st_setting.setScene(sc_setting);
+
+			this.controlStage = st_control ;
+			this.settingStage = st_setting ;
+			this.controlStage.setOnCloseRequest(e->{
+				finish() ;
+			});
+
+			st_setting.show();
+			st_control.show();
+
+		}catch(Exception exc) {
+			exc.printStackTrace();
+		}
+		//executeListにmainFlow.symsを追加
+		this.executeList.addAll(this.getMainFlow().getSyms());
+		this.status = Status.BEFORE_START ;
+		//初期化時処理
+		this.onInit();
+	}
+	private Sym beforeExeSym = null ;
 	//開始ボタン押下時
 	public void start() {
-		if(this.status == Status.BEFORE_START) {
-			//開始前(初回開始時)-----------------------------------------------------EDTがブロックされるけど非同期にはできない？じゃあどうする？
-			onInit();
-			FBEExecutor.this.status = Status.EXECUTING ;
-			FBEExecutor.this.executeItem(mainFlow);
-
-		}else if(this.status == Status.STOPPING){
-			//一時停止中に再開始
+		if(!this.status.finish) {
 			this.status = Status.EXECUTING ;
-//			this.executeItem(this.getExeCursor());
-		}else{
-			//エラー
-			this.msgBox("エラー:実行制御エラー(statusが"+this.status+"の時にstartされました。)");
+			boolean skipF = false ;
+			Sym s = executeList.get(0);
+			if(s != null) {
+				try {
+					if(!s.isSkip()) {
+						System.out.println("実行:"+s);
+						if(beforeExeSym != null) {
+							beforeExeSym.toBaseLook();
+							beforeExeSym.redraw();
+						}
+						s.toExeLook();
+						s.redraw();
+						beforeExeSym = s ;
+						s.execute(this);
+					}else {
+						System.out.println("!Skip "+s);
+						skipF = true ;
+					}
+					executeList.remove(s);
+					System.out.println("実行終了"+s);
+					if(executeList.size() <= 0) {
+						this.msgBox("実行が終了しました");
+						this.finish();
+						this.status = Status.SAFE_FINISHED ;
+						skipF = false ;
+					}
+				}catch(Throwable t) {
+					t.printStackTrace();
+					this.msgBox("エラーが発生しました");
+					this.status = Status.ERROR_FINISHED ;
+				}
+			}
+			if(skipF) {
+				start();
+			}
+		}else {
+			this.msgBox("すでに実行は終了しました");
 		}
 	}
 	//一時停止ボタン押下時
 	public void stop() {
-		if(this.status == Status.EXECUTING || this.status == Status.STOPPING ){
-			//実行中
-			this.status = Status.STOPPING ;
-		}else{
-			//エラー
-			this.msgBox("エラー:実行制御エラー(status:"+this.status+")");
-		}
+
 	}
 	//終了ボタン押下時
 	public void finish() {
-
-		if(this.status == Status.EXECUTING || this.status == Status.STOPPING ){
-			//実行中
+		if(beforeExeSym != null) {
+			beforeExeSym.toBaseLook();
+			beforeExeSym.redraw();
+		}
+		if(this.status == Status.EXECUTING || !this.status.finish) {
 			this.status = Status.WARN_FINISHED ;
-			this.msgBox("強制終了しました");
-		}else{
-			//エラー
-			this.msgBox("エラー:実行制御エラー(status:"+this.status+")");
+			this.onDiscard();
+			FBEExecutor.runningExecutor = null ;
+		}else if(this.status.finish){
+			this.controlStage.hide();
+			this.settingStage.hide();
 		}
 	}
 
@@ -297,72 +372,24 @@ public class FBEExecutor extends FBERunnable {
 
 
 	//変数設定
-	public void putVar(String name,Variable value) {
+	public void putVar(String name,Object value) {
 		vars.put(name,value);
 	}
 	public void putVar(String name,String value) {
-		putVar(name,new Variable(name,value));
+		vars.put(name,toValidType(value));
 	}
 	//変数取得
-	public Variable getVar(String name) {
+	public Object getVar(String name) {
 		if(vars.containsKey(name)) {
 			return null ;
 		}
 		return vars.get(name);
-	}
-	public Object getVarAsObject(String name) {
-		if(vars.containsKey(name)) {
-			return null ;
-		}
-		return getVar(name).parse() ;
 	}
 
 	public void openSettingWindow() {
 		//設定ウィンドウを開く
 	}
 
-	//テスト用流れ図実行
-	public void execute_Test() {
-		if(this.status == Status.BEFORE_START) {
-			try {
-				System.out.println("実行-開始");
-//				this.setExeCursor(mainFlow.getSyms().get(0));
-//				mainFlow.execute(this);
-				executeItem(mainFlow);
-				if(this.status == Status.EXECUTING) {
-					this.status = Status.SAFE_FINISHED ;
-				}
-				setExeCursor(null);
-				System.out.println("実行-終了");
-			}catch(Throwable t) {
-				this.status = Status.ERROR_FINISHED ;
-				System.out.println("エラー");
-				t.printStackTrace();
-				msgBox("エラー");
-			}
-		}
-	}
-	public void executeItem(FBEExecutable executableItem) {
-		if(this.status != Status.WARN_FINISHED && this.status != Status.SAFE_FINISHED && this.status != Status.ERROR_FINISHED ) {
-
-			System.out.println("execute :"+executableItem);
-			this.setExeCursor(executableItem);
-			//ここでストップ中なら待機する
-			while(this.status == Status.STOPPING) {
-				System.out.println("executeItem:"+Thread.currentThread().getName());
-				FBEApp.sleep(100);
-			}
-			executableItem.execute(this);
-			//ここでexecuteAllがfalseなら（1行ずつ実行なら）EXECUTINGになるまで待機する
-			if(executeAll == false) {
-				this.status = Status.STOPPING;
-				while(this.status == Status.STOPPING) {
-					System.out.println("status が Status STOPPING なので待機しています");
-					FBEApp.sleep(100);
-				}
-			}
-		}
-	}
 
 	//キーボードから入力
 	protected String inputMsgBox(String msg,String defaultText) {
@@ -385,9 +412,9 @@ public class FBEExecutor extends FBERunnable {
 		});
 		bb.getButtons().add(okB);
 		root.getChildren().add(bb);
-		System.out.println("keyborad inputing ...");
+//		System.out.println("keyborad inputing ...");
 		st.showAndWait();
-		System.out.println("keyborad inputed ...");
+//		System.out.println("keyborad inputed ...");
 		if(inputTf.getText() != null) {
 			return inputTf.getText();
 		}else {
@@ -396,10 +423,6 @@ public class FBEExecutor extends FBERunnable {
 	}
 	protected String inputMsgBox(String name) {
 		return this.inputMsgBox(name+"を入力してください", "");
-	}
-
-	public String inputFile() {
-		return "DEPLOYING..." ;
 	}
 
 
@@ -421,16 +444,13 @@ public class FBEExecutor extends FBERunnable {
 		this.status = status;
 	}
 
-	public FBEExecutable getExeCursor() {
-		return exeCursor;
-	}
 
-	public void setExeCursor(FBEExecutable exeCursor) {
-		this.exeCursor = exeCursor;
-	}
-
-	public Map<String, Variable> getVars() {
+	public Map<String, Object> getVars() {
 		return vars;
+	}
+
+	public List<Sym> getExecuteList() {
+		return executeList;
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.fbe.sym;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.fbe.exe.FBEExecutor;
 import com.fbe.item.RoundFlow;
@@ -132,17 +133,15 @@ public class WhileSym extends Sym {
 	public void execute(FBEExecutor exe) {
 		Object con = exe.eval(this.optionGet("条件"));
 		if(optionGet("タイプ").equals("前判定")) {
-			while((boolean) con) {
-				flow.execute(exe);
-				con = exe.eval(this.optionGet("条件"));
-			}
 		}else if(optionGet("タイプ").equals("後判定")) {
-			do {
-				flow.execute(exe);
-				con = exe.eval(this.optionGet("条件"));
-			}while((boolean) con);
 		}else {
+		}
 
+		if((boolean)con) {
+			List<Sym> exeList = exe.getExecuteList() ;
+			int idx = exeList.indexOf(this);
+			exeList.addAll(idx+1,this.getFlow().getSyms());
+			exeList.add(idx+this.getFlow().getSyms().size()+1,this);
 		}
 	}
 

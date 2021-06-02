@@ -19,27 +19,19 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
 public abstract class Item extends AnchorPane {
-	/**
-	 * デザイン関連をまとめたクラスつくる？--------------------------------------------------------------------------------
-	 */
-/*
-	public static double baseWidth = 180 ;
-	public static double baseHeight = 40 ;
-	public static double baseLineWidth = 3 ;
-*/
+
 	public static DoubleProperty baseWidthProperty = new SimpleDoubleProperty(180);
 	public static DoubleProperty baseHeightProperty = new SimpleDoubleProperty(40);
 	public static DoubleProperty baseLineWidthProperty = new SimpleDoubleProperty(3);
 
-/*
-	public static Color baseLineColor = Color.BLACK ;
-	public static Color baseFillColor = Color.WHITE ;
-*/
 	public static ObjectProperty<Color> baseLineColorProperty = new SimpleObjectProperty<>(Color.BLACK) ;
 	public static ObjectProperty<Color> baseFillColorProperty = new SimpleObjectProperty<>(Color.WHITE) ;
-//	public static Color focusedLineColor = Color.web("#bad3ff");
-//	public static Color focusedFillColor = baseFillColor;
 
+	public static ObjectProperty<Color> selectLineColorProperty = new SimpleObjectProperty<>(Color.BLUE) ;
+	public static ObjectProperty<Color> selectFillColorProperty = new SimpleObjectProperty<>(Color.WHITE) ;
+
+	public static ObjectProperty<Color> exeLineColorProperty = new SimpleObjectProperty<>(Color.RED) ;
+	public static ObjectProperty<Color> exeFillColorProperty = new SimpleObjectProperty<>(Color.WHITE) ;
 
 
 	protected Label symLabel = new Label("[DEFAULT]");
@@ -175,7 +167,18 @@ public abstract class Item extends AnchorPane {
 
 	public abstract void draw() ;
 
-	//出力結果を返すメソッドを用意
+	public void toBaseLook() {
+		this.itemLineColor = baseLineColorProperty.get();
+		this.itemFillColor = baseFillColorProperty.get();
+	}
+	public void toSelectLook() {
+		this.itemLineColor = selectLineColorProperty.get();
+		this.itemFillColor = selectFillColorProperty.get();
+	}
+	public void toExeLook() {
+		this.itemLineColor = exeLineColorProperty.get();
+		this.itemFillColor = exeFillColorProperty.get();
+	}
 
 	@Override public String toString() {
 		return this.getClass().getSimpleName()+"["+symLabel.getText()+"]" ;

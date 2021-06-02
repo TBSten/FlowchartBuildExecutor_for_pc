@@ -144,6 +144,7 @@ public class BaseController implements Initializable{
 			*/
 			//実行モードにする(実行用ウィンドウを表示)
 			FBEExecutor.toExecuteMode(FBEApp.app.flows.get(0), FBEApp.app.flows);
+
 		});
 		menu_exeSetting.setOnAction(e->{
 			FBEExecutor exe = new FBEExecutor(FBEApp.app.flows.get(0), FBEApp.app.flows ) ;

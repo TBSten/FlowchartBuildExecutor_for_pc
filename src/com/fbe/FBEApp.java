@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.fbe.item.Flow;
+import com.fbe.item.Item;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -23,6 +24,8 @@ public class FBEApp {
 	public static FBEWindow app ;
 	public static Stage window ;
 	public static HashMap<String,BaseController> controllers = new HashMap<>();
+
+	private static Item nowSelectingItem = null ;
 //	public static String fbePath = "" ;
 
 	/**
@@ -100,5 +103,17 @@ public class FBEApp {
 		exe.executeAll();
 	}
 */
+	public static void selectItem(Item i) {
+		if(FBEApp.nowSelectingItem != null) {
+			FBEApp.nowSelectingItem.toBaseLook();
+			FBEApp.nowSelectingItem.redraw();
+		}
+		if(i != null) {
+			i.toSelectLook();
+			i.redraw();
+		}
+		FBEApp.nowSelectingItem = i ;
+	}
+
 }
 
