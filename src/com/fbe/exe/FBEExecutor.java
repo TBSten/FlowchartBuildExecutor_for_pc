@@ -311,11 +311,13 @@ public class FBEExecutor extends FBERunnable {
 					this.status = Status.ERROR_FINISHED ;
 				}
 			}
-			if(skipF) {
+			if(skipF || this.executeAll) {
 				start();
 			}
 		}else {
-			this.msgBox("すでに実行は終了しました");
+			if(!this.executeAll) {		//よくわからないがifではじかないとallの時に出力される
+				this.msgBox("すでに実行は終了しました");
+			}
 		}
 	}
 	//一時停止ボタン押下時
