@@ -18,7 +18,6 @@ public class CalcSym extends Sym {
 	@Override
 	public void execute(FBEExecutor exe) {
 		//
-		System.out.println("exe:"+this);
 		String variable = this.optionGet("代入先変数");
 		String formula = this.optionGet("式");
 		exe.putVar(variable, exe.eval(formula) );

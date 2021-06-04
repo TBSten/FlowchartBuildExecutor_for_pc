@@ -45,7 +45,6 @@
                       <Menu mnemonicParsing="false" text="実行">
                         <items>
                           <MenuItem fx:id="menu_exe" mnemonicParsing="false" text="実行" />
-                              <MenuItem fx:id="menu_exeSetting" mnemonicParsing="false" text="実行の設定" />
                         </items>
                       </Menu>
                       <Menu mnemonicParsing="false" text="コード変換">

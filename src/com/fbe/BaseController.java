@@ -56,7 +56,6 @@ public class BaseController implements Initializable{
 	@FXML MenuItem menu_copy ;
 	@FXML MenuItem menu_paste ;
 	@FXML MenuItem menu_exe ;
-	@FXML MenuItem menu_exeSetting ;
 	@FXML MenuItem menu_java ;
 	@FXML MenuItem menu_python ;
 	@FXML MenuItem menu_check ;
@@ -145,10 +144,6 @@ public class BaseController implements Initializable{
 			//実行モードにする(実行用ウィンドウを表示)
 			FBEExecutor.toExecuteMode(FBEApp.app.flows.get(0), FBEApp.app.flows);
 
-		});
-		menu_exeSetting.setOnAction(e->{
-			FBEExecutor exe = new FBEExecutor(FBEApp.app.flows.get(0), FBEApp.app.flows ) ;
-			exe.openSettingWindow() ;
 		});
 
 		menu_newFlow.setOnAction(e->{

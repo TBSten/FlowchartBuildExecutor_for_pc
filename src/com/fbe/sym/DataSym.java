@@ -30,12 +30,8 @@ public class DataSym extends Sym {
 		String tar = this.optionGet("対象");
 		String typ = this.optionGet("タイプ");
 		if(typ.equals("表示")) {
-			//
-			System.out.println("exe :"+this);
-		//	exe.msgBox(exe.eval(tar).toString());
 			exe.print(tar);
 		}else if(typ.equals("出力")) {
-			System.out.println("exe :"+this);
 			exe.print(tar);
 		}else if(typ.equals("キーボード入力")) {
 			String input = exe.input(tar);

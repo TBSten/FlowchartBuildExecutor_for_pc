@@ -7,9 +7,11 @@ import java.util.Map;
 
 import com.fbe.FBEApp;
 import com.fbe.FBERunnable;
+import com.fbe.exe.factory.ExecutorFactory;
 import com.fbe.item.Flow;
 import com.fbe.sym.Sym;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jp.hishidama.eval.ExpRuleFactory;
 import jp.hishidama.eval.Expression;
@@ -61,6 +64,7 @@ public class FBEExecutor extends FBERunnable {
 		}
 	}
 
+	public static ExecutorFactory<?> factory = null ;
 	public static FBEExecutor runningExecutor = null ;
 
 	//変数一覧
@@ -69,7 +73,7 @@ public class FBEExecutor extends FBERunnable {
 	protected Flow mainFlow ;
 	protected List<Flow> flows ;
 	protected Status status = Status.BEFORE_START ;
-	protected boolean executeAll = false ;
+	protected boolean executeAll = true ;
 
 	public FBEExecutor(Flow mainFlow,List<Flow> flows ){
 		this.mainFlow = mainFlow ;
@@ -218,29 +222,48 @@ public class FBEExecutor extends FBERunnable {
 	//実行制御（コントロール）メソッド。ControlController等から呼ばれる。
 	//実行モード起動処理
 	public static void toExecuteMode(Flow mainFlow,List<Flow> flows) {
-		if(FBEExecutor.runningExecutor == null) {
-			FBEExecutor exe = new FBEExecutor(mainFlow,flows) ;
-			FBEExecutor.runningExecutor = exe ;
-			exe.initExecutor();
-		}else {
-			FBEExecutor.runningExecutor.msgBox("新しく実行し始めるには現在の実行を中止してください。");
+		try {
+			if(FBEExecutor.runningExecutor == null) {
+				//設定画面を表示
+				Stage st_setting = new Stage() ;
+				FXMLLoader loader = new FXMLLoader(FBEExecutor.class.getResource("ExeSetting.fxml"));
+				AnchorPane root = (AnchorPane)loader.load();
+				SettingController cont = loader.getController();
+				cont.stage = st_setting ;
+				cont.setFactory(ExecutorFactory.factorys.get(0));
+				cont.hb_viewType.getChildren().addAll(ExecutorFactory.factorys);
+				for(ExecutorFactory<?> fac:ExecutorFactory.factorys) {
+					fac.setOnAction(e->{
+						cont.setFactory(fac);
+					});
+				}
+				st_setting.setScene(new Scene(root));
+				st_setting.showAndWait();
+				//exeを登録して初期化
+//				FBEExecutor exe = new FBEExecutor(mainFlow,flows) ;	//factory.createExecutor(mainFlow,flows);
+				if(cont.status) {
+					FBEExecutor exe = cont.fact.createExecutor(mainFlow, flows) ;	//factory.createExecutor(mainFlow,flows);
+					FBEExecutor.runningExecutor = exe ;
+					exe.initExecutor();
+				}
+			}else {
+				FBEExecutor.runningExecutor.msgBox("新しく実行し始めるには現在の実行を中止してください。");
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 	protected Stage controlStage = null ;
-	protected Stage settingStage = null ;
 	public void initExecutor() {
 		//--実行制御・設定ウィンドウ表示
 		try {
+
 			FBEExecutor exe = this ;
 			FXMLLoader loader_control = new FXMLLoader(exe.getClass().getResource("ExeControl.fxml"));
-			FXMLLoader loader_setting = new FXMLLoader(exe.getClass().getResource("ExeSetting.fxml"));
 			AnchorPane ap_control = (AnchorPane)loader_control.load() ;
-			AnchorPane ap_setting = (AnchorPane)loader_setting.load();
 			ControlController con_control = loader_control.getController() ;
-			SettingController con_setting = loader_setting.getController() ;
 			con_control.exe = exe ;
-			con_setting.exe = exe ;
 			Stage st_control = new Stage();
 			Scene sc_control = new Scene(ap_control);
 			st_control.setX(0);
@@ -248,21 +271,11 @@ public class FBEExecutor extends FBERunnable {
 			st_control.setWidth(250);
 			st_control.initOwner(FBEApp.window);
 			st_control.setScene(sc_control);
-			Stage st_setting = new Stage();
-			Scene sc_setting = new Scene(ap_setting);
-			System.out.println(FBEApp.window.getWidth());
-			st_setting.setX(0);
-			st_setting.setY(st_control.getY()+st_control.getHeight()+10);
-//			st_setting.initOwner(FBEApp.window);
-			st_setting.setScene(sc_setting);
 
 			this.controlStage = st_control ;
-			this.settingStage = st_setting ;
 			this.controlStage.setOnCloseRequest(e->{
 				finish() ;
 			});
-
-			st_setting.show();
 			st_control.show();
 
 		}catch(Exception exc) {
@@ -274,16 +287,17 @@ public class FBEExecutor extends FBERunnable {
 		//初期化時処理
 		this.onInit();
 	}
+
 	private Sym beforeExeSym = null ;
 	//開始ボタン押下時
 	public void start() {
-		if(!this.status.finish) {
+		if(!this.status.finish ) {
 			this.status = Status.EXECUTING ;
 			boolean skipF = false ;
 			Sym s = executeList.get(0);
 			if(s != null) {
 				try {
-					if(!s.isSkip()) {
+					if(!s.isSkip() ) {
 						System.out.println("実行:"+s);
 						if(beforeExeSym != null) {
 							beforeExeSym.toBaseLook();
@@ -298,31 +312,49 @@ public class FBEExecutor extends FBERunnable {
 						skipF = true ;
 					}
 					executeList.remove(s);
-					System.out.println("実行終了"+s);
+					System.out.println("実行終了:"+s);
 					if(executeList.size() <= 0) {
 						this.msgBox("実行が終了しました");
 						this.finish();
 						this.status = Status.SAFE_FINISHED ;
 						skipF = false ;
+						if(this.executeAll) {
+							this.finish();
+						}
 					}
 				}catch(Throwable t) {
+					this.status = Status.ERROR_FINISHED ;
 					t.printStackTrace();
 					this.msgBox("エラーが発生しました");
-					this.status = Status.ERROR_FINISHED ;
 				}
 			}
-			if(skipF || this.executeAll) {
-				start();
+			if(this.status.finish) {
+				//処理終了
+			}if(skipF && this.status != Status.STOPPING) {
+				new Thread(()->{
+				//	FBEApp.sleep(300);
+					Platform.runLater(()->{
+						start();
+					});
+				}).start();
+			}else if(this.executeAll && this.status == Status.EXECUTING && this.status != Status.STOPPING){
+				new Thread(()->{
+				//	FBEApp.sleep(300);
+					Platform.runLater(()->{
+						start();
+					});
+				}).start();
+			}else {
 			}
 		}else {
 			if(!this.executeAll) {		//よくわからないがifではじかないとallの時に出力される
-				this.msgBox("すでに実行は終了しました");
+				this.msgBox("すでに実行は終了しました。\n終了ボタンで終了してください。");
 			}
 		}
 	}
 	//一時停止ボタン押下時
 	public void stop() {
-
+		this.status = Status.STOPPING ;
 	}
 	//終了ボタン押下時
 	public void finish() {
@@ -333,11 +365,15 @@ public class FBEExecutor extends FBERunnable {
 		if(this.status == Status.EXECUTING || !this.status.finish) {
 			this.status = Status.WARN_FINISHED ;
 			this.onDiscard();
-			FBEExecutor.runningExecutor = null ;
 		}else if(this.status.finish){
 			this.controlStage.hide();
-			this.settingStage.hide();
 		}
+		if(FBEExecutor.runningExecutor == this) {
+			FBEExecutor.runningExecutor = null ;
+		}else {
+			//エラー
+		}
+
 	}
 
 
@@ -346,6 +382,8 @@ public class FBEExecutor extends FBERunnable {
 		System.out.println("表示:"+data);
 		Stage st = new Stage();
 		st.setTitle("データの表示");
+		st.initOwner(this.controlStage);
+		st.initModality(Modality.WINDOW_MODAL);
 		VBox root = new VBox();
 		root.setMinSize(300, 50);
 		Scene sc = new Scene(root);
@@ -388,15 +426,14 @@ public class FBEExecutor extends FBERunnable {
 		return vars.get(name);
 	}
 
-	public void openSettingWindow() {
-		//設定ウィンドウを開く
-	}
 
 
 	//キーボードから入力
 	protected String inputMsgBox(String msg,String defaultText) {
 		Stage st = new Stage();
 		st.setTitle("データの入力");
+		st.initOwner(this.controlStage);
+		st.initModality(Modality.WINDOW_MODAL);
 		VBox root = new VBox();
 		root.setMinWidth(300);
 		Scene sc = new Scene(root);
@@ -453,6 +490,14 @@ public class FBEExecutor extends FBERunnable {
 
 	public List<Sym> getExecuteList() {
 		return executeList;
+	}
+
+	public boolean isExecuteAll() {
+		return executeAll;
+	}
+
+	public void setExecuteAll(boolean executeAll) {
+		this.executeAll = executeAll;
 	}
 
 }
