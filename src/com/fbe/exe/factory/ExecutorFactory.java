@@ -15,7 +15,8 @@ import javafx.scene.control.Button;
 public abstract class ExecutorFactory<E extends FBEExecutor> extends Button {
 	public static final List<ExecutorFactory<?>> factorys = new ArrayList<>();
 	static {
-		factorys.add(new BaseExecutorFactory());
+		factorys.add(new MsgBoxExecutorFactory());
+		factorys.add(new LoggerExecutorFactory());
 	}
 
 

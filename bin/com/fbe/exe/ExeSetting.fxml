@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="473.0" prefWidth="827.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fbe.exe.SettingController">
+<AnchorPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fbe.exe.SettingController">
    <children>
-      <BorderPane>
+      <BorderPane prefHeight="497.0" prefWidth="827.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <bottom>
             <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <buttons>
@@ -28,7 +28,10 @@
                   <Label text="表示タイプ" />
                   <ScrollPane>
                      <content>
-                        <HBox fx:id="hb_viewType" prefHeight="150.0" prefWidth="200.0" />
+                        <HBox fx:id="hb_viewType" prefHeight="150.0" prefWidth="200.0">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding></HBox>
                      </content>
                   </ScrollPane>
                   <Label fx:id="lb_desc" text="[description]">
@@ -37,7 +40,7 @@
                      </padding></Label>
                   <Pane prefHeight="44.0" prefWidth="827.0" />
                   <Label text="オプション" />
-                  <ScrollPane fx:id="sp_option" prefHeight="200.0" prefWidth="200.0" />
+                  <ScrollPane fx:id="sp_option" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" />
                </children>
             </VBox>
          </center>

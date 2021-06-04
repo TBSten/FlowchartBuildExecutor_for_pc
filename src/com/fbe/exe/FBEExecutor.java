@@ -318,9 +318,11 @@ public class FBEExecutor extends FBERunnable {
 						this.finish();
 						this.status = Status.SAFE_FINISHED ;
 						skipF = false ;
+						/*
 						if(this.executeAll) {
 							this.finish();
 						}
+						*/
 					}
 				}catch(Throwable t) {
 					this.status = Status.ERROR_FINISHED ;
@@ -382,7 +384,7 @@ public class FBEExecutor extends FBERunnable {
 		System.out.println("表示:"+data);
 		Stage st = new Stage();
 		st.setTitle("データの表示");
-		st.initOwner(this.controlStage);
+		st.initOwner(getOwner());
 		st.initModality(Modality.WINDOW_MODAL);
 		VBox root = new VBox();
 		root.setMinSize(300, 50);
@@ -432,7 +434,7 @@ public class FBEExecutor extends FBERunnable {
 	protected String inputMsgBox(String msg,String defaultText) {
 		Stage st = new Stage();
 		st.setTitle("データの入力");
-		st.initOwner(this.controlStage);
+		st.initOwner(getOwner());
 		st.initModality(Modality.WINDOW_MODAL);
 		VBox root = new VBox();
 		root.setMinWidth(300);
@@ -498,6 +500,10 @@ public class FBEExecutor extends FBERunnable {
 
 	public void setExecuteAll(boolean executeAll) {
 		this.executeAll = executeAll;
+	}
+
+	public Stage getOwner() {
+		return this.controlStage ;
 	}
 
 }

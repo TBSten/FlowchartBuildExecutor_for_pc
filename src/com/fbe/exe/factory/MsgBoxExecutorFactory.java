@@ -5,9 +5,9 @@ import java.util.List;
 import com.fbe.exe.FBEExecutor;
 import com.fbe.item.Flow;
 
-public class BaseExecutorFactory extends ExecutorFactory<FBEExecutor> {
+public class MsgBoxExecutorFactory extends ExecutorFactory<FBEExecutor> {
 
-	public BaseExecutorFactory() {
+	public MsgBoxExecutorFactory() {
 		super("デフォルト");
 		this.description = "通常の表示タイプです。プログラムの入出力はすべてメッセージダイアログを使用します。" ;
 	}
@@ -22,7 +22,6 @@ public class BaseExecutorFactory extends ExecutorFactory<FBEExecutor> {
 		}else {
 			//エラー
 		}
-		System.out.println("実行タイプ："+this.options.get("実行タイプ"));
 		return ans;
 	}
 
