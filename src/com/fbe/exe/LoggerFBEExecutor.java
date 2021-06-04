@@ -26,8 +26,6 @@ public class LoggerFBEExecutor extends FBEExecutor {
 
 	@Override public void onInit() {
 		loggerSt = new Stage();
-		loggerSt.setMinWidth(300);
-		loggerSt.setMinHeight(200);
 		loggerSt.initOwner(getOwner());
 		loggerSt.setScene(new Scene(rootSp));
 		rootSp.viewportBoundsProperty().addListener(e->{
@@ -38,6 +36,16 @@ public class LoggerFBEExecutor extends FBEExecutor {
 		lines.setStyle("-fx-background-color:black;");
 
 		loggerSt.show();
+		loggerSt.sizeToScene();
+		loggerSt.setMinWidth(500);
+		loggerSt.setMinHeight(300);
+		loggerSt.setWidth(500);
+		loggerSt.setHeight(300);
+
+		Label lb = new Label("### このウィンドウに実行結果が表示されます ###");
+		lb.setFont(Font.font(fontSize));
+		lb.setTextFill(Color.WHITE);
+		lines.getChildren().add(lb);
 	}
 
 	@Override public void onDiscard() {
@@ -74,5 +82,18 @@ public class LoggerFBEExecutor extends FBEExecutor {
 		return ans ;
 	}
 
+	@Override public void msgBox(String data) {
+		Label lb = new Label(" ダイアログ："+data);
+		lb.setFont(Font.font(fontSize));
+		lb.setTextFill(Color.GREEN);
+		lines.getChildren().add(lb);
+		super.msgBox(data);
+	}
+	public void addLine(String msg,Color c) {
+		Label lb = new Label(msg);
+		lb.setFont(Font.font(fontSize));
+		lb.setTextFill(c);
+		lines.getChildren().add(lb);
+	}
 
 }
