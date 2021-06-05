@@ -7,7 +7,6 @@ import com.fbe.FBEApp;
 import com.fbe.sym.Sym;
 
 import javafx.animation.FadeTransition;
-import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -97,12 +96,13 @@ public class Flow extends Item {
 
 		redraw();
 
+		sym.onAddFlow();
 	}
 	public void addSym(Sym befSym ,Sym sym) {
 		this.addSym(syms.indexOf(befSym)+1 , sym);
 	}
 	public void addAnime(Sym sym) {
-		FadeTransition animation = new FadeTransition(Duration.seconds(1.0), sym);
+		FadeTransition animation = new FadeTransition(Duration.seconds(0.2), sym);
 		animation.setFromValue(0);
 		animation.setToValue(1);
 		animation.play();
@@ -124,6 +124,7 @@ public class Flow extends Item {
 				}
 			});
 		}else {
+			/*
 			//symにアニメーション
 			FadeTransition animation = new FadeTransition(Duration.seconds(0.2), sym);
 			animation.setFromValue(1);
@@ -147,8 +148,26 @@ public class Flow extends Item {
 						//フローを削除
 						disable();
 					}
+					sym.onRemoveFlow();
 				});
 			});
+			*/
+			//外す処理
+			syms.remove(idx);
+			vb.getChildren().remove(sym);
+			Arrow ar ;
+			if(idx < arrows.size() ) {
+				ar = arrows.remove(idx);
+				vb.getChildren().remove(ar);
+			}else {
+				ar = arrows.remove(idx-1);
+				vb.getChildren().remove(ar);
+			}
+			if(syms.size() <= 0) {
+				//フローを削除
+				disable();
+			}
+			sym.onRemoveFlow();
 		}
 
 

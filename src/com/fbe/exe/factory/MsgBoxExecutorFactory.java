@@ -5,11 +5,17 @@ import java.util.List;
 import com.fbe.exe.FBEExecutor;
 import com.fbe.item.Flow;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 public class MsgBoxExecutorFactory extends ExecutorFactory<FBEExecutor> {
 
 	public MsgBoxExecutorFactory() {
 		super("デフォルト");
 		this.description = "通常の表示タイプです。プログラムの入出力はすべてメッセージダイアログを使用します。" ;
+		Image image = new Image(getClass().getResourceAsStream("window.png"),100,100,false,false);
+		ImageView iv = new ImageView(image) ;
+		this.setGraphic(iv);
 	}
 
 	@Override

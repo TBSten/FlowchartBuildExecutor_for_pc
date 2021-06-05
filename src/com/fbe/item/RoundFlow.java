@@ -61,6 +61,8 @@ public class RoundFlow extends Flow {
 
 		//addAnimeで追加時のアニメーション
 		addAnime(sym);
+
+		sym.onAddFlow();
 	}
 	@Override
 	public void addSym(Sym befSym ,Sym sym) {
@@ -85,6 +87,8 @@ public class RoundFlow extends Flow {
 			child.remove(ar);
 
 			this.redraw();
+
+			sym.onRemoveFlow();
 
 /*
 																	//sym *3

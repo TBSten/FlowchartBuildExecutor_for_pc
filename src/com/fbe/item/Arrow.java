@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.fbe.FBEApp;
 import com.fbe.sym.Sym;
 import com.fbe.sym.factory.CalcSymFactory;
+import com.fbe.sym.factory.ForSymFactory;
 import com.fbe.sym.factory.InputDataSymFactory;
 import com.fbe.sym.factory.OutputDataSymFactory;
 import com.fbe.sym.factory.SymFactory;
@@ -19,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -32,6 +34,7 @@ public class Arrow extends Item {
 		factorys.add(new OutputDataSymFactory());
 		factorys.add(new InputDataSymFactory());
 		factorys.add(new WhileSymFactory());
+		factorys.add(new ForSymFactory());
 	}
 
 	public static int cnt = 0 ;
@@ -70,12 +73,15 @@ public class Arrow extends Item {
 				st.initOwner(FBEApp.window);
 				FXMLLoader loader = new FXMLLoader(getClass().getResource("FBEAddSym.fxml"));
 				Parent root = loader.load();
-
+				ScrollPane addZoneSp = ((AddSymController)loader.getController()).addZoneSp ;
+				FlowPane flowPane = ((AddSymController)loader.getController()).addZone ;
+				addZoneSp.viewportBoundsProperty().addListener((ev)->{
+					flowPane.setPrefWidth(addZoneSp.getViewportBounds().getWidth());
+				});
 				for(SymFactory<? extends Sym> fact:factorys) {
 					//((HBox)root.lookup("")).getChildren().add(fact1);
-					((AddSymController)loader.getController()).addZone.getChildren().add(fact);
+					flowPane.getChildren().add(fact);
 					fact.setOnAction((ev)->{
-						Flow f = this.getParentFlow() ;
 /*
 						System.out.println(f.arrows.contains(Arrow.this));
 						System.out.println(f.arrows.indexOf(Arrow.this));
@@ -84,14 +90,8 @@ public class Arrow extends Item {
 						System.out.println(f.arrows.contains(Arrow.this));
 */
 						Sym newSym = fact.createSym() ;
-						f.addSym(f.getSymBeforeOf(Arrow.this), newSym);
+						this.addSymAfterThis(newSym,fact);
 						st.hide();
-						if(this.parentFlow != null) {
-							this.parentFlow.redraw();
-						}
-						if(fact.isOpenSetting() ) {
-							newSym.openSettingWindow();
-						}
 
 					});
 
@@ -107,6 +107,19 @@ public class Arrow extends Item {
 			}
 
 		});
+
+
+	}
+
+	public void addSymAfterThis(Sym sym,SymFactory<?> fact) {
+		Flow f = this.getParentFlow() ;
+		f.addSym(f.getSymBeforeOf(Arrow.this), sym);
+		if(this.parentFlow != null) {
+			this.parentFlow.redraw();
+		}
+		if(fact != null && fact.isOpenSetting() ) {
+			sym.openSettingWindow();
+		}
 
 	}
 

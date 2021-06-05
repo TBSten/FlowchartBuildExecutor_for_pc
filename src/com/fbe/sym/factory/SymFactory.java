@@ -2,10 +2,11 @@ package com.fbe.sym.factory;
 
 import com.fbe.sym.Sym;
 
-import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
 public abstract class SymFactory<TYPE extends Sym> extends Button {
 
@@ -17,7 +18,11 @@ public abstract class SymFactory<TYPE extends Sym> extends Button {
 		b.setEllipsisString("???");
 		b.setMinHeight( 80);
 
-		Node n = new ImageView(sym.snapshot()) ;
+		Stage st = new Stage();
+		Scene sc = new Scene(sym) ;
+		st.setScene(sc);
+		sym.redraw();
+		ImageView n = new ImageView(sym.snapshot()) ;
 		b.setGraphic(n);
 
 		b.setWrapText(true);

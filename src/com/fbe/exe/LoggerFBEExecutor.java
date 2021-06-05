@@ -26,13 +26,14 @@ public class LoggerFBEExecutor extends FBEExecutor {
 
 	@Override public void onInit() {
 		loggerSt = new Stage();
+		loggerSt.setTitle("ログ");
 		loggerSt.initOwner(getOwner());
 		loggerSt.setScene(new Scene(rootSp));
 		rootSp.viewportBoundsProperty().addListener(e->{
 			lines.setPrefSize(rootSp.getViewportBounds().getWidth(),rootSp.getViewportBounds().getHeight());
 		});
 		rootSp.setContent(lines);
-		rootSp.setStyle("-fx-background-color:red;");
+		rootSp.setStyle("-fx-background-color:black;");
 		lines.setStyle("-fx-background-color:black;");
 
 		loggerSt.show();
@@ -50,6 +51,7 @@ public class LoggerFBEExecutor extends FBEExecutor {
 
 	@Override public void onDiscard() {
 	//	loggerSt.close();
+		addLine("プログラムは終了しました。終了ボタンを押してください。",Color.GREEN);
 	}
 
 	@Override public void print(String formula,Object...args) {

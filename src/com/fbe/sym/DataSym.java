@@ -11,11 +11,11 @@ public class DataSym extends Sym {
 
 	public DataSym(String type,String target) {
 //		this.options.put("タイプ",type);
-//		this.optionsValueList.put("タイプ",Arrays.asList("キーボード入力","ファイル入力","出力","表示"));
+//		this.optionsValueList.put("タイプ",Arrays.asList("キーボード入力","ファイル入力","出力","ダイアログで表示"));
 //		this.options.put("対象",target);
 		optionPut("タイプ", "入出力の種類を指定します。", OptionTable.Type.COMBOBOX, type);
 		optionPut("対象", "入力なら何に入力するか、出力なら何を出力するかを指定します。", OptionTable.Type.TEXTFIELD, target);
-		this.getOptionsValueList().put("タイプ",Arrays.asList("キーボード入力","ファイル入力","出力","表示"));
+		this.getOptionsValueList().put("タイプ",Arrays.asList("キーボード入力","ファイル入力","出力","ダイアログで表示"));
 
 
 		redraw();
@@ -29,7 +29,7 @@ public class DataSym extends Sym {
 
 		String tar = this.optionGet("対象");
 		String typ = this.optionGet("タイプ");
-		if(typ.equals("表示")) {
+		if(typ.equals("ダイアログで表示")) {
 			exe.print(tar);
 		}else if(typ.equals("出力")) {
 			exe.print(tar);
@@ -52,9 +52,9 @@ public class DataSym extends Sym {
 			this.setText("ファイルから"+target+"を読む");
 		}else if(type.equals("出力")){
 			this.setText(target+"を出力");
-		}else if(type.equals("表示")){
+		}else if(type.equals("ダイアログで表示")){
 			if(target == null || target.matches("\\s*")) {
-				this.setText("表示");
+				this.setText("ダイアログで表示");
 			}else{
 				this.setText(target+"を表示");
 			}

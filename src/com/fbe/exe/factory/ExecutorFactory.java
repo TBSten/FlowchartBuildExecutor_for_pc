@@ -11,6 +11,8 @@ import com.fbe.option.Inputable;
 import com.fbe.option.OptionTable;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.paint.Color;
 
 public abstract class ExecutorFactory<E extends FBEExecutor> extends Button {
 	public static final List<ExecutorFactory<?>> factorys = new ArrayList<>();
@@ -31,6 +33,7 @@ public abstract class ExecutorFactory<E extends FBEExecutor> extends Button {
 		setPrefSize(150,150);
 		setMaxSize(150,150);
 		setMinSize(150,150);
+		this.setContentDisplay(ContentDisplay.TOP);
 		optionPut("実行タイプ","フローチャートを1つずつ実行するか、全て一気に実行するかを指定します。",OptionTable.Type.COMBOBOX,"1つずつ実行");
 		optionValueLists.get("実行タイプ").add("1つずつ実行");
 		optionValueLists.get("実行タイプ").add("全て実行する");
@@ -50,10 +53,12 @@ public abstract class ExecutorFactory<E extends FBEExecutor> extends Button {
 	}
 	public abstract FBEExecutor createExecutor(Flow mainFlow,List<Flow> flows) ;
 	public void toSelectMode() {
-		this.setStyle("-fx-background-color:white;-fx-border-color:blue;-fx-border-width:3px;-fx-border-radius:5px;");
+		this.setStyle("-fx-background-color:blue;-fx-border-color:blue;-fx-border-width:6px;-fx-border-radius:5px;");
+		this.setTextFill(Color.WHITE);
 	}
 	public void toUnSelectMode() {
 		this.setStyle("-fx-background-color:white;-fx-border-color:black;-fx-border-width:3px;-fx-border-radius:5px;");
+		this.setTextFill(Color.BLACK);
 	}
 	public String getDescription() {
 		return description;

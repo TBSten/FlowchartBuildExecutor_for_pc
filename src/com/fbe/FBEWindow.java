@@ -72,7 +72,7 @@ public class FBEWindow extends Application implements GettableFlow{
 					new TerminalSym(TerminalSym.Type.START),
 					new DataSym("キーボード入力","変数") ,
 					new CalcSym("変数*3","変数") ,
-					new DataSym("表示","\"3倍は\"+変数") ,
+					new DataSym("ダイアログで表示","\"3倍は\"+変数") ,
 					new TerminalSym(TerminalSym.Type.END),
 			};
 			for(int i = 0;i < syms.length;i++) {

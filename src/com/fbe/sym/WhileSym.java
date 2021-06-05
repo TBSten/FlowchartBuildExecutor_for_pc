@@ -1,3 +1,4 @@
+
 package com.fbe.sym;
 
 import java.util.Arrays;
@@ -27,7 +28,6 @@ public class WhileSym extends Sym {
 		super();
 
 		this.num = cnt ;
-		cnt ++;
 //		this.options.put("条件",condition);
 //		this.options.put("タイプ","前判定");
 //		this.optionsValueList.put("タイプ",Arrays.asList("前判定","後判定"));
@@ -133,16 +133,23 @@ public class WhileSym extends Sym {
 	public void execute(FBEExecutor exe) {
 		Object con = exe.eval(this.optionGet("条件"));
 		if(optionGet("タイプ").equals("前判定")) {
+			if((boolean)con) {
+				List<Sym> exeList = exe.getExecuteList() ;
+				int idx = exeList.indexOf(this);
+				exeList.addAll(idx+1,this.getFlow().getSyms());
+				exeList.add(idx+this.getFlow().getSyms().size()+1,this);
+			}
 		}else if(optionGet("タイプ").equals("後判定")) {
+			if((boolean)con || exe.executeOptions.get(this) == null) {
+				exe.executeOptions.put(this,"前判定");
+				List<Sym> exeList = exe.getExecuteList() ;
+				int idx = exeList.indexOf(this);
+				exeList.addAll(idx+1,this.getFlow().getSyms());
+				exeList.add(idx+this.getFlow().getSyms().size()+1,this);
+			}
 		}else {
 		}
 
-		if((boolean)con) {
-			List<Sym> exeList = exe.getExecuteList() ;
-			int idx = exeList.indexOf(this);
-			exeList.addAll(idx+1,this.getFlow().getSyms());
-			exeList.add(idx+this.getFlow().getSyms().size()+1,this);
-		}
 	}
 
 	@Override
@@ -157,6 +164,9 @@ public class WhileSym extends Sym {
 		}
 		this.bottomLabel.setLayoutY(this.getHeight()-baseHeightProperty.get());
 	}
+
+
+
 
 	@Override
 	public void redraw() {
@@ -231,7 +241,13 @@ public class WhileSym extends Sym {
 		return flow;
 	}
 
-	@Override public void finalize() {
+
+	@Override
+	public void onAddFlow() {
+		cnt ++;
+	}
+	@Override
+	public void onRemoveFlow() {
 		cnt --;
 	}
 

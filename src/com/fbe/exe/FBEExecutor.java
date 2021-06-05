@@ -1,9 +1,12 @@
 package com.fbe.exe;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fbe.FBEApp;
 import com.fbe.FBERunnable;
@@ -28,6 +31,7 @@ import jp.hishidama.eval.ExpRuleFactory;
 import jp.hishidama.eval.Expression;
 import jp.hishidama.eval.Rule;
 import jp.hishidama.eval.exp.AbstractExpression;
+import jp.hishidama.eval.exp.ArrayExpression;
 import jp.hishidama.eval.exp.EqualExpression;
 import jp.hishidama.eval.exp.LetPowerExpression;
 import jp.hishidama.eval.exp.PowerExpression;
@@ -74,6 +78,7 @@ public class FBEExecutor extends FBERunnable {
 	protected List<Flow> flows ;
 	protected Status status = Status.BEFORE_START ;
 	protected boolean executeAll = true ;
+	public Map<Sym,Object> executeOptions = new HashMap<>();
 
 	public FBEExecutor(Flow mainFlow,List<Flow> flows ){
 		this.mainFlow = mainFlow ;
@@ -82,26 +87,58 @@ public class FBEExecutor extends FBERunnable {
 
 	//数式解析
 	public Object eval(String formula) {
-		//変数定義
-		MapVariable<String,Object> varMap = new MapVariable<>(String.class,Object.class);
-		for(Map.Entry<String,Object> ent:vars.entrySet()) {
-			varMap.put(ent.getKey(), ent.getValue());
+		String regex = "\\s*\\[(.*)\\]\\s*" ;
+		Pattern p = Pattern.compile(regex) ;
+		Matcher m = p.matcher(formula);
+		if(m.matches()) {
+			String f = m.group(1) ;
+			System.out.println(f);
+			//,で分割
+			List<String> ans = new ArrayList<>();
+			int kakko = 0 ;
+			String work = "" ;
+			for(int i = 0;i < f.length();i++) {
+				String s= Character.toString(f.charAt(i));
+				if(s.equals("[")) {
+					kakko ++;
+				}else if(s.equals("]")){
+					kakko --;
+				}
+				if(s.equals(",") && kakko == 0){
+					ans.add(work);
+					work = "" ;
+				}else {
+					work+=s;
+				}
+			}
+			ans.add(work);
+			List<Object> ans2 = new ArrayList<>();
+			for(String s:ans) {
+				ans2.add(this.eval(s));
+			}
+			return ans2.toArray() ;
+		}else {
+			//変数定義
+			MapVariable<String,Object> varMap = new MapVariable<>(String.class,Object.class);
+			for(Map.Entry<String,Object> ent:vars.entrySet()) {
+				varMap.put(ent.getKey(), ent.getValue());
+			}
+			String str = formula ;
+			BasicPowerRuleFactory factory = new BasicPowerRuleFactory() ;
+			Rule rule = factory.getRule();
+			Expression exp = rule.parse(str);
+			exp.setVariable(varMap);
+			exp.setOperator(new StringOperator());
+			Object result = exp.eval();
+			return result ;
 		}
-		String str = formula ;
-		BasicPowerRuleFactory factory = new BasicPowerRuleFactory() ;
-		Rule rule = factory.getRule();
-		Expression exp = rule.parse(str);
-		exp.setVariable(varMap);
-		exp.setOperator(new StringOperator());
-		Object result = exp.eval();
-		return result ;
 	}
 	public Object toValidType(String str) {
 		if(str != null) {
 			if(str.matches("(\\d)*(.(\\d)+)??")) {
 				//Double
 				return Double.parseDouble(str);
-			}else {
+			}else{
 				//String
 				return str ;
 			}
@@ -132,6 +169,7 @@ public class FBEExecutor extends FBERunnable {
 		public Object number(String word, AbstractExpression exp) {
 			return Double.parseDouble(word) ;
 		}
+
 	}
 
 	private static class BasicPowerRuleFactory extends ExpRuleFactory {
@@ -140,7 +178,13 @@ public class FBEExecutor extends FBERunnable {
 			super();
 		}
 
-
+		@Override
+		protected AbstractExpression createArrayExpression() {
+			AbstractExpression e = new ArrayExpression() ;
+			e.setOperator("[");
+			e.setEndOperator("]");
+			return e ;
+		}
 		@Override
 		protected AbstractExpression createEqualExpression() {
 			AbstractExpression e = new EqualExpression() ;
@@ -226,17 +270,20 @@ public class FBEExecutor extends FBERunnable {
 			if(FBEExecutor.runningExecutor == null) {
 				//設定画面を表示
 				Stage st_setting = new Stage() ;
+				st_setting.setTitle("実行の設定");
 				FXMLLoader loader = new FXMLLoader(FBEExecutor.class.getResource("ExeSetting.fxml"));
 				AnchorPane root = (AnchorPane)loader.load();
 				SettingController cont = loader.getController();
 				cont.stage = st_setting ;
-				cont.setFactory(ExecutorFactory.factorys.get(0));
 				cont.hb_viewType.getChildren().addAll(ExecutorFactory.factorys);
 				for(ExecutorFactory<?> fac:ExecutorFactory.factorys) {
+					fac.toUnSelectMode();
 					fac.setOnAction(e->{
 						cont.setFactory(fac);
 					});
 				}
+				cont.setFactory(ExecutorFactory.factorys.get(0));
+				cont.setFactory(ExecutorFactory.factorys.get(0));
 				st_setting.setScene(new Scene(root));
 				st_setting.showAndWait();
 				//exeを登録して初期化
@@ -260,6 +307,7 @@ public class FBEExecutor extends FBERunnable {
 		try {
 
 			FBEExecutor exe = this ;
+			exe.executeOptions.clear();
 			FXMLLoader loader_control = new FXMLLoader(exe.getClass().getResource("ExeControl.fxml"));
 			AnchorPane ap_control = (AnchorPane)loader_control.load() ;
 			ControlController con_control = loader_control.getController() ;

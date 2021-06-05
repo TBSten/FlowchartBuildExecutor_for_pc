@@ -38,8 +38,8 @@
                         <Menu mnemonicParsing="false" text="編集">
                            <items>
                               <MenuItem fx:id="menu_newFlow" mnemonicParsing="false" text="フローを追加する" />
-                              <MenuItem fx:id="menu_copy" mnemonicParsing="false" text="コピー" />
-                              <MenuItem fx:id="menu_paste" mnemonicParsing="false" text="貼り付け" />
+                              <MenuItem fx:id="menu_copy" mnemonicParsing="false" text="選択中の記号をコピー" />
+                              <MenuItem fx:id="menu_loopNumber" mnemonicParsing="false" text="ループ番号を更新" />
                            </items>
                         </Menu>
                       <Menu mnemonicParsing="false" text="実行">

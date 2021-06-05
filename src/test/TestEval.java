@@ -2,6 +2,8 @@ package test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jp.hishidama.eval.ExpRuleFactory;
 import jp.hishidama.eval.Expression;
@@ -18,6 +20,40 @@ import jp.hishidama.eval.var.MapVariable;
 public class TestEval {
 
 	public static void main(String[] args) {
+		String regex = "\\s*\\[(.*)\\]\\s*" ;
+		String formula = "  [10,[20,[80,90],30],40]   " ;
+		Pattern p = Pattern.compile(regex) ;
+		Matcher m = p.matcher(formula);
+		if(m.matches()) {
+			String f = m.group(1) ;
+			System.out.println(f);
+			//,で分割
+			List<String> ans = new ArrayList<>();
+			int kakko = 0 ;
+			String work = "" ;
+			for(int i = 0;i < f.length();i++) {
+				String s= Character.toString(f.charAt(i));
+				if(s.equals("[")) {
+					kakko ++;
+				}else if(s.equals("]")){
+					kakko --;
+				}
+				if(s.equals(",") && kakko == 0){
+					ans.add(work);
+					work = "" ;
+				}else {
+					work+=s;
+				}
+			}
+			ans.add(work);
+			ans.forEach(e->{
+				System.out.print(e+"|") ;
+			});
+			System.out.println();
+		}else {
+			System.out.println("don't match");
+		}
+
 		//変数定義
 		/*
 		MapVariable<String,Long> varMap = new MapVariable<>(String.class,Long.class);
@@ -33,8 +69,9 @@ public class TestEval {
 		varMap.put("D1", 0.1);
 		varMap.put("D2", 6.5);
 
+
 		//通常の式解析
-		String str = "S1*S2+(L1+L2)+(D1+D2)" ;
+		String str = "a=\"abcd\",a" ;
 		BasicPowerRuleFactory factory = new BasicPowerRuleFactory() ;
 		Rule rule = factory.getRule();
 		Expression exp = rule.parse(str);
@@ -42,6 +79,7 @@ public class TestEval {
 		exp.setOperator(new StringOperator());
 		Object result = exp.eval();
 		System.out.println(str+" = "+result);
+
 		/*
 		//通常の式解析
 		String str = "x+y" ;
@@ -98,11 +136,18 @@ public class TestEval {
 		public Object string(String word, AbstractExpression exp) {
 			return word;
 		}
+
 	}
 	static class BasicPowerRuleFactory extends ExpRuleFactory {
 
 		public BasicPowerRuleFactory() {
 			super();
+		}
+
+
+		@Override
+		public AbstractExpression createArrayExpression() {
+			return super.createArrayExpression() ;
 		}
 
 		@Override

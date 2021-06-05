@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fbe.FBEApp;
 import com.fbe.exe.FBEExecutor;
+import com.fbe.item.Flow;
 import com.fbe.item.Item;
 import com.fbe.option.Inputable;
 import com.fbe.option.OptionTable;
@@ -20,7 +23,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -40,6 +46,9 @@ public abstract class Sym extends Item {
 	private final Map<String,String> optionDescriptions = new LinkedHashMap<>();
 	private final Map<String,List<String>> optionsValueList = new LinkedHashMap<>();
 	private boolean isSkip = false ;
+	private boolean movable = true ;
+	private boolean deletable = true ;
+
 
 	public AnchorPane clickPane = new AnchorPane() ;
 	public Sym() {
@@ -96,13 +105,53 @@ public abstract class Sym extends Item {
 			}
 
 		});
+		this.clickPane.setOnDragDetected(e->{
+			Dragboard dragboard = this.clickPane.startDragAndDrop(TransferMode.ANY);
+
+	        ClipboardContent content = new ClipboardContent();
+	        content.putString("FBE_ITEM_ID:"+this.itemId);
+	        dragboard.setContent(content);
+
+	        e.consume();
+		});
+		this.clickPane.setOnDragOver(e->{
+			Matcher m = Pattern.compile("FBE_ITEM_ID:(\\d*)").matcher(e.getDragboard().getString());
+			if(m.find()) {
+				e.acceptTransferModes(TransferMode.ANY);
+			}
+	        e.consume();
+		});
+		this.clickPane.setOnDragDropped(e->{
+			Dragboard dragboard = e.getDragboard();
+	        String string = dragboard.getString();
+			Matcher m = Pattern.compile("FBE_ITEM_ID:(\\d*)").matcher(string);
+			if(m.find()) {
+				Item i = Item.items.get(Long.parseLong(m.group(1)));
+				if(i instanceof Sym ) {
+					Sym sym = (Sym)i ;
+					if(this.isMovable() &&  sym.isMovable() && this.getParentFlow() != null) {
+						//symを親から削除
+						Flow symP = sym.getParentFlow();
+						if(symP != null) {
+							symP.removeSym(sym);
+						}
+						//symを追加
+						this.getParentFlow().addSym(this.getParentFlow().getSyms().indexOf(this)+1, sym);
+					}
+				}
+			}
+		});
+
+
 		ArrayList<MenuItem> items = new ArrayList<>();
 		MenuItem i = new MenuItem("削除");
 		i.setOnAction(e ->{
 			//削除
 			this.getParentFlow().removeSym(this);
 		});
-		items.add(i);
+		if(this.isDeletable()) {
+			items.add(i);
+		}
 		i = new MenuItem("オプション");
 		i.setOnAction(e ->{
 			//オプションを開く
@@ -289,6 +338,8 @@ public abstract class Sym extends Item {
 	}
 
 	public void redraw() {
+		baseWidthProperty.set(baseWidthProperty.get());
+		baseHeightProperty.set(baseHeightProperty.get());
 		if(options != null) {
 			reflectOption();
 		}
@@ -325,6 +376,20 @@ public abstract class Sym extends Item {
 	}
 	public void setSkip(boolean isSkip) {
 		this.isSkip = isSkip;
+	}
+	public void onAddFlow() {}
+	public void onRemoveFlow() {}
+	public boolean isMovable() {
+		return movable;
+	}
+	public void setMovable(boolean movable) {
+		this.movable = movable;
+	}
+	public boolean isDeletable() {
+		return deletable;
+	}
+	public void setDeletable(boolean deletable) {
+		this.deletable = deletable;
 	}
 
 

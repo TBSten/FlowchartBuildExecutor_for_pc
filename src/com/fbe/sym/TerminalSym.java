@@ -21,6 +21,8 @@ public class TerminalSym extends Sym {
 	protected Type type ;
 	public TerminalSym(Type t) {
 		this.type = t ;
+		this.setMovable(false);
+		this.setDeletable(false);
 
 		if(this.type == Type.END) {
 			this.getMenu().getItems().remove(0);	//削除できない

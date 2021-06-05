@@ -1,5 +1,8 @@
 package com.fbe.item;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -20,6 +23,9 @@ import javafx.scene.text.TextAlignment;
 
 public abstract class Item extends AnchorPane {
 
+	public static final Map<Long,Item> items = new LinkedHashMap<>();
+	public static long itemCnt = 0;
+
 	public static DoubleProperty baseWidthProperty = new SimpleDoubleProperty(180);
 	public static DoubleProperty baseHeightProperty = new SimpleDoubleProperty(40);
 	public static DoubleProperty baseLineWidthProperty = new SimpleDoubleProperty(3);
@@ -34,19 +40,26 @@ public abstract class Item extends AnchorPane {
 	public static ObjectProperty<Color> exeFillColorProperty = new SimpleObjectProperty<>(Color.WHITE) ;
 
 
-	protected Label symLabel = new Label("[DEFAULT]");
-	protected Canvas symCanvas = new Canvas();
+//	protected Label symLabel = new Label("[DEFAULT]");
+//	protected Canvas symCanvas = new Canvas();
+	public Label symLabel = new Label("[DEFAULT]");
+	public Canvas symCanvas = new Canvas();
 	protected Flow parentFlow = null ;
 	public double itemLineWidth = baseLineWidthProperty.get() ;
 	public Color itemLineColor = baseLineColorProperty.get() ;
 	public Color itemFillColor = baseFillColorProperty.get() ;
-
+	public long itemId ;
 
 
 	public Item() {
+		items.put(itemCnt, this);
+		this.itemId = itemCnt ;
+		itemCnt ++;
+
 //		symLabel.setStyle("-fx-background-color:red;");
 
 		//子の設定
+		this.symLabel.setLineSpacing(-5);
 		this.symLabel.setWrapText(true);
 		this.symLabel.setAlignment(Pos.CENTER);
 		this.symLabel.setTextAlignment(TextAlignment.CENTER);
@@ -118,6 +131,7 @@ public abstract class Item extends AnchorPane {
 		*/
 
 	//	redraw();
+
 	}
 /*
 	protected void changeFocusedDesign() {

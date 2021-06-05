@@ -24,10 +24,12 @@ import com.fbe.sym.TerminalSym;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.print.PrinterJob;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.WritableImage;
@@ -54,7 +56,7 @@ public class BaseController implements Initializable{
 	@FXML MenuItem menu_toImage ;
 	@FXML MenuItem menu_newFlow ;
 	@FXML MenuItem menu_copy ;
-	@FXML MenuItem menu_paste ;
+	@FXML MenuItem menu_loopNumber ;
 	@FXML MenuItem menu_exe ;
 	@FXML MenuItem menu_java ;
 	@FXML MenuItem menu_python ;
@@ -142,8 +144,15 @@ public class BaseController implements Initializable{
 			exe.execute_Test();
 			*/
 			//実行モードにする(実行用ウィンドウを表示)
-			FBEExecutor.toExecuteMode(FBEApp.app.flows.get(0), FBEApp.app.flows);
-
+			if(FBEApp.app.flows != null && FBEApp.app.flows.size() >= 1) {
+				FBEExecutor.toExecuteMode(FBEApp.app.flows.get(0), FBEApp.app.flows);
+			}else {
+				Stage dialog = new Stage() ;
+				Label lb = new Label("処理がありません。処理を追加してください。");
+				lb.setPadding(new Insets(30,5,30,5));
+				dialog.setScene(new Scene(lb));
+				dialog.show();
+			}
 		});
 
 		menu_newFlow.setOnAction(e->{
@@ -158,6 +167,19 @@ public class BaseController implements Initializable{
 			FBEApp.app.addFlow(f);
 
 			ssym.openSettingWindow();
+		});
+		menu_copy.setOnAction(e->{
+			/*
+			Item item = FBEApp.getNowSelectingItem();
+			if(item != null) {
+				//OSのクリップボードを利用
+				final Clipboard cb = Clipboard.getSystemClipboard();
+				final Map<DataFormat, Object> content = new HashMap<>();
+				content.put(DataFormat.PLAIN_TEXT, "FBE_ITEM_"+item.itemId);
+				cb.setContent(content);
+			}
+			*/
+
 		});
 
 		menu_test1.setOnAction(e->{

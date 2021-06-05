@@ -114,6 +114,9 @@ public class FBEApp {
 		}
 		FBEApp.nowSelectingItem = i ;
 	}
+	public static Item getNowSelectingItem() {
+		return nowSelectingItem;
+	}
 
 }
 
