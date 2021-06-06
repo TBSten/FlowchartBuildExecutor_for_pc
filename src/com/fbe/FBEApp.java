@@ -10,6 +10,12 @@ import com.fbe.item.Flow;
 import com.fbe.item.Item;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
@@ -116,6 +122,19 @@ public class FBEApp {
 	}
 	public static Item getNowSelectingItem() {
 		return nowSelectingItem;
+	}
+
+	public static void msgBox(String msg) {
+		Platform.runLater(()->{
+			Stage st = new Stage() ;
+			st.initOwner(FBEApp.window);
+			st.initModality(Modality.WINDOW_MODAL);
+			Label root = new Label(msg);
+			root.setFont(Font.font(25));
+			root.setPadding(new Insets(30,10,30,10));
+			st.setScene(new Scene(root));
+			st.show();
+		});
 	}
 
 }

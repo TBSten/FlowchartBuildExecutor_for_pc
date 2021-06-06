@@ -21,6 +21,10 @@ public class Flow extends Item {
 	VBox vb = new VBox();
 	Label label = new Label("") ;
 	boolean nonSymDelete = true ;
+	String tag = "" ;
+	Runnable onDisabled = null ;
+	Runnable onRedraw = null ;
+	boolean ableToDisable = true ;
 
 	public Flow() {
 		this.getChildren().add(vb);
@@ -183,17 +187,22 @@ public class Flow extends Item {
 		}
 		*/
 
-		FadeTransition animation = new FadeTransition(Duration.seconds(0.6), this);
-		animation.setFromValue(1);
-		animation.setToValue(0);
-		animation.play();
-		animation.setOnFinished(e->{
-			if(this.parentFlow == null) {
-				FBEApp.app.removeFlow(this);
-			}else if(this.parentFlow instanceof GettableFlow){
-				((GettableFlow)this.parentFlow).removeFlow(this);
-			}
-		});
+		if(this.ableToDisable) {
+			FadeTransition animation = new FadeTransition(Duration.seconds(0.6), this);
+			animation.setFromValue(1);
+			animation.setToValue(0);
+			animation.play();
+			animation.setOnFinished(e->{
+				if(this.parentFlow == null) {
+					FBEApp.app.removeFlow(this);
+				}else if(this.parentFlow instanceof GettableFlow){
+					((GettableFlow)this.parentFlow).removeFlow(this);
+				}
+				if(this.onDisabled != null) {
+					this.onDisabled.run();
+				}
+			});
+		}
 	}
 
 	@Override public void redraw() {
@@ -211,6 +220,10 @@ public class Flow extends Item {
 			for(Arrow arr: arrows) {
 				arr.redraw();
 			}
+		}
+
+		if(this.onRedraw != null) {
+			this.onRedraw.run();
 		}
 
 	//	this.test();
@@ -250,5 +263,47 @@ public class Flow extends Item {
 	public void setNonSymDelete(boolean nonSymDelete) {
 		this.nonSymDelete = nonSymDelete;
 	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
+	public Runnable getOnDisabled() {
+		return onDisabled;
+	}
+
+	public void setOnDisabled(Runnable onDisabled) {
+		this.onDisabled = onDisabled;
+	}
+
+	public boolean isAbleToDisable() {
+		return ableToDisable;
+	}
+
+	public void setAbleToDisable(boolean ableToDisable) {
+		this.ableToDisable = ableToDisable;
+	}
+
+	@Override public void toBaseLook() {
+		this.setStyle("-fx-border-color:#00000000;");
+		System.out.println("Flow.toBaseLook()");
+	}
+	@Override public void toSelectLook() {
+		this.setStyle("-fx-border-color:cyan;");
+		System.out.println("Flow.toSelectLook()");
+	}
+
+	public Runnable getOnRedraw() {
+		return onRedraw;
+	}
+
+	public void setOnRedraw(Runnable onRedraw) {
+		this.onRedraw = onRedraw;
+	}
+
 
 }

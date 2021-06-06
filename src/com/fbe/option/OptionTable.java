@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -74,6 +75,7 @@ public class OptionTable extends AnchorPane {
 		nlb.setWrapText(true);
 		Label dlb = new Label(desc);
 		dlb.setWrapText(true);
+		dlb.setPadding(new Insets(0,3,0,3));
 		Inputable inp = null ;
 
 		switch(type) {

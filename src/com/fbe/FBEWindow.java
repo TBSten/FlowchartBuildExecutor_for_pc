@@ -58,10 +58,9 @@ public class FBEWindow extends Application implements GettableFlow{
 //			RoundFlow f2 = new RoundFlow();
 //			addFlow(f2);
 
-/*
 			ap.prefWidthProperty().bind(f.widthProperty().add(sp.widthProperty().multiply(2)));
 			ap.prefHeightProperty().bind(f.heightProperty().add(sp.heightProperty().multiply(2)));
-*/
+
 			ap.prefWidthProperty().bind(flowHb.widthProperty().add(PADX*2));
 			ap.prefHeightProperty().bind(flowHb.heightProperty().add(PADY*2));
 

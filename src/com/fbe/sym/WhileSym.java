@@ -28,9 +28,6 @@ public class WhileSym extends Sym {
 		super();
 
 		this.num = cnt ;
-//		this.options.put("条件",condition);
-//		this.options.put("タイプ","前判定");
-//		this.optionsValueList.put("タイプ",Arrays.asList("前判定","後判定"));
 		this.optionPut("条件", "繰り返し処理の条件式を指定します。", OptionTable.Type.TEXTFIELD, condition);
 		this.optionPut("タイプ", "どのタイミングで条件を判定するかを指定します。", OptionTable.Type.COMBOBOX, "前判定");
 		this.getOptionsValueList().put("タイプ",Arrays.asList("前判定","後判定"));
@@ -61,8 +58,6 @@ public class WhileSym extends Sym {
 		this.symLabel.minHeightProperty().bind(baseHeightProperty);
 		this.symLabel.prefWidthProperty().bind(baseWidthProperty);
 		this.symLabel.prefHeightProperty().bind(baseHeightProperty);
-//		this.symLabel.setMaxWidth(baseWidth) ;
-//		this.symLabel.setMaxHeight(baseHeight) ;
 		this.symLabel.setLayoutX(0);
 		this.symLabel.setLayoutY(0);
 
@@ -73,12 +68,6 @@ public class WhileSym extends Sym {
 		this.bottomLabel.minHeightProperty().bind(baseHeightProperty);
 		this.bottomLabel.maxWidthProperty().bind(baseWidthProperty);
 		this.bottomLabel.maxHeightProperty().bind(baseHeightProperty);
-//		this.bottomLabel.setPrefWidth(baseWidth);
-//		this.bottomLabel.setPrefHeight(baseHeight);
-//		this.bottomLabel.setMinWidth(baseWidth);
-//		this.bottomLabel.setMinHeight(baseHeight);
-//		this.bottomLabel.setMaxWidth(baseWidth);
-//		this.bottomLabel.setMaxHeight(baseHeight);
 		this.bottomLabel.setWrapText(true);
 		this.bottomLabel.setAlignment(Pos.CENTER);
 		this.bottomLabel.setTextAlignment(TextAlignment.CENTER);
@@ -93,36 +82,16 @@ public class WhileSym extends Sym {
 		this.prefHeightProperty().bind(flow.heightProperty().add(baseHeightProperty.multiply(2)));
 		this.maxHeightProperty().bind(flow.heightProperty().add(baseHeightProperty.multiply(2)));
 		this.minHeightProperty().bind(flow.heightProperty().add(baseHeightProperty.multiply(2)));
-//		this.prefHeightProperty().bind(flow.heightProperty().add(baseHeight*2));
-//		this.maxHeightProperty().bind(flow.heightProperty().add(baseHeight*2));
-//		this.minHeightProperty().bind(flow.heightProperty().add(baseHeight*2));
 		this.flow.heightProperty().addListener(e->{
-		//	System.out.println("flow.height changed::");
 			redraw() ;
 		});
 
 		flow.setLayoutX(0);
-//		flow.layoutYProperty().bind(baseHeightProperty);
-//		flow.setLayoutY(baseHeightProperty.get());
-//		flow.layoutYProperty().bind(baseHeightProperty);		//おそらくここでlayoutYの変更エラーが出る
 		flow.translateYProperty().bind(baseHeightProperty);
-//		flow.setLayoutY(baseHeight);
 		this.getChildren().add(flow);
 		this.setFocusTraversable(false);
-/*
-		this.clickPane.setOnMouseClicked((e)->{
 
-			System.out.println("mouse pressed :"+this);
-			if(e.getClickCount() == 2) {
-				//設定を開く
-				openSettingWindow();
-			}
-			if(e.isSecondaryButtonDown()) {
-				menu.show(this,e.getScreenX() , e.getScreenY());
-			}
-			redraw();
-		});
-*/
+
 	}
 
 	public WhileSym() {

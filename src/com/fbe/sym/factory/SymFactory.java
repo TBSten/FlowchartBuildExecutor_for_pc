@@ -12,8 +12,13 @@ public abstract class SymFactory<TYPE extends Sym> extends Button {
 
 	boolean openSetting = true ;
 	public SymFactory(Sym sym) {
-		//本当はsymのスナップイメージ
 		super("記号");
+		if(sym != null) {
+			init(sym);
+		}
+	}
+
+	public void init(Sym sym) {
 		Button b = this ;
 		b.setEllipsisString("???");
 		b.setMinHeight( 80);
@@ -28,6 +33,7 @@ public abstract class SymFactory<TYPE extends Sym> extends Button {
 		b.setWrapText(true);
 		b.setContentDisplay(ContentDisplay.TOP);
 	}
+
 	public abstract TYPE createSym() ;
 
 	public boolean isOpenSetting() {

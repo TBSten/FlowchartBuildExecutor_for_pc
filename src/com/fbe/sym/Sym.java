@@ -338,12 +338,16 @@ public abstract class Sym extends Item {
 	}
 
 	public void redraw() {
-		baseWidthProperty.set(baseWidthProperty.get());
-		baseHeightProperty.set(baseHeightProperty.get());
-		if(options != null) {
-			reflectOption();
+		try {
+			baseWidthProperty.set(baseWidthProperty.get());
+			baseHeightProperty.set(baseHeightProperty.get());
+			if(options != null) {
+				reflectOption();
+			}
+			super.redraw();
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
-		super.redraw();
 	}
 
 	public static void showExportViewWindow(Sym sym) {

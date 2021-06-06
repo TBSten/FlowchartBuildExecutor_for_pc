@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import com.fbe.FBEApp;
 import com.fbe.sym.Sym;
 import com.fbe.sym.factory.CalcSymFactory;
+import com.fbe.sym.factory.DoubleBranchSymFactory;
 import com.fbe.sym.factory.ForSymFactory;
 import com.fbe.sym.factory.InputDataSymFactory;
+import com.fbe.sym.factory.MultiBranchSymFactory;
 import com.fbe.sym.factory.OutputDataSymFactory;
 import com.fbe.sym.factory.SymFactory;
 import com.fbe.sym.factory.WhileSymFactory;
@@ -20,8 +22,15 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -32,9 +41,11 @@ public class Arrow extends Item {
 	static {
 		factorys.add(new CalcSymFactory());
 		factorys.add(new OutputDataSymFactory());
-		factorys.add(new InputDataSymFactory());
 		factorys.add(new WhileSymFactory());
+		factorys.add(new DoubleBranchSymFactory());
 		factorys.add(new ForSymFactory());
+		factorys.add(new InputDataSymFactory());
+		factorys.add(new MultiBranchSymFactory());
 	}
 
 	public static int cnt = 0 ;
@@ -64,6 +75,50 @@ public class Arrow extends Item {
 		addB.setGraphicTextGap(0);
 		addB.setPadding(new Insets(0,0,0,0));
 		pane.getChildren().add(addB);
+		pane.setOnMouseClicked(e->{
+			FBEApp.selectItem(this.getParentFlow());
+			if(e.getButton() == MouseButton.SECONDARY) {
+				ContextMenu menu = new ContextMenu() ;
+				MenuItem mi1 = new MenuItem("フローを削除する");
+				mi1.setOnAction(ev->{
+					this.getParentFlow().disable();
+				});
+				if(this.getParentFlow().isAbleToDisable()) {
+					menu.getItems().addAll(mi1);
+				}
+				MenuItem mi2 = new MenuItem("タグを変更する");
+				mi2.setOnAction(ev->{
+					Stage st = new Stage() ;
+					st.initOwner(FBEApp.window);
+					st.initModality(Modality.WINDOW_MODAL);
+					VBox root = new VBox();
+					root.getChildren().add(new Label("フローのタグ名を入力してください"));
+					TextField tf = new TextField(this.getParentFlow().getTag()) ;
+					root.getChildren().add(tf);
+					ButtonBar bb = new ButtonBar();
+					Button okB = new Button("OK");
+					Button canB = new Button("キャンセル");
+					okB.setOnAction(eve->{
+						this.getParentFlow().setTag(tf.getText());
+						st.hide();
+						this.getParentFlow().redraw();
+					});
+					canB.setOnAction(eve->{
+						st.hide();
+						this.getParentFlow().redraw();
+					});
+					bb.getButtons().addAll(okB,canB);
+					root.getChildren().add(bb);
+					st.setScene(new Scene(root));
+					st.showAndWait();
+				});
+				menu.getItems().add(mi2);
+
+				if(menu.getItems().size() > 0) {
+					menu.show(this,e.getScreenX() , e.getScreenY());
+				}
+			}
+		});
 		addB.setOnAction( e -> {
 
 			try {
