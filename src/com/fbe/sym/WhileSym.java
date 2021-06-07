@@ -32,8 +32,6 @@ public class WhileSym extends Sym {
 		this.optionPut("タイプ", "どのタイミングで条件を判定するかを指定します。", OptionTable.Type.COMBOBOX, "前判定");
 		this.getOptionsValueList().put("タイプ",Arrays.asList("前判定","後判定"));
 
-
-
 		//		this.setStyle("-fx-background-color:red;");
 //		this.flow.setStyle("-fx-background-color:yellow;");
 //		this.symLabel.setStyle("-fx-background-color:gray;");
@@ -79,6 +77,8 @@ public class WhileSym extends Sym {
 		this.prefWidthProperty().unbind();
 		this.prefHeightProperty().unbind();
 		this.prefWidthProperty().bind(flow.widthProperty());
+		this.maxWidthProperty().bind(flow.widthProperty());
+		this.minWidthProperty().bind(flow.widthProperty());
 		this.prefHeightProperty().bind(flow.heightProperty().add(baseHeightProperty.multiply(2)));
 		this.maxHeightProperty().bind(flow.heightProperty().add(baseHeightProperty.multiply(2)));
 		this.minHeightProperty().bind(flow.heightProperty().add(baseHeightProperty.multiply(2)));
@@ -88,6 +88,7 @@ public class WhileSym extends Sym {
 
 		flow.setLayoutX(0);
 		flow.translateYProperty().bind(baseHeightProperty);
+		flow.setAbleToDisable(false);
 		this.getChildren().add(flow);
 		this.setFocusTraversable(false);
 

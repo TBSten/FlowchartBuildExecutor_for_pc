@@ -11,7 +11,7 @@ public class CalcSym extends Sym {
 	public CalcSym(String formula,String variable){
 //		this.options.put("式", formula);
 //		this.options.put("代入先変数", variable);
-		this.optionPut("式","式に代入する値を指定します。",OptionTable.Type.TEXTAREA,formula);
+		this.optionPut("式","式に代入する値を指定します。",OptionTable.Type.TEXTFIELD,formula);
 		this.optionPut("代入先変数","式を代入する変数を指定します。",OptionTable.Type.TEXTFIELD,variable);
 		redraw();
 	}

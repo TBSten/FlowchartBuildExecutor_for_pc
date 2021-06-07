@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import com.fbe.item.Flow;
 import com.fbe.item.GettableFlow;
-import com.fbe.sym.CalcSym;
-import com.fbe.sym.DataSym;
 import com.fbe.sym.Sym;
 import com.fbe.sym.TerminalSym;
 
@@ -33,6 +31,7 @@ public class FBEWindow extends Application implements GettableFlow{
 		FBEApp.app = this ;
 		FBEApp.window = primaryStage ;
 		primaryStage.setTitle("FBE");
+
 
 		try {
 			AnchorPane root = (AnchorPane)FXMLLoader.load(getClass().getResource("FBEBase.fxml"));
@@ -67,11 +66,17 @@ public class FBEWindow extends Application implements GettableFlow{
 
 //			flows.add(f);
 
+			/*
 			Sym[] syms = {
 					new TerminalSym(TerminalSym.Type.START),
 					new DataSym("キーボード入力","変数") ,
 					new CalcSym("変数*3","変数") ,
 					new DataSym("ダイアログで表示","\"3倍は\"+変数") ,
+					new TerminalSym(TerminalSym.Type.END),
+			};
+			*/
+			Sym[] syms = {
+					new TerminalSym(TerminalSym.Type.START),
 					new TerminalSym(TerminalSym.Type.END),
 			};
 			for(int i = 0;i < syms.length;i++) {
@@ -81,6 +86,12 @@ public class FBEWindow extends Application implements GettableFlow{
 
 
 			primaryStage.show();
+
+			primaryStage.setOnHidden(e->{
+				System.out.printf("app end [startTime=%d]\n",System.currentTimeMillis()) ;
+			});
+
+			FBEApp.init();
 
 		} catch(Exception e) {
 			e.printStackTrace();

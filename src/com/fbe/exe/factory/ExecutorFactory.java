@@ -16,10 +16,6 @@ import javafx.scene.paint.Color;
 
 public abstract class ExecutorFactory<E extends FBEExecutor> extends Button {
 	public static final List<ExecutorFactory<?>> factorys = new ArrayList<>();
-	static {
-		factorys.add(new MsgBoxExecutorFactory());
-		factorys.add(new LoggerExecutorFactory());
-	}
 
 
 	Map<String,String> options = new LinkedHashMap<>();

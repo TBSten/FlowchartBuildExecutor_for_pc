@@ -55,7 +55,6 @@ public class BaseController implements Initializable{
 	@FXML MenuItem menu_print ;
 	@FXML MenuItem menu_toImage ;
 	@FXML MenuItem menu_newFlow ;
-	@FXML MenuItem menu_copy ;
 	@FXML MenuItem menu_loopNumber ;
 	@FXML MenuItem menu_exe ;
 	@FXML MenuItem menu_java ;
@@ -167,19 +166,6 @@ public class BaseController implements Initializable{
 			FBEApp.app.addFlow(f);
 
 			ssym.openSettingWindow();
-		});
-		menu_copy.setOnAction(e->{
-			/*
-			Item item = FBEApp.getNowSelectingItem();
-			if(item != null) {
-				//OSのクリップボードを利用
-				final Clipboard cb = Clipboard.getSystemClipboard();
-				final Map<DataFormat, Object> content = new HashMap<>();
-				content.put(DataFormat.PLAIN_TEXT, "FBE_ITEM_"+item.itemId);
-				cb.setContent(content);
-			}
-			*/
-
 		});
 
 		menu_test1.setOnAction(e->{

@@ -4,14 +4,7 @@ import java.util.ArrayList;
 
 import com.fbe.FBEApp;
 import com.fbe.sym.Sym;
-import com.fbe.sym.factory.CalcSymFactory;
-import com.fbe.sym.factory.DoubleBranchSymFactory;
-import com.fbe.sym.factory.ForSymFactory;
-import com.fbe.sym.factory.InputDataSymFactory;
-import com.fbe.sym.factory.MultiBranchSymFactory;
-import com.fbe.sym.factory.OutputDataSymFactory;
 import com.fbe.sym.factory.SymFactory;
-import com.fbe.sym.factory.WhileSymFactory;
 
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -22,15 +15,8 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -38,15 +24,6 @@ public class Arrow extends Item {
 
 
 	public static ArrayList<SymFactory<? extends Sym>> factorys = new ArrayList<>();
-	static {
-		factorys.add(new CalcSymFactory());
-		factorys.add(new OutputDataSymFactory());
-		factorys.add(new WhileSymFactory());
-		factorys.add(new DoubleBranchSymFactory());
-		factorys.add(new ForSymFactory());
-		factorys.add(new InputDataSymFactory());
-		factorys.add(new MultiBranchSymFactory());
-	}
 
 	public static int cnt = 0 ;
 	public int id = 0 ;
@@ -76,6 +53,8 @@ public class Arrow extends Item {
 		addB.setPadding(new Insets(0,0,0,0));
 		pane.getChildren().add(addB);
 		pane.setOnMouseClicked(e->{
+			this.getParentFlow().onClicked(e,pane) ;
+			/*
 			FBEApp.selectItem(this.getParentFlow());
 			if(e.getButton() == MouseButton.SECONDARY) {
 				ContextMenu menu = new ContextMenu() ;
@@ -118,6 +97,7 @@ public class Arrow extends Item {
 					menu.show(this,e.getScreenX() , e.getScreenY());
 				}
 			}
+			*/
 		});
 		addB.setOnAction( e -> {
 

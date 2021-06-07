@@ -8,11 +8,21 @@ import com.fbe.sym.Sym;
 
 import javafx.animation.FadeTransition;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class Flow extends Item {
@@ -48,8 +58,57 @@ public class Flow extends Item {
 		this.minWidthProperty().bind(vb.widthProperty());
 		this.minHeightProperty().bind(vb.heightProperty());
 
+		this.setOnMouseClicked(e->{
+			this.onClicked(e,this);
+		});
 
+	}
 
+	public void onClicked(MouseEvent e,Node target) {
+		if(e.getTarget() == target){
+			FBEApp.selectItem(this);
+			if(e.getButton() == MouseButton.SECONDARY) {
+				ContextMenu menu = new ContextMenu() ;
+				MenuItem mi1 = new MenuItem("フローを削除する");
+				mi1.setOnAction(ev->{
+					this.disable();
+				});
+				if(this.isAbleToDisable()) {
+					menu.getItems().addAll(mi1);
+				}
+				MenuItem mi2 = new MenuItem("タグを変更する");
+				mi2.setOnAction(ev->{
+					Stage st = new Stage() ;
+					st.initOwner(FBEApp.window);
+					st.initModality(Modality.WINDOW_MODAL);
+					VBox root = new VBox();
+					root.getChildren().add(new Label("フローのタグ名を入力してください"));
+					TextField tf = new TextField(this.getTag()) ;
+					root.getChildren().add(tf);
+					ButtonBar bb = new ButtonBar();
+					Button okB = new Button("OK");
+					Button canB = new Button("キャンセル");
+					okB.setOnAction(eve->{
+						this.setTag(tf.getText());
+						st.hide();
+						this.redraw();
+					});
+					canB.setOnAction(eve->{
+						st.hide();
+						this.redraw();
+					});
+					bb.getButtons().addAll(okB,canB);
+					root.getChildren().add(bb);
+					st.setScene(new Scene(root));
+					st.showAndWait();
+				});
+				menu.getItems().add(mi2);
+
+				if(menu.getItems().size() > 0) {
+					menu.show(this,e.getScreenX() , e.getScreenY());
+				}
+			}
+		}
 	}
 
 	public Sym getSymBeforeOf(Arrow ar) {
@@ -290,11 +349,9 @@ public class Flow extends Item {
 
 	@Override public void toBaseLook() {
 		this.setStyle("-fx-border-color:#00000000;");
-		System.out.println("Flow.toBaseLook()");
 	}
 	@Override public void toSelectLook() {
 		this.setStyle("-fx-border-color:cyan;");
-		System.out.println("Flow.toSelectLook()");
 	}
 
 	public Runnable getOnRedraw() {

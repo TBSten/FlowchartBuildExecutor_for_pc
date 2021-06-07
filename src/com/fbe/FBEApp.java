@@ -6,8 +6,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.fbe.exe.factory.ExecutorFactory;
+import com.fbe.exe.factory.LoggerExecutorFactory;
+import com.fbe.exe.factory.MsgBoxExecutorFactory;
+import com.fbe.format.FBEFormat;
+import com.fbe.format.FBEFormat1_0;
+import com.fbe.format.FBEFormatApp;
+import com.fbe.item.Arrow;
 import com.fbe.item.Flow;
 import com.fbe.item.Item;
+import com.fbe.sym.factory.CalcSymFactory;
+import com.fbe.sym.factory.DoubleBranchSymFactory;
+import com.fbe.sym.factory.ForSymFactory;
+import com.fbe.sym.factory.InputDataSymFactory;
+import com.fbe.sym.factory.MultiBranchSymFactory;
+import com.fbe.sym.factory.OutputDataSymFactory;
+import com.fbe.sym.factory.WhileSymFactory;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -31,6 +45,8 @@ public class FBEApp {
 	public static Stage window ;
 	public static HashMap<String,BaseController> controllers = new HashMap<>();
 
+	public static long startTime ;
+
 	private static Item nowSelectingItem = null ;
 //	public static String fbePath = "" ;
 
@@ -38,32 +54,19 @@ public class FBEApp {
 	 * FBEアプリケーションを起動します。
 	 */
 	public static void main(String[] args) {
-		// TODO 自動生成されたメソッド・スタブ
+
+		startTime = System.currentTimeMillis();
+		System.out.printf("app start [startTime=%d]\n",startTime) ;
+
 		/**
 	      * アプリケーションを起動するAPIの引数に
 	      * プロジェクト作成時に自動作成されたMain.classを設定
 	      */
 
 	    Application.launch(FBEWindow.class);
-/*
-	    System.out.println("test1");
-	    invoke(()->{
-	    	System.out.println("start");
-	    	sleep(5000);
-	    	System.out.println("end");
-	    });
-	    System.out.println("test2");
-*/
-/*
-	    FBERunnable run = new FBERunnable(()->{
-	    	System.out.println("test1");
-	    	sleep(5000);
-	    	System.out.println("test2");
-	    });
-	    run.setName("Thread1");
-	    invoke(run);
-	    System.out.println("test3");
-*/
+
+	    //コマンドライン引数があればここでインポート
+
 	}
 
 	protected static List<Runnable> executingRunnables = new ArrayList<>();
@@ -135,6 +138,29 @@ public class FBEApp {
 			st.setScene(new Scene(root));
 			st.show();
 		});
+	}
+
+	public static void init() {
+		ExecutorFactory.factorys.add(new MsgBoxExecutorFactory());
+		ExecutorFactory.factorys.add(new LoggerExecutorFactory());
+
+		//SymFacotoryを登録
+		Arrow.factorys.add(new CalcSymFactory());
+		Arrow.factorys.add(new OutputDataSymFactory());
+		Arrow.factorys.add(new WhileSymFactory());
+		Arrow.factorys.add(new DoubleBranchSymFactory());
+		Arrow.factorys.add(new ForSymFactory());
+		Arrow.factorys.add(new InputDataSymFactory());
+		Arrow.factorys.add(new MultiBranchSymFactory());
+
+		//FBEFormatAppにFBEFormatを登録 , defaultFormatに代入
+		FBEFormat[] formats = {
+				new FBEFormat1_0()
+		} ;
+		for(FBEFormat format:formats) {
+			FBEFormatApp.formats.put(format.getVer(),format) ;
+		}
+
 	}
 
 }
