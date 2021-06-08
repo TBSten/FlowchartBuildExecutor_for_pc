@@ -3,11 +3,14 @@ package com.fbe;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 
 import com.fbe.exe.FBEExecutor;
+import com.fbe.format.FBEFormat;
+import com.fbe.format.FBEFormatApp;
 import com.fbe.item.Flow;
 import com.fbe.item.Item;
 import com.fbe.option.Inputable;
@@ -167,6 +170,67 @@ public class BaseController implements Initializable{
 
 			ssym.openSettingWindow();
 		});
+		menu_import.setOnAction(e->{
+			FileChooser fileChooser = new FileChooser();
+			fileChooser.setTitle("開く");
+			for(String key:FBEFormatApp.formats.keySet()) {
+				FBEFormat format = FBEFormatApp.formats.get(key) ;
+				fileChooser.getExtensionFilters().add(new ExtensionFilter("FBE形式 "+format.getVer(),"*."+format.getExtension()));
+			}
+			if(FBEFormatApp.lastUpdatePath != null) {
+				File fi = new File(FBEFormatApp.lastUpdatePath) ;
+				if(fi.isDirectory()) {
+					fileChooser.setInitialDirectory(fi);
+				}else {
+					fileChooser.setInitialDirectory(fi.getParentFile());
+				}
+			}
+		//	fileChooser.setInitialFileName("新規FBEプロジェクト");
+			File selectedFile = fileChooser.showOpenDialog(FBEApp.window);
+			if (selectedFile != null) {
+				try {
+					System.out.println("開く："+selectedFile.getAbsolutePath());
+					List<Flow> flows = FBEFormatApp.defaultFormat.importFrom(selectedFile);
+					flows.forEach(ele->{
+						FBEApp.app.addFlow(ele);
+						ele.redraw();
+					});
+					//更新
+					FBEApp.selectItem(flows.get(0));
+					flows.get(0).redraw();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		menu_save.setOnAction(e->{
+			FileChooser fileChooser = new FileChooser();
+			fileChooser.setTitle("保存");
+			for(String key:FBEFormatApp.formats.keySet()) {
+				FBEFormat format = FBEFormatApp.formats.get(key) ;
+				fileChooser.getExtensionFilters().add(new ExtensionFilter("FBE形式 "+format.getVer(),"*."+format.getExtension()));
+			}
+			if(FBEFormatApp.lastUpdatePath != null) {
+				File fi = new File(FBEFormatApp.lastUpdatePath) ;
+				if(fi.isDirectory()) {
+					fileChooser.setInitialDirectory(fi);
+				}else {
+					fileChooser.setInitialDirectory(fi.getParentFile());
+				}
+			}
+			fileChooser.setInitialFileName("新規FBEプロジェクト");
+			File selectedFile = fileChooser.showSaveDialog(FBEApp.window);
+			if (selectedFile != null) {
+				try {
+					System.out.println("保存："+selectedFile.getAbsolutePath());
+					FBEFormatApp.defaultFormat.save(selectedFile.getAbsolutePath(), FBEApp.app.flows.get(0), FBEApp.app.flows);
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+
+		});
+
 
 		menu_test1.setOnAction(e->{
 			double w = Item.baseWidthProperty.get();
@@ -220,29 +284,33 @@ public class BaseController implements Initializable{
 		});
 
 		menu_test5.setOnAction(e->{
-			Stage st = new Stage() ;
-			OptionTable table = new OptionTable();
-			Scene sc = new Scene(table);
-			Inputable i1 = table.put("TF","夕暮れ空を飛んで真下次第に小さくなっていくのは君のいた町だ", OptionTable.Type.TEXTFIELD, "text");
-			Inputable i2 = table.put("タイプあああ","aa", OptionTable.Type.COMBOBOX, "combo");
-			Inputable i3 = table.put("TA","aa", OptionTable.Type.TEXTAREA, "area");
-			Inputable i4 = table.put("CB","aa", OptionTable.Type.CHECKBOX, true);
-			Inputable i5 = table.put("SL","aa", OptionTable.Type.SLIDER, 0);
-			Inputable i6 = table.put("SP","aa", OptionTable.Type.SPIN, 0);
-			Inputable i7 = table.put("FI","aa", OptionTable.Type.FILE, "");
-			Inputable i8 = table.put("DI","aa", OptionTable.Type.DIRECTORY, "");
-			i2.args("そらにうたえば");
-			i2.args("必然　必然");
-			i2.args("未来へ、足掻け");
-			i7.args(new FileChooser.ExtensionFilter("HTML", "*.html"));
-			i7.args(new FileChooser.ExtensionFilter("CSS", "*.css"));
-			i7.args(new FileChooser.ExtensionFilter("XML", "*.xml"));
-			i7.args(new FileChooser.ExtensionFilter("JavaScript", "*.js"));
-			i7.args(new FileChooser.ExtensionFilter("JSON", "*.json"));
+			try {
+				Stage st = new Stage() ;
+				OptionTable table = new OptionTable();
+				Scene sc = new Scene(table);
+				Inputable i1 = table.put("TF","夕暮れ空を飛んで真下次第に小さくなっていくのは君のいた町だ", OptionTable.Type.TEXTFIELD, "text");
+				Inputable i2 = table.put("タイプあああ","aa", OptionTable.Type.COMBOBOX, "combo");
+				Inputable i3 = table.put("TA","aa", OptionTable.Type.TEXTAREA, "area");
+				Inputable i4 = table.put("CB","aa", OptionTable.Type.CHECKBOX, true);
+				Inputable i5 = table.put("SL","aa", OptionTable.Type.SLIDER, 0);
+				Inputable i6 = table.put("SP","aa", OptionTable.Type.SPIN, 0);
+				Inputable i7 = table.put("FI","aa", OptionTable.Type.FILE, "");
+				Inputable i8 = table.put("DI","aa", OptionTable.Type.DIRECTORY, "");
+				i2.args("そらにうたえば");
+				i2.args("必然　必然");
+				i2.args("未来へ、足掻け");
+				i7.args(new FileChooser.ExtensionFilter("HTML", "*.html"));
+				i7.args(new FileChooser.ExtensionFilter("CSS", "*.css"));
+				i7.args(new FileChooser.ExtensionFilter("XML", "*.xml"));
+				i7.args(new FileChooser.ExtensionFilter("JavaScript", "*.js"));
+				i7.args(new FileChooser.ExtensionFilter("JSON", "*.json"));
 
-			st.setScene(sc);
-			table.autosize();
-			st.show();
+				st.setScene(sc);
+				table.autosize();
+				st.show();
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
 		});
 
 	}

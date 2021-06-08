@@ -7,6 +7,7 @@ import java.util.List;
 import com.fbe.item.Flow;
 
 public abstract class FBEFormat {
+
 	protected String ver ;
 	protected String extension ;
 

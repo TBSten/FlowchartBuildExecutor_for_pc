@@ -160,6 +160,7 @@ public class FBEApp {
 		for(FBEFormat format:formats) {
 			FBEFormatApp.formats.put(format.getVer(),format) ;
 		}
+		FBEFormatApp.defaultFormat = formats[0] ;
 
 	}
 

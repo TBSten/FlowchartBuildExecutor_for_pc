@@ -20,13 +20,21 @@ import javafx.scene.text.TextAlignment;
 public class WhileSym extends Sym {
 	public static int cnt = 1 ;
 
-	RoundFlow flow = new RoundFlow() ;
+	public RoundFlow flow ;
 	Label bottomLabel = new Label("TEST");
 	int num ;
 
-	public WhileSym(String condition) {
+	public WhileSym(String condition,RoundFlow flow) {
 		super();
+		this.flow = flow ;
 
+		init(condition);
+	}
+	public WhileSym(String condition) {
+		this(condition,new RoundFlow());
+	}
+
+	protected void init(String condition) {
 		this.num = cnt ;
 		this.optionPut("条件", "繰り返し処理の条件式を指定します。", OptionTable.Type.TEXTFIELD, condition);
 		this.optionPut("タイプ", "どのタイミングで条件を判定するかを指定します。", OptionTable.Type.COMBOBOX, "前判定");
@@ -76,6 +84,10 @@ public class WhileSym extends Sym {
 
 		this.prefWidthProperty().unbind();
 		this.prefHeightProperty().unbind();
+		this.maxWidthProperty().unbind();
+		this.maxHeightProperty().unbind();
+		this.minWidthProperty().unbind();
+		this.minHeightProperty().unbind();
 		this.prefWidthProperty().bind(flow.widthProperty());
 		this.maxWidthProperty().bind(flow.widthProperty());
 		this.minWidthProperty().bind(flow.widthProperty());
@@ -92,8 +104,9 @@ public class WhileSym extends Sym {
 		this.getChildren().add(flow);
 		this.setFocusTraversable(false);
 
-
 	}
+
+
 
 	public WhileSym() {
 		this("条件式");
@@ -144,6 +157,7 @@ public class WhileSym extends Sym {
 			flow.layout();
 			flow.requestLayout();
 			flow.autosize();
+			flow.redraw();
 		}
 		super.redraw();
 	}
@@ -200,15 +214,14 @@ public class WhileSym extends Sym {
 */
 		}
 	}
-/*
-	private void drawTrapezoid(GraphicsContext gc,double sx,double sy,double width,double height) {
-		gc.fillRect(sx+itemLineWidth/2, sy+itemLineWidth/2, width-itemLineWidth, height-itemLineWidth);
-		gc.strokeRect(sx+itemLineWidth/2, sy+itemLineWidth/2, width-itemLineWidth, height-itemLineWidth);
-	}
-*/
+
 
 	public RoundFlow getFlow() {
 		return flow;
+	}
+	public void setFlow(RoundFlow flow) {
+		this.flow = flow;
+
 	}
 
 

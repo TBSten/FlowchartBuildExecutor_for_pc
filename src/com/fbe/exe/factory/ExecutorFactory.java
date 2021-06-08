@@ -62,17 +62,21 @@ public abstract class ExecutorFactory<E extends FBEExecutor> extends Button {
 	public OptionTable createOptionTable() {
 		OptionTable ans = new OptionTable();
 		for(Map.Entry<String, String> ent:options.entrySet()) {
-			String name = ent.getKey();
-			String value = ent.getValue();
-			String desc = this.optionDescriptions.get(name);
-			OptionTable.Type type = this.optionTypes.get(name);
-			List<String> list = this.optionValueLists.get(name) ;
+			try {
+				String name = ent.getKey();
+				String value = ent.getValue();
+				String desc = this.optionDescriptions.get(name);
+				OptionTable.Type type = this.optionTypes.get(name);
+				List<String> list = this.optionValueLists.get(name) ;
 
-			Inputable inputable = ans.put(name,desc,type,value);
-			if(type.haveList && this.optionValueLists.containsKey(name)) {
-				for(String item:this.optionValueLists.get(name)) {
-					inputable.args(item);
+				Inputable inputable = ans.put(name,desc,type,value);
+				if(type.haveList && this.optionValueLists.containsKey(name)) {
+					for(String item:this.optionValueLists.get(name)) {
+						inputable.args(item);
+					}
 				}
+			}catch(Exception ex) {
+				ex.printStackTrace();
 			}
 		}
 		return ans ;

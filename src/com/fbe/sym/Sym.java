@@ -208,17 +208,21 @@ public abstract class Sym extends Item {
 		if(options.size() > 0) {
 
 			for(Map.Entry<String, String> ent:options.entrySet()) {
-				String name = ent.getKey();
-				String value = ent.getValue();
-				String desc = this.optionDescriptions.get(name);
-				OptionTable.Type type = this.optionTypes.get(name);
-				List<String> list = this.optionsValueList.get(name) ;
+				try {
+					String name = ent.getKey();
+					String value = ent.getValue();
+					String desc = this.optionDescriptions.get(name);
+					OptionTable.Type type = this.optionTypes.get(name);
+					List<String> list = this.optionsValueList.get(name) ;
 
-				Inputable inputable = table.put(name,desc,type,value);
-				if(type.haveList) {
-					for(String item:this.optionsValueList.get(name)) {
-						inputable.args(item);
+					Inputable inputable = table.put(name,desc,type,value);
+					if(type.haveList) {
+						for(String item:this.optionsValueList.get(name)) {
+							inputable.args(item);
+						}
 					}
+				}catch(Exception ex) {
+					ex.printStackTrace();
 				}
 			}
 		}else {

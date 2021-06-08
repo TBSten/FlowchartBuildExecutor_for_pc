@@ -164,6 +164,10 @@ public class Flow extends Item {
 	public void addSym(Sym befSym ,Sym sym) {
 		this.addSym(syms.indexOf(befSym)+1 , sym);
 	}
+	public void addSym(Sym sym) {
+		this.addSym(this.getSyms().size(), sym);
+	}
+
 	public void addAnime(Sym sym) {
 		FadeTransition animation = new FadeTransition(Duration.seconds(0.2), sym);
 		animation.setFromValue(0);

@@ -68,7 +68,11 @@ public class OptionTable extends AnchorPane {
 
 	}
 
-	public Inputable put(String name,String desc,Type type,Object defValue) {
+	public Inputable put(String name,String desc,Type type,Object defValue) throws OptionException {
+		if(type == null) {
+			throw new OptionException("typeが不正です name:「"+name+"」 type:「"+type+"」") ;
+		}
+
 		HBox hb = new HBox();
 //		hb.setStyle("-fx-background-color:blue;");
 		Label nlb = new Label(name);
