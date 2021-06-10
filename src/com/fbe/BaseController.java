@@ -35,6 +35,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -65,6 +66,7 @@ public class BaseController implements Initializable{
 	@FXML MenuItem menu_check ;
 	@FXML AnchorPane mainPane ;
 	@FXML ScrollPane mainSp ;
+	@FXML SplitPane mainSplitPane ;
 
 	int wx = 0 ;
 
@@ -201,6 +203,7 @@ public class BaseController implements Initializable{
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
+
 			}
 		});
 		menu_save.setOnAction(e->{

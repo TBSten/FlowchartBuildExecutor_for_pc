@@ -3,6 +3,7 @@ package com.fbe.sym;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fbe.exe.FBEExecutable;
 import com.fbe.exe.FBEExecutor;
 import com.fbe.option.OptionTable;
 
@@ -39,11 +40,11 @@ public class ForSym extends WhileSym {
 	@Override
 	public void execute(FBEExecutor exe) {
 		if(exe.executeOptions.get(this) == null) {
-			exe.putVar(this.optionGet("ループ変数"),this.optionGet("初期値"));
+			exe.putVar(this.optionGet("ループ変数"),exe.eval(this.optionGet("初期値")));
 		}
 		Object con = exe.eval(this.optionGet("条件"));
 		if((boolean)con) {
-			List<Sym> exeList = exe.getExecuteList() ;
+			List<FBEExecutable> exeList = exe.getExecuteList() ;
 			int idx = exeList.indexOf(this);
 			List<Sym> list = new ArrayList<>();
 			list.addAll(this.getFlow().getSyms());

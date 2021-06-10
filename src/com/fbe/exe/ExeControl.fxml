@@ -7,16 +7,24 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fbe.exe.ControlController">
+<AnchorPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fbe.exe.ControlController">
    <children>
       <VBox>
          <children>
-            <Label text="実行制御" />
+            <Label text="実行制御">
+               <padding>
+                  <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+               </padding></Label>
             <FlowPane prefHeight="25.0" prefWidth="275.0">
                <children>
-                  <Button fx:id="bt_exe" mnemonicParsing="false" text="実行" />
-                  <Button fx:id="bt_stop" mnemonicParsing="false" text="一時停止" />
-                  <Button fx:id="bt_finish" mnemonicParsing="false" text="終了" />
+                  <Button fx:id="bt_exe" mnemonicParsing="false" text="実行">
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding></Button>
+                  <Button fx:id="bt_finish" mnemonicParsing="false" text="終了">
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding></Button>
                </children>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

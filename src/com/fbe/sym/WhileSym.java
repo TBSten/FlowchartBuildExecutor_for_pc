@@ -1,9 +1,11 @@
 
 package com.fbe.sym;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fbe.exe.FBEExecutable;
 import com.fbe.exe.FBEExecutor;
 import com.fbe.item.RoundFlow;
 import com.fbe.option.OptionTable;
@@ -117,18 +119,22 @@ public class WhileSym extends Sym {
 		Object con = exe.eval(this.optionGet("条件"));
 		if(optionGet("タイプ").equals("前判定")) {
 			if((boolean)con) {
-				List<Sym> exeList = exe.getExecuteList() ;
+				List<FBEExecutable> exeList = exe.getExecuteList() ;
 				int idx = exeList.indexOf(this);
-				exeList.addAll(idx+1,this.getFlow().getSyms());
-				exeList.add(idx+this.getFlow().getSyms().size()+1,this);
+				List<FBEExecutable> list = new ArrayList<>() ;
+				list.addAll(this.getFlow().getSyms());
+				list.add(this );
+				exeList.addAll(idx+1, list);
 			}
 		}else if(optionGet("タイプ").equals("後判定")) {
 			if((boolean)con || exe.executeOptions.get(this) == null) {
 				exe.executeOptions.put(this,"前判定");
-				List<Sym> exeList = exe.getExecuteList() ;
+				List<FBEExecutable> exeList = exe.getExecuteList() ;
 				int idx = exeList.indexOf(this);
-				exeList.addAll(idx+1,this.getFlow().getSyms());
-				exeList.add(idx+this.getFlow().getSyms().size()+1,this);
+				List<FBEExecutable> list = new ArrayList<>() ;
+				list.addAll(this.getFlow().getSyms());
+				list.add(this);
+				exeList.addAll(idx+1,list);
 			}
 		}else {
 		}

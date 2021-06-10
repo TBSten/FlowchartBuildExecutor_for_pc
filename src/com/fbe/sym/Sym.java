@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.fbe.FBEApp;
+import com.fbe.exe.FBEExecutable;
 import com.fbe.exe.FBEExecutor;
-import com.fbe.item.Flow;
 import com.fbe.item.Item;
 import com.fbe.option.Inputable;
 import com.fbe.option.OptionTable;
@@ -23,10 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -37,7 +32,7 @@ import javafx.stage.Stage;
  *     -fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );
  * }
  */
-public abstract class Sym extends Item {
+public abstract class Sym extends Item implements FBEExecutable {
 
 
 	ContextMenu menu = new ContextMenu() ;
@@ -45,7 +40,6 @@ public abstract class Sym extends Item {
 	private final Map<String,OptionTable.Type> optionTypes = new LinkedHashMap<>();
 	private final Map<String,String> optionDescriptions = new LinkedHashMap<>();
 	private final Map<String,List<String>> optionsValueList = new LinkedHashMap<>();
-	private boolean isSkip = false ;
 	private boolean movable = true ;
 	private boolean deletable = true ;
 
@@ -105,6 +99,7 @@ public abstract class Sym extends Item {
 			}
 
 		});
+		/*
 		this.clickPane.setOnDragDetected(e->{
 			Dragboard dragboard = this.clickPane.startDragAndDrop(TransferMode.ANY);
 
@@ -121,6 +116,7 @@ public abstract class Sym extends Item {
 			}
 	        e.consume();
 		});
+
 		this.clickPane.setOnDragDropped(e->{
 			Dragboard dragboard = e.getDragboard();
 	        String string = dragboard.getString();
@@ -141,6 +137,7 @@ public abstract class Sym extends Item {
 				}
 			}
 		});
+		*/
 
 
 		ArrayList<MenuItem> items = new ArrayList<>();
@@ -378,12 +375,6 @@ public abstract class Sym extends Item {
 	}
 	public Map<String, List<String>> getOptionsValueList() {
 		return optionsValueList;
-	}
-	public boolean isSkip() {
-		return isSkip;
-	}
-	public void setSkip(boolean isSkip) {
-		this.isSkip = isSkip;
 	}
 	public void onAddFlow() {}
 	public void onRemoveFlow() {}

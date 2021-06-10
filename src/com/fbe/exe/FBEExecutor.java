@@ -73,7 +73,7 @@ public class FBEExecutor extends FBERunnable {
 
 	//変数一覧
 	protected Map<String,Object> vars = new LinkedHashMap<>();
-	protected List<Sym> executeList = new ArrayList<>() ;
+	protected List<FBEExecutable> executeList = new ArrayList<>() ;
 	protected Flow mainFlow ;
 	protected List<Flow> flows ;
 	protected Status status = Status.BEFORE_START ;
@@ -91,6 +91,7 @@ public class FBEExecutor extends FBERunnable {
 		Pattern p = Pattern.compile(regex) ;
 		Matcher m = p.matcher(formula);
 		if(m.matches()) {
+			System.out.println("配列");
 			String f = m.group(1) ;
 			System.out.println(f);
 			//,で分割
@@ -119,7 +120,15 @@ public class FBEExecutor extends FBERunnable {
 			return ans2.toArray() ;
 		}else {
 			//変数定義
-			MapVariable<String,Object> varMap = new MapVariable<>(String.class,Object.class);
+			MapVariable<String,Object> varMap = new MapVariable<>(String.class,Object.class) {
+				@Override public Object getFieldValue(Object obj , String objName,String field,AbstractExpression exp) {
+					System.out.println("  getFieldValue ::"+obj+" "+objName+" "+field+" "+exp);
+					if(obj.getClass().isArray() && field.matches("length|len|LENGTH|LEN")) {
+						return java.lang.reflect.Array.getLength(obj) ;
+					}
+					return super.getFieldValue(obj,objName,field,exp);
+				}
+			};
 			for(Map.Entry<String,Object> ent:vars.entrySet()) {
 				varMap.put(ent.getKey(), ent.getValue());
 			}
@@ -129,7 +138,17 @@ public class FBEExecutor extends FBERunnable {
 			Expression exp = rule.parse(str);
 			exp.setVariable(varMap);
 			exp.setOperator(new StringOperator());
+			/*
+			DefaultVariable dv = new DefaultVariable() {
+				@Override public Object getFieldValue(Object obj,String name,String field,AbstractExpression exp) {
+					System.out.println("getFieldValue obj:"+obj+" name:"+name+" field:"+field+" exp:"+exp);
+					return super.getFieldValue(obj, name, field, exp);
+				}
+			} ;
+			exp.setVariable(dv);
+			*/
 			Object result = exp.eval();
+
 			return result ;
 		}
 	}
@@ -244,6 +263,7 @@ public class FBEExecutor extends FBERunnable {
 	}
 	//プログラム実行中の表示
 	public void print(String formula,Object...args) {
+		System.out.println("print:"+formula+","+args);
 		String data = String.valueOf(this.eval(formula)) ;
 		this.msgBox(data);
 	}
@@ -336,29 +356,24 @@ public class FBEExecutor extends FBERunnable {
 		this.onInit();
 	}
 
-	private Sym beforeExeSym = null ;
+	private FBEExecutable beforeExeSym = null ;
 	//開始ボタン押下時
 	public void start() {
 		if(!this.status.finish ) {
 			this.status = Status.EXECUTING ;
 			boolean skipF = false ;
-			Sym s = executeList.get(0);
+			FBEExecutable s =  executeList.get(0);
 			if(s != null) {
 				try {
-					if(!s.isSkip() ) {
-						System.out.println("実行:"+s);
-						if(beforeExeSym != null) {
-							beforeExeSym.toBaseLook();
-							beforeExeSym.redraw();
-						}
-						s.toExeLook();
-						s.redraw();
-						beforeExeSym = s ;
-						s.execute(this);
-					}else {
-						System.out.println("!Skip "+s);
-						skipF = true ;
+					System.out.println("実行:"+s);
+					if(beforeExeSym != null) {
+					beforeExeSym.toBaseLook();
+						beforeExeSym.redraw();
 					}
+					s.toExeLook();
+					s.redraw();
+					beforeExeSym = s ;
+					s.execute(this);
 					executeList.remove(s);
 					System.out.println("実行終了:"+s);
 					if(executeList.size() <= 0) {
@@ -464,13 +479,17 @@ public class FBEExecutor extends FBERunnable {
 	//変数設定
 	public void putVar(String name,Object value) {
 		vars.put(name,value);
+		System.out.println("var putted :"+name+" <- "+value);
+		System.out.println("           :"+getVar(name));
 	}
-	public void putVar(String name,String value) {
+	public void putVar(String name,String formula) {
 		vars.put(name,toValidType(value));
 	}
 	//変数取得
 	public Object getVar(String name) {
-		if(vars.containsKey(name)) {
+		if(!vars.containsKey(name)) {
+			System.out.println("non contains var :"+name);
+			System.out.println("  contains test :"+vars.containsKey(name));
 			return null ;
 		}
 		return vars.get(name);
@@ -538,7 +557,7 @@ public class FBEExecutor extends FBERunnable {
 		return vars;
 	}
 
-	public List<Sym> getExecuteList() {
+	public List<FBEExecutable> getExecuteList() {
 		return executeList;
 	}
 

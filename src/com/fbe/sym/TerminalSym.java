@@ -1,6 +1,8 @@
 package com.fbe.sym;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fbe.exe.FBEExecutor;
 import com.fbe.option.OptionTable;
@@ -49,7 +51,9 @@ public class TerminalSym extends Sym {
 	@Override
 	public void execute(FBEExecutor exe) {
 		//type == Type.ENDの時は戻り値を返す
-		System.out.println("exe:"+this);
+		if(this.type == Type.END && this.optionGet("戻り値").equals("")) {
+			exe.putVar(this.optionGet("テキスト")+"::RETURN", exe.eval(this.optionGet("戻り値")));
+		}
 	}
 
 	@Override public void reflectOption() {
@@ -92,5 +96,25 @@ public class TerminalSym extends Sym {
 		gc.strokeRoundRect(0+itemLineWidth/2, 0+itemLineWidth/2, getWidth()-itemLineWidth, getHeight()-itemLineWidth, getHeight(), getHeight());
 	}
 
+	public String getProcessName() {
+		String ans = this.optionGet("テキスト");
+		Pattern p = Pattern.compile("(.*)\\((.*)\\)");
+		Matcher m = p.matcher(ans);
+		if(m.matches()) {
+			ans = m.group(1);
+		}
+		return ans ;
+
+	}
+	public String[] getArgNames() {
+		String[] ans = {} ;
+		Pattern p = Pattern.compile("(.*)\\((.*)\\)");
+		Matcher m = p.matcher(this.optionGet("テキスト"));
+		if(m.matches()) {
+			ans = m.group(2).split(",");
+		}
+		return ans ;
+
+	}
 
 }

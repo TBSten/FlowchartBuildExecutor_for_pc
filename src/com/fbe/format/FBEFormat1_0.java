@@ -29,6 +29,8 @@ import com.fbe.sym.DataSym;
 import com.fbe.sym.DoubleBranchSym;
 import com.fbe.sym.ForSym;
 import com.fbe.sym.MultiBranchSym;
+import com.fbe.sym.PrepareSym;
+import com.fbe.sym.ProcessSym;
 import com.fbe.sym.Sym;
 import com.fbe.sym.TerminalSym;
 import com.fbe.sym.WhileSym;
@@ -125,7 +127,23 @@ public class FBEFormat1_0 extends FBEFormat {
 			//子要素を追加
 			Element child = item2Element(doc,sym.getFlow());
 			ans.appendChild(child);
-		}else if(item instanceof Flow) {
+		}else if(item instanceof PrepareSym){
+			PrepareSym sym = (PrepareSym)item;
+			String v1 = sym.optionGet("タイプ") ;
+			String v2 = sym.optionGet("要素数") ;
+			String v3 = sym.optionGet("対象") ;
+			String v4 = sym.optionGet("初期値") ;
+			ans = doc.createElement("Prepare") ;
+			ans.setAttribute("type", v1);
+			ans.setAttribute("counts", v2);
+			ans.setAttribute("target", v3);
+			ans.setAttribute("start", v4);
+		}else if(item instanceof ProcessSym){
+			ProcessSym sym = (ProcessSym)item;
+			String v1 = sym.optionGet("処理名") ;
+			ans = doc.createElement("Process") ;
+			ans.setAttribute("name", v1);
+		}else  if(item instanceof Flow) {
 			Flow flow = (Flow)item;
 			String v1 = flow.getTag() ;
 			ans = doc.createElement("Flow") ;
@@ -142,7 +160,6 @@ public class FBEFormat1_0 extends FBEFormat {
 		}else {
 			throw new FBEFormatException("不正なItemインスタンス："+item.getClass().getName());
 		}
-		//PrepareSym,ProcessSymも追加予定#############################
 		return ans ;
 	}
 	protected boolean writexml(File file, Document doc) {
@@ -256,6 +273,12 @@ public class FBEFormat1_0 extends FBEFormat {
 					ter.getFlow().setTag(work.getTag());
 				}
 			}
+		}else if(ele.getTagName().equals("Prepare")){
+			PrepareSym ter = new PrepareSym(ele.getAttribute("type"),ele.getAttribute("counts"),ele.getAttribute("target"),ele.getAttribute("start"));
+			ans = ter ;
+		}else if(ele.getTagName().equals("Process")){
+			ProcessSym ter = new ProcessSym(ele.getAttribute("name")) ;
+			ans = ter ;
 		}else if(ele.getTagName().equals("Flow")){
 			Flow flow = ele.getAttribute("round").equals("true") ? new RoundFlow() : new Flow() ;
 			flow.setTag(ele.getAttribute("tag"));

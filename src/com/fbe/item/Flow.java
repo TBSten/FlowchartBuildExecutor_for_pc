@@ -58,7 +58,7 @@ public class Flow extends Item {
 		this.minWidthProperty().bind(vb.widthProperty());
 		this.minHeightProperty().bind(vb.heightProperty());
 
-		this.setOnMouseClicked(e->{
+		this.setOnMouseReleased(e->{
 			this.onClicked(e,this);
 		});
 

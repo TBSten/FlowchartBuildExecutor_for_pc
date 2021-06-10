@@ -21,6 +21,8 @@ import com.fbe.sym.factory.ForSymFactory;
 import com.fbe.sym.factory.InputDataSymFactory;
 import com.fbe.sym.factory.MultiBranchSymFactory;
 import com.fbe.sym.factory.OutputDataSymFactory;
+import com.fbe.sym.factory.PrepareSymFactory;
+import com.fbe.sym.factory.ProcessSymFactory;
 import com.fbe.sym.factory.WhileSymFactory;
 
 import javafx.application.Application;
@@ -152,6 +154,8 @@ public class FBEApp {
 		Arrow.factorys.add(new ForSymFactory());
 		Arrow.factorys.add(new InputDataSymFactory());
 		Arrow.factorys.add(new MultiBranchSymFactory());
+		Arrow.factorys.add(new ProcessSymFactory());
+		Arrow.factorys.add(new PrepareSymFactory());
 
 		//FBEFormatAppにFBEFormatを登録 , defaultFormatに代入
 		FBEFormat[] formats = {
