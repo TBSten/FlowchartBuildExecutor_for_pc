@@ -1,9 +1,8 @@
 package test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import jp.hishidama.eval.ExpRuleFactory;
 import jp.hishidama.eval.Expression;
@@ -22,6 +21,7 @@ public class TestEval {
 	public static void main(String[] args) {
 		String regex = "\\s*\\[(.*)\\]\\s*" ;
 		String formula = "  [10,[20,[80,90],30],40]   " ;
+		/*
 		Pattern p = Pattern.compile(regex) ;
 		Matcher m = p.matcher(formula);
 		if(m.matches()) {
@@ -53,6 +53,7 @@ public class TestEval {
 		}else {
 			System.out.println("don't match");
 		}
+		*/
 
 		//変数定義
 		/*
@@ -68,10 +69,10 @@ public class TestEval {
 		varMap.put("L2", 10L);
 		varMap.put("D1", 0.1);
 		varMap.put("D2", 6.5);
-
+		varMap.put("arr", new Object[] {10,20,30});
 
 		//通常の式解析
-		String str = "a=\"abcd\",a" ;
+		String str = "arr[0]=99" ;
 		BasicPowerRuleFactory factory = new BasicPowerRuleFactory() ;
 		Rule rule = factory.getRule();
 		Expression exp = rule.parse(str);
@@ -79,6 +80,8 @@ public class TestEval {
 		exp.setOperator(new StringOperator());
 		Object result = exp.eval();
 		System.out.println(str+" = "+result);
+		System.out.println(Arrays.toString((Object[])varMap.get("arr")));
+
 
 		/*
 		//通常の式解析

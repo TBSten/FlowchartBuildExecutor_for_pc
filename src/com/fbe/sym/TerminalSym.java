@@ -52,7 +52,7 @@ public class TerminalSym extends Sym {
 	public void execute(FBEExecutor exe) {
 		//type == Type.ENDの時は戻り値を返す
 		if(this.type == Type.END && this.optionGet("戻り値").equals("")) {
-			exe.putVar(this.optionGet("テキスト")+"::RETURN", exe.eval(this.optionGet("戻り値")));
+			exe.putVar(this.optionGet("テキスト")+"__RETURN", exe.eval(this.optionGet("戻り値")));
 		}
 	}
 

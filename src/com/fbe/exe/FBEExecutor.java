@@ -2,7 +2,6 @@ package com.fbe.exe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -21,8 +20,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
@@ -33,6 +34,7 @@ import jp.hishidama.eval.Rule;
 import jp.hishidama.eval.exp.AbstractExpression;
 import jp.hishidama.eval.exp.ArrayExpression;
 import jp.hishidama.eval.exp.EqualExpression;
+import jp.hishidama.eval.exp.LetExpression;
 import jp.hishidama.eval.exp.LetPowerExpression;
 import jp.hishidama.eval.exp.PowerExpression;
 import jp.hishidama.eval.lex.LexFactory;
@@ -72,7 +74,20 @@ public class FBEExecutor extends FBERunnable {
 	public static FBEExecutor runningExecutor = null ;
 
 	//変数一覧
-	protected Map<String,Object> vars = new LinkedHashMap<>();
+//	protected Map<String,Object> vars = new LinkedHashMap<>();
+	protected MapVariable<String,Object> vars = new MapVariable<>(String.class,Object.class){
+		@Override public Object getFieldValue(Object obj , String objName,String field,AbstractExpression exp) {
+			System.out.println("  getFieldValue ::"+obj+" "+objName+" "+field+" "+exp);
+			if(obj.getClass().isArray() && field.matches("length|len|LENGTH|LEN|")) {
+				return java.lang.reflect.Array.getLength(obj) ;
+			}
+			return super.getFieldValue(obj,objName,field,exp);
+		}
+		@Override public void put(String name,Object value) {
+			super.put(name, value);
+		}
+
+	};
 	protected List<FBEExecutable> executeList = new ArrayList<>() ;
 	protected Flow mainFlow ;
 	protected List<Flow> flows ;
@@ -120,6 +135,7 @@ public class FBEExecutor extends FBERunnable {
 			return ans2.toArray() ;
 		}else {
 			//変数定義
+			/*
 			MapVariable<String,Object> varMap = new MapVariable<>(String.class,Object.class) {
 				@Override public Object getFieldValue(Object obj , String objName,String field,AbstractExpression exp) {
 					System.out.println("  getFieldValue ::"+obj+" "+objName+" "+field+" "+exp);
@@ -129,14 +145,15 @@ public class FBEExecutor extends FBERunnable {
 					return super.getFieldValue(obj,objName,field,exp);
 				}
 			};
-			for(Map.Entry<String,Object> ent:vars.entrySet()) {
+			for(Map.Entry<String,Object> ent:vars.getMap().entrySet()) {
 				varMap.put(ent.getKey(), ent.getValue());
 			}
+			*/
 			String str = formula ;
-			BasicPowerRuleFactory factory = new BasicPowerRuleFactory() ;
+			FBERuleFactory factory = new FBERuleFactory() ;
 			Rule rule = factory.getRule();
 			Expression exp = rule.parse(str);
-			exp.setVariable(varMap);
+			exp.setVariable(this.vars);
 			exp.setOperator(new StringOperator());
 			/*
 			DefaultVariable dv = new DefaultVariable() {
@@ -191,9 +208,9 @@ public class FBEExecutor extends FBERunnable {
 
 	}
 
-	private static class BasicPowerRuleFactory extends ExpRuleFactory {
+	private static class FBERuleFactory extends ExpRuleFactory {
 
-		public BasicPowerRuleFactory() {
+		public FBERuleFactory() {
 			super();
 		}
 
@@ -208,6 +225,13 @@ public class FBEExecutor extends FBERunnable {
 		protected AbstractExpression createEqualExpression() {
 			AbstractExpression e = new EqualExpression() ;
 			e.setOperator("=");
+			return e ;
+		}
+
+		@Override
+		protected AbstractExpression createLetExpression() {
+			LetExpression e = new LetExpression() ;
+			e.setOperator("<-");
 			return e ;
 		}
 
@@ -244,7 +268,7 @@ public class FBEExecutor extends FBERunnable {
 			// 「'」を行コメントとする
 			List<CommentLex> list = new ArrayList<CommentLex>();
 			list.add(new LineComment("'"));
-
+			list.add(new LineComment("#"));
 			LexFactory factory = super.getLexFactory();
 			factory.setDefaultCommentLexList(list);
 			return factory;
@@ -280,8 +304,6 @@ public class FBEExecutor extends FBERunnable {
 		//ファイルなどから入力する
 		return "#DEVELOPPING..." ;
 	}
-
-
 
 	//実行制御（コントロール）メソッド。ControlController等から呼ばれる。
 	//実行モード起動処理
@@ -322,6 +344,7 @@ public class FBEExecutor extends FBERunnable {
 	}
 
 	protected Stage controlStage = null ;
+	protected static FlowPane variablePane ;
 	public void initExecutor() {
 		//--実行制御・設定ウィンドウ表示
 		try {
@@ -344,6 +367,13 @@ public class FBEExecutor extends FBERunnable {
 			this.controlStage.setOnCloseRequest(e->{
 				finish() ;
 			});
+			this.controlStage.setOnHidden(e->{
+				System.out.println("controlStage.setOnCloseRequest");
+				if(FBEExecutor.variablePane != null) {
+					FBEApp.app.getMainSplitPane().getItems().remove(FBEExecutor.variablePane);
+					System.out.println("Delete variablePane");
+				}
+			});
 			st_control.show();
 
 		}catch(Exception exc) {
@@ -352,6 +382,32 @@ public class FBEExecutor extends FBERunnable {
 		//executeListにmainFlow.symsを追加
 		this.executeList.addAll(this.getMainFlow().getSyms());
 		this.status = Status.BEFORE_START ;
+
+		//必須実行準備
+		this.putVar("null", null );
+		this.putVar("NULL", null );
+		this.putVar("Null", null );
+		this.putVar("true", true );
+		this.putVar("false", false );
+		this.putVar("TRUE", true );
+		this.putVar("FALSE", false );
+		this.putVar("True", true );
+		this.putVar("False", false );
+		SplitPane sp = FBEApp.app.getMainSplitPane() ;
+		if(FBEExecutor.variablePane != null) {
+			sp.getItems().remove(FBEExecutor.variablePane);
+			System.out.println("Delete variablePane");
+		}
+		FlowPane variablePane = new FlowPane() ;
+		variablePane.setPrefWidth(250);
+		variablePane.setMinWidth(50);
+		for(int i = 0;i < 30;i++) {
+			variablePane.getChildren().addAll(new Button("B - "+i));
+		}
+		FBEExecutor.variablePane = variablePane ;
+		sp.getItems().add(variablePane);
+
+
 		//初期化時処理
 		this.onInit();
 	}
@@ -478,16 +534,26 @@ public class FBEExecutor extends FBERunnable {
 
 	//変数設定
 	public void putVar(String name,Object value) {
-		vars.put(name,value);
-		System.out.println("var putted :"+name+" <- "+value);
-		System.out.println("           :"+getVar(name));
+
+		if(value == null || value == Boolean.TRUE || value == Boolean.FALSE || value.getClass().isArray() ) {
+			this.putArrVar(name,value) ;
+		}else {
+			if(value instanceof String || value instanceof Character) {
+				this.eval(String.format("%s <- \"%s\"",name, value));
+			}else {
+				this.eval(String.format("%s <- %s",name, value));
+			}
+		}
+
+
 	}
-	public void putVar(String name,String formula) {
-		vars.put(name,toValidType(value));
+	public void putArrVar(String name ,Object arr) {
+		this.vars.put(name, arr);
 	}
 	//変数取得
 	public Object getVar(String name) {
-		if(!vars.containsKey(name)) {
+		Map<String, Object> vars = this.vars.getMap();
+		if(!vars.containsKey(name) ) {
 			System.out.println("non contains var :"+name);
 			System.out.println("  contains test :"+vars.containsKey(name));
 			return null ;
@@ -553,7 +619,7 @@ public class FBEExecutor extends FBERunnable {
 	}
 
 
-	public Map<String, Object> getVars() {
+	public MapVariable<String, Object> getVars() {
 		return vars;
 	}
 

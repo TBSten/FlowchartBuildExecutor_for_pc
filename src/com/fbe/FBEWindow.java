@@ -11,6 +11,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -18,6 +19,7 @@ import javafx.stage.Stage;
 
 public class FBEWindow extends Application implements GettableFlow{
 
+	SplitPane mainSplitPane ;
 	AnchorPane ap ;
 	HBox flowHb = new HBox(10);
 
@@ -45,6 +47,8 @@ public class FBEWindow extends Application implements GettableFlow{
 			ap = FBEApp.controllers.get("Base").mainPane ;
 			ScrollPane sp = FBEApp.controllers.get("Base").mainSp ;
 			root.getChildren().add(ap);
+			SplitPane split = FBEApp.controllers.get("Base").mainSplitPane ;
+			this.mainSplitPane = split ;
 
 
 			flowHb.setLayoutX(PADX);
@@ -111,5 +115,9 @@ public class FBEWindow extends Application implements GettableFlow{
 	public static void main(String[] args) {
 //		launch(args);
 		launch(FBEWindow.class);
+	}
+
+	public SplitPane getMainSplitPane() {
+		return mainSplitPane;
 	}
 }
