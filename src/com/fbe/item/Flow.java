@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fbe.FBEApp;
 import com.fbe.sym.Sym;
+import com.fbe.sym.TerminalSym;
 
 import javafx.animation.FadeTransition;
 import javafx.scene.Node;
@@ -364,6 +365,21 @@ public class Flow extends Item {
 
 	public void setOnRedraw(Runnable onRedraw) {
 		this.onRedraw = onRedraw;
+	}
+
+	public String getProcessName() {
+		if(this.getSyms().get(0) instanceof TerminalSym) {
+			return ((TerminalSym)this.getSyms().get(0)).getProcessName() ;
+		}else {
+			return null ;
+		}
+	}
+	public String[] getProcessArgNames() {
+		if(this.getSyms().get(0) instanceof TerminalSym) {
+			return ((TerminalSym)this.getSyms().get(0)).getArgNames() ;
+		}else {
+			return null ;
+		}
 	}
 
 

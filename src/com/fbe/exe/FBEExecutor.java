@@ -20,10 +20,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
@@ -85,6 +87,7 @@ public class FBEExecutor extends FBERunnable {
 		}
 		@Override public void put(String name,Object value) {
 			super.put(name, value);
+			onPutVar(name,value);
 		}
 
 	};
@@ -344,7 +347,8 @@ public class FBEExecutor extends FBERunnable {
 	}
 
 	protected Stage controlStage = null ;
-	protected static FlowPane variablePane ;
+	protected static Pane variablePane ;
+	protected static ScrollPane scroll ;
 	public void initExecutor() {
 		//--実行制御・設定ウィンドウ表示
 		try {
@@ -368,11 +372,7 @@ public class FBEExecutor extends FBERunnable {
 				finish() ;
 			});
 			this.controlStage.setOnHidden(e->{
-				System.out.println("controlStage.setOnCloseRequest");
-				if(FBEExecutor.variablePane != null) {
-					FBEApp.app.getMainSplitPane().getItems().remove(FBEExecutor.variablePane);
-					System.out.println("Delete variablePane");
-				}
+				FBEApp.app.getMainSplitPane().getItems().remove(scroll);
 			});
 			st_control.show();
 
@@ -398,15 +398,19 @@ public class FBEExecutor extends FBERunnable {
 			sp.getItems().remove(FBEExecutor.variablePane);
 			System.out.println("Delete variablePane");
 		}
-		FlowPane variablePane = new FlowPane() ;
+
+		/*
 		variablePane.setPrefWidth(250);
 		variablePane.setMinWidth(50);
-		for(int i = 0;i < 30;i++) {
-			variablePane.getChildren().addAll(new Button("B - "+i));
-		}
-		FBEExecutor.variablePane = variablePane ;
-		sp.getItems().add(variablePane);
-
+		*/
+		variablePane = new FlowPane(10,5) ;
+		scroll = new ScrollPane(variablePane) ;
+		scroll.viewportBoundsProperty().addListener(e->{
+			variablePane.setPrefWidth(scroll.viewportBoundsProperty().get().getWidth());
+			variablePane.setPrefHeight(scroll.viewportBoundsProperty().get().getHeight());
+		});
+		sp.getItems().add(scroll);
+		VarTracePane.varTracePanes.clear();
 
 		//初期化時処理
 		this.onInit();
@@ -550,6 +554,24 @@ public class FBEExecutor extends FBERunnable {
 	public void putArrVar(String name ,Object arr) {
 		this.vars.put(name, arr);
 	}
+	//変数登録時
+	protected void onPutVar(String name,Object value) {
+		//
+		if(variablePane != null) {
+			if(!VarTracePane.varTracePanes.containsKey(name) && !name.matches(".*__RETURN")) {
+				VarTracePane vtp = new VarTracePane(this,name) ;
+				VarTracePane.varTracePanes.put(name, vtp);
+				((Pane)variablePane).getChildren().add(vtp);
+			}
+			for(Map.Entry<String , Object> ent:vars.getMap().entrySet()) {
+				if( ent.getValue() != null && ent.getValue() != Boolean.TRUE && ent.getValue() != Boolean.FALSE){
+					VarTracePane.varTracePanes.get(ent.getKey()).redraw();
+				}
+			}
+		}
+	}
+
+
 	//変数取得
 	public Object getVar(String name) {
 		Map<String, Object> vars = this.vars.getMap();
