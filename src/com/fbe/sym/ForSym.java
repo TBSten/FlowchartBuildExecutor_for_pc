@@ -39,22 +39,24 @@ public class ForSym extends WhileSym {
 
 	@Override
 	public void execute(FBEExecutor exe) {
+		System.out.println(exe.executeOptions.get(this));
 		if(exe.executeOptions.get(this) == null) {
+			System.out.println("For Start");
 			exe.putVar(this.optionGet("ループ変数"),exe.eval(this.optionGet("初期値")));
 		}
 		Object con = exe.eval(this.optionGet("条件"));
 		if((boolean)con) {
 			List<FBEExecutable> exeList = exe.getExecuteList() ;
 			int idx = exeList.indexOf(this);
-			List<Sym> list = new ArrayList<>();
+			List<FBEExecutable> list = new ArrayList<>();
 			list.addAll(this.getFlow().getSyms());
 			list.add(new ForEndSym());
 			list.add(this);
 			exeList.addAll(idx+1,list);
-
+			exe.executeOptions.put(this,"already init");
+		}else {
+			exe.executeOptions.put(this,null) ;
 		}
-
-		exe.executeOptions.put(this,"前判定");
 
 
 	}
@@ -63,6 +65,7 @@ public class ForSym extends WhileSym {
 			String hen = ForSym.this.optionGet("ループ変数") ;
 			Object zou = exe.eval(ForSym.this.optionGet("増分"));
 			exe.putVar(hen, exe.eval(hen+"+"+zou));
+			ForSym.this.toExeLook();
 		}
 		@Override
 		public void draw() {}

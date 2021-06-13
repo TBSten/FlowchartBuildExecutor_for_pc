@@ -384,6 +384,8 @@ public class FBEExecutor extends FBERunnable {
 		this.status = Status.BEFORE_START ;
 
 		//必須実行準備
+		this.vars.getMap().clear();
+		VarTracePane.varTracePanes.clear();
 		this.putVar("null", null );
 		this.putVar("NULL", null );
 		this.putVar("Null", null );
@@ -559,7 +561,7 @@ public class FBEExecutor extends FBERunnable {
 		//
 		if(variablePane != null) {
 			if(!VarTracePane.varTracePanes.containsKey(name) && !name.matches(".*__RETURN")) {
-				VarTracePane vtp = new VarTracePane(this,name) ;
+				VarTracePane vtp = VarTracePane.createTracePane(this,name,value) ;
 				VarTracePane.varTracePanes.put(name, vtp);
 				((Pane)variablePane).getChildren().add(vtp);
 			}

@@ -1,5 +1,6 @@
 package com.fbe.exe;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,52 +14,83 @@ import javafx.scene.text.TextAlignment;
 
 public class VarTracePane extends AnchorPane {
 	public static final Map<String,VarTracePane> varTracePanes = new HashMap<>() ;
+	public static VarTracePane createTracePane(FBEExecutor exe,String name, Object value) {
+		try {
+			if(value != null && value.getClass().isArray()) {
+				Object w1 = Array.get(value, 0) ;
+				if(w1.getClass().isArray()) {
+					Object w2 = Array.get(w1, 0);
+					if(w2.getClass().isArray()) {
+						//3次元配列
+						return new UnvisibleTracePane(exe,name,value,"3次元配列")  ;
+					}else {
+						//2次元配列
+						return new Arr2DTracePane(exe,name,value) ;
+					}
+				}else {
+					//1次元配列
+					return new Arr1DTracePane(exe,name ,value) ;
+				}
+			}else {
+				//変数
+				return new VarTracePane(exe,name,value);
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+			return new UnvisibleTracePane(exe,name,value,"不正な型") ;
+		}
+	}
+	public static double baseSizeW = 40 ;
+	public static double baseSizeH = 40 ;
+
 
 	private String name ;
-	private FBEExecutor exe ;
-	private Label valueLb ;
-	public VarTracePane(FBEExecutor exe,String name){
+	protected FBEExecutor exe ;
+	protected BorderPane borderPane = new BorderPane() ;
+	protected Label valueLb ;
+	public VarTracePane(FBEExecutor exe,String name,Object value){
 
 		this.name = name ;
 		this.exe = exe ;
 
-		double sizeW = 40 ;
-		double sizeH = 40 ;
 		/*
-		this.setMaxWidth(sizeW);
-		this.setMinWidth(sizeW);
-		this.setPrefWidth(sizeW);
-		this.setMaxHeight(sizeH);
-		this.setMinHeight(sizeH);
-		this.setPrefHeight(sizeH);
+		this.setMaxWidth(baseSizeW);
+		this.setMinWidth(baseSizeW);
+		this.setPrefWidth(baseSizeW);
+		this.setMaxHeight(baseSizeH);
+		this.setMinHeight(baseSizeH);
+		this.setPrefHeight(baseSizeH);
 		*/
 
-		BorderPane fp = new BorderPane() ;
 			/*
-			fp.prefWidthProperty().bind(this.widthProperty());
-			fp.maxWidthProperty().bind(this.widthProperty());
-			fp.minWidthProperty().bind(this.widthProperty());
-			fp.prefHeightProperty().bind(this.heightProperty());
-			fp.maxHeightProperty().bind(this.heightProperty());
-			fp.minHeightProperty().bind(this.heightProperty());
+			borderPane.prefWidthProperty().bind(this.widthProperty());
+			borderPane.maxWidthProperty().bind(this.widthProperty());
+			borderPane.minWidthProperty().bind(this.widthProperty());
+			borderPane.prefHeightProperty().bind(this.heightProperty());
+			borderPane.maxHeightProperty().bind(this.heightProperty());
+			borderPane.minHeightProperty().bind(this.heightProperty());
 			*/
 		Label nameLb = new Label(name);
 		nameLb.setMinWidth(USE_PREF_SIZE);
 		nameLb.setMinHeight(USE_PREF_SIZE);
 		this.valueLb = new Label();
-			this.valueLb.setStyle("-fx-border-color:black;-fx-border-width:2;-fx-border-style: solid;-fx-background-color:white;");
-			this.valueLb.setFont(Font.font(20));
-			this.valueLb.setMinWidth(sizeW);
-			this.valueLb.setMinHeight(sizeH);
-			valueLb.setTextAlignment(TextAlignment.CENTER);
-			valueLb.setAlignment(Pos.CENTER);
-			valueLb.setTextFill(Color.BLACK);
-			valueLb.setWrapText(true);
-		this.getChildren().add(fp);
-		fp.setTop(nameLb);
-		fp.setCenter(valueLb);
+			toTracePaneDesign(this.valueLb) ;
+		this.getChildren().add(borderPane);
+		borderPane.setTop(nameLb);
+		borderPane.setCenter(valueLb);
 
 		varTracePanes.put(name, this) ;
+	}
+
+	public static void toTracePaneDesign(Label lb) {
+		lb.setStyle("-fx-border-color:black;-fx-border-width:1;-fx-border-style: solid;-fx-background-color:white;");
+		lb.setFont(Font.font(20));
+		lb.setMinWidth(baseSizeW);
+		lb.setMinHeight(baseSizeH);
+		lb.setTextAlignment(TextAlignment.CENTER);
+		lb.setAlignment(Pos.CENTER);
+		lb.setTextFill(Color.BLACK);
+		lb.setWrapText(true);
 	}
 
 	public void redraw() {

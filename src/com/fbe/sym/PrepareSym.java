@@ -49,7 +49,7 @@ public class PrepareSym extends Sym {
 			Object[][][] ans = new Object[args[0]][args[1]][args[2]] ;
 			for(int i = 0;i < ans.length;i++) {
 				for(int j = 0;j < ans[i].length;j++) {
-					for(int k = 0;k < ans[j].length;k++) {
+					for(int k = 0;k < ans[i][j].length;k++) {
 						ans[i][j][k] = exe.eval(optionGet("初期値"));
 					}
 				}
