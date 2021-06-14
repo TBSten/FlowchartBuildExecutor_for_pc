@@ -102,6 +102,8 @@ public class Flow extends Item {
 					root.getChildren().add(bb);
 					st.setScene(new Scene(root));
 					st.showAndWait();
+					Flow.this.redraw();
+					Flow.this.getParentFlow().redraw();
 				});
 				menu.getItems().add(mi2);
 

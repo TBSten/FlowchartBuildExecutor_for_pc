@@ -25,9 +25,8 @@ public class LoggerFBEExecutor extends FBEExecutor {
 	}
 
 	@Override public void onInit() {
-		loggerSt = new Stage();
+		loggerSt = this.createStage();
 		loggerSt.setTitle("ログ");
-		loggerSt.initOwner(getOwner());
 		loggerSt.setScene(new Scene(rootSp));
 		rootSp.viewportBoundsProperty().addListener(e->{
 			lines.setPrefSize(rootSp.getViewportBounds().getWidth(),rootSp.getViewportBounds().getHeight());

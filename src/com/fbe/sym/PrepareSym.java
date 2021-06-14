@@ -68,7 +68,8 @@ public class PrepareSym extends Sym {
 		double w = getWidth();
 		double h = getHeight() ;
 		double lw = this.itemLineWidth ;
-		double[] x = {w*0.05 , w*0.95 , w-lw/2 , w*0.95 , w*0.05 , 0+lw/2 } ;
+		double base = 0.10 ;
+		double[] x = {w*base , w*(1-base) , w-lw/2 , w*(1-base) , w*base , 0+lw/2 } ;
 		double[] y = {0+lw/2 , 0+lw/2 , h/2 , h-lw/2 , h-lw/2 , h/2 } ;
 		gc.fillPolygon(x, y, x.length);
 		gc.strokePolygon(x, y, x.length);

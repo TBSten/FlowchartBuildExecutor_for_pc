@@ -41,8 +41,8 @@ public class FBEWindow extends Application implements GettableFlow{
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.sizeToScene();
-			final int PADX = 200 ;
-			final int PADY = PADX*1/4 ;
+//			final int PADX = 200 ;
+//			final int PADY = PADX*1/4 ;
 
 			ap = FBEApp.controllers.get("Base").mainPane ;
 			ScrollPane sp = FBEApp.controllers.get("Base").mainSp ;
@@ -51,24 +51,17 @@ public class FBEWindow extends Application implements GettableFlow{
 			this.mainSplitPane = split ;
 
 
-			flowHb.setLayoutX(PADX);
-			flowHb.setLayoutY(PADY);
+			double base = 30 ;
+			flowHb.setLayoutX(base);
+			flowHb.setLayoutY(base);
 			ap.getChildren().add(flowHb);
+			sp.viewportBoundsProperty().addListener(e->{
+				flowHb.setMinSize(sp.getViewportBounds().getWidth()+base,sp.getViewportBounds().getHeight()+base);
+			});
+
 
 			Flow f = new Flow() ;
 			addFlow(f);
-
-//			RoundFlow f2 = new RoundFlow();
-//			addFlow(f2);
-
-			ap.prefWidthProperty().bind(f.widthProperty().add(sp.widthProperty().multiply(2)));
-			ap.prefHeightProperty().bind(f.heightProperty().add(sp.heightProperty().multiply(2)));
-
-			ap.prefWidthProperty().bind(flowHb.widthProperty().add(PADX*2));
-			ap.prefHeightProperty().bind(flowHb.heightProperty().add(PADY*2));
-
-
-//			flows.add(f);
 
 			/*
 			Sym[] syms = {

@@ -19,6 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 public abstract class Item extends AnchorPane {
@@ -26,9 +27,12 @@ public abstract class Item extends AnchorPane {
 	public static final Map<Long,Item> items = new LinkedHashMap<>();
 	public static long itemCnt = 0;
 
-	public static DoubleProperty baseWidthProperty = new SimpleDoubleProperty(180);
-	public static DoubleProperty baseHeightProperty = new SimpleDoubleProperty(40);
+//	public static DoubleProperty baseWidthProperty = new SimpleDoubleProperty(180);
+//	public static DoubleProperty baseHeightProperty = new SimpleDoubleProperty(40);
+	public static DoubleProperty baseWidthProperty = new SimpleDoubleProperty(160);
+	public static DoubleProperty baseHeightProperty = new SimpleDoubleProperty(42);
 	public static DoubleProperty baseLineWidthProperty = new SimpleDoubleProperty(3);
+	public static double fontSize = 10.5 ;
 
 	public static ObjectProperty<Color> baseLineColorProperty = new SimpleObjectProperty<>(Color.BLACK) ;
 	public static ObjectProperty<Color> baseFillColorProperty = new SimpleObjectProperty<>(Color.WHITE) ;
@@ -63,6 +67,8 @@ public abstract class Item extends AnchorPane {
 		this.symLabel.setWrapText(true);
 		this.symLabel.setAlignment(Pos.CENTER);
 		this.symLabel.setTextAlignment(TextAlignment.CENTER);
+
+		this.symLabel.setFont(Font.font(fontSize));
 
 		//サイズ設定
 		this.widthProperty().addListener( e -> {
@@ -207,6 +213,7 @@ public abstract class Item extends AnchorPane {
 
 	public Node getExportView() {
 //		changeUnfocusedDesign();
+		this.toBaseLook();
 		redraw();
 		WritableImage wi = this.snapshot();
 		ImageView iv = new ImageView(wi);

@@ -34,10 +34,12 @@ import jp.hishidama.eval.ExpRuleFactory;
 import jp.hishidama.eval.Expression;
 import jp.hishidama.eval.Rule;
 import jp.hishidama.eval.exp.AbstractExpression;
+import jp.hishidama.eval.exp.AndExpression;
 import jp.hishidama.eval.exp.ArrayExpression;
 import jp.hishidama.eval.exp.EqualExpression;
 import jp.hishidama.eval.exp.LetExpression;
 import jp.hishidama.eval.exp.LetPowerExpression;
+import jp.hishidama.eval.exp.OrExpression;
 import jp.hishidama.eval.exp.PowerExpression;
 import jp.hishidama.eval.lex.LexFactory;
 import jp.hishidama.eval.lex.comment.CommentLex;
@@ -217,6 +219,18 @@ public class FBEExecutor extends FBERunnable {
 			super();
 		}
 
+		@Override
+		protected AbstractExpression createAndExpression() {
+			AbstractExpression e = new AndExpression() ;
+			e.setOperator("かつ");
+			return e ;
+		}
+		@Override
+		protected AbstractExpression createOrExpression() {
+			AbstractExpression e = new OrExpression() ;
+			e.setOperator("または");
+			return e ;
+		}
 		@Override
 		protected AbstractExpression createArrayExpression() {
 			AbstractExpression e = new ArrayExpression() ;
@@ -661,6 +675,13 @@ public class FBEExecutor extends FBERunnable {
 
 	public Stage getOwner() {
 		return this.controlStage ;
+	}
+
+
+	public Stage createStage() {
+		Stage ans = new Stage();
+		ans.initOwner(getOwner());
+		return ans ;
 	}
 
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import com.fbe.exe.factory.ExecutorFactory;
 import com.fbe.exe.factory.LoggerExecutorFactory;
 import com.fbe.exe.factory.MsgBoxExecutorFactory;
+import com.fbe.exe.factory.TableExecutorFactory;
 import com.fbe.format.FBEFormat;
 import com.fbe.format.FBEFormat1_0;
 import com.fbe.format.FBEFormatApp;
@@ -145,6 +146,7 @@ public class FBEApp {
 	public static void init() {
 		ExecutorFactory.factorys.add(new MsgBoxExecutorFactory());
 		ExecutorFactory.factorys.add(new LoggerExecutorFactory());
+		ExecutorFactory.factorys.add(new TableExecutorFactory());
 
 		//SymFacotoryを登録
 		Arrow.factorys.add(new CalcSymFactory());
