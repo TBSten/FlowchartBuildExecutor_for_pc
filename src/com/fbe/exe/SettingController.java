@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 
 public class SettingController implements Initializable {
 
-	@FXML HBox hb_viewType ;
+	@FXML public HBox hb_viewType ;
 	@FXML Label lb_desc ;
 	@FXML ScrollPane sp_option ;
 	@FXML Button bt_ok ;

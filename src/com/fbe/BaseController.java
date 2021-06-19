@@ -9,18 +9,10 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 
 import com.fbe.exe.FBEExecutor;
+import com.fbe.export.JSExporter;
 import com.fbe.format.FBEFormat;
 import com.fbe.format.FBEFormatApp;
 import com.fbe.item.Flow;
-import com.fbe.item.Item;
-import com.fbe.option.Inputable;
-import com.fbe.option.InputableCheckBox;
-import com.fbe.option.InputableComboBox;
-import com.fbe.option.InputableFileChooser;
-import com.fbe.option.InputableSlider;
-import com.fbe.option.InputableSpinButton;
-import com.fbe.option.InputableTextArea;
-import com.fbe.option.InputableTextField;
 import com.fbe.option.OptionTable;
 import com.fbe.sym.TerminalSym;
 
@@ -38,21 +30,21 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 
 public class BaseController implements Initializable{
-
+/*
 	@FXML MenuItem menu_test1 ;
 	@FXML MenuItem menu_test2 ;
 	@FXML MenuItem menu_test3 ;
 	@FXML MenuItem menu_test4 ;
 	@FXML MenuItem menu_test5 ;
 	@FXML MenuItem menu_test6 ;
-
+*/
 	@FXML MenuItem menu_new ;
 	@FXML MenuItem menu_import ;
 	@FXML MenuItem menu_save ;
@@ -62,11 +54,13 @@ public class BaseController implements Initializable{
 	@FXML MenuItem menu_loopNumber ;
 	@FXML MenuItem menu_exe ;
 	@FXML MenuItem menu_java ;
+	@FXML MenuItem menu_javascript ;
 	@FXML MenuItem menu_python ;
 	@FXML MenuItem menu_check ;
 	@FXML AnchorPane mainPane ;
 	@FXML ScrollPane mainSp ;
 	@FXML SplitPane mainSplitPane ;
+
 
 	int wx = 0 ;
 
@@ -233,9 +227,32 @@ public class BaseController implements Initializable{
 			}
 
 		});
+		menu_javascript.setOnAction(e->{
+			try {
+				JSExporter ex = new JSExporter() ;
+				DirectoryChooser dc = new DirectoryChooser();
+				File iniDir = new File(FBEFormatApp.lastUpdatePath) ;
+				iniDir = iniDir.isDirectory() ? iniDir : iniDir.getParentFile() ;
+				dc.setInitialDirectory(iniDir);
+				dc.setTitle("JavaScriptのコードに変換");
+				File dir = dc.showDialog(FBEApp.window);
+				if(dir != null) {
+					ex.export(FBEApp.app.flows.get(0), FBEApp.app.flows, dir);
+					FBEApp.msgBox("書き込みが完了しました");
+				}
+			}catch(Exception exc) {
+				FBEApp.msgBox("エラーが発生しました");
+				exc.printStackTrace();
+			}
+		});
 
 
+
+
+
+/*
 		menu_test1.setOnAction(e->{
+			//ズーム
 			double w = Item.baseWidthProperty.get();
 			double h = Item.baseHeightProperty.get();
 			double lw = Item.baseLineWidthProperty.get();
@@ -246,7 +263,7 @@ public class BaseController implements Initializable{
 			System.out.println(w+"*"+h+" "+lw);
 		});
 		menu_test2.setOnAction(e->{
-			//現在のサイズよりは小さくならない？-----------------------------------------------------
+			//ズーム
 			double w = Item.baseWidthProperty.get();
 			double h = Item.baseHeightProperty.get();
 			double lw = Item.baseLineWidthProperty.get();
@@ -259,6 +276,7 @@ public class BaseController implements Initializable{
 			System.out.println(w+"*"+h+" "+lw);
 		});
 		menu_test3.setOnAction(e->{
+			//ズーム
 			double w = Item.baseWidthProperty.get();
 			double h = Item.baseHeightProperty.get();
 			double lw = Item.baseLineWidthProperty.get();
@@ -270,6 +288,7 @@ public class BaseController implements Initializable{
 		});
 
 		menu_test4.setOnAction(e->{
+			//オプションテーブル系のテスト
 			Stage st = new Stage() ;
 			VBox vb = new VBox() ;
 			Scene sc = new Scene(vb);
@@ -287,6 +306,7 @@ public class BaseController implements Initializable{
 		});
 
 		menu_test5.setOnAction(e->{
+			//オプションテーブル系のテスト
 			try {
 				Stage st = new Stage() ;
 				OptionTable table = new OptionTable();
@@ -315,6 +335,12 @@ public class BaseController implements Initializable{
 				ex.printStackTrace();
 			}
 		});
+
+		menu_test6.setOnAction(e->{
+			//カレントディレクトリの表示
+			System.out.println(new File("./").getAbsolutePath());
+		});
+*/
 
 	}
 

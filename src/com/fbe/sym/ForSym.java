@@ -39,9 +39,9 @@ public class ForSym extends WhileSym {
 
 	@Override
 	public void execute(FBEExecutor exe) {
-		System.out.println(exe.executeOptions.get(this));
+	//	System.out.println(exe.executeOptions.get(this));
 		if(exe.executeOptions.get(this) == null) {
-			System.out.println("For Start");
+		//	System.out.println("For Start");
 			exe.putVar(this.optionGet("ループ変数"),exe.eval(this.optionGet("初期値")));
 		}
 		Object con = exe.eval(this.optionGet("条件"));

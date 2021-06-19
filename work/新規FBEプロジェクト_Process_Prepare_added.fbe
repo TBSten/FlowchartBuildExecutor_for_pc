@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<FBE>
+    <Flow round="false" tag="">
+        <Terminal return="" text="" type="はじめ"/>
+        <Prepare counts="10" start="0" target="ARR" type="1次元配列"/>
+        <For condition="CNT &lt; ARR.length" start="0" up="1" variable="CNT">
+            <Flow round="true" tag="">
+                <Calc formula="2^CNT" variable="ARR[CNT]"/>
+                <Process name="表示(ARR[CNT])"/>
+            </Flow>
+        </For>
+        <Terminal return="" text="" type="おわり"/>
+    </Flow>
+    <Flow round="false" tag="">
+        <Terminal return="" text="表示(item)" type="はじめ"/>
+        <Data target="&quot;内容：&quot;+item" type="出力"/>
+        <Terminal return="" text="" type="おわり"/>
+    </Flow>
+</FBE>

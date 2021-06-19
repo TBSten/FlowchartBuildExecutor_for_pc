@@ -2,9 +2,13 @@ package com.fbe;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fbe.exe.factory.ExecutorFactory;
 import com.fbe.exe.factory.LoggerExecutorFactory;
@@ -28,11 +32,8 @@ import com.fbe.sym.factory.WhileSymFactory;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.text.Font;
-import javafx.stage.Modality;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 
@@ -132,6 +133,7 @@ public class FBEApp {
 
 	public static void msgBox(String msg) {
 		Platform.runLater(()->{
+			/*
 			Stage st = new Stage() ;
 			st.initOwner(FBEApp.window);
 			st.initModality(Modality.WINDOW_MODAL);
@@ -139,11 +141,17 @@ public class FBEApp {
 			root.setFont(Font.font(25));
 			root.setPadding(new Insets(30,10,30,10));
 			st.setScene(new Scene(root));
-			st.show();
+			st.showAndWait();
+			*/
+			Alert alert = new Alert(Alert.AlertType.INFORMATION,msg);
+			alert.showAndWait()
+		      .filter(response -> response == ButtonType.OK)
+		      .ifPresent(response -> {});
 		});
 	}
 
 	public static void init() {
+
 		ExecutorFactory.factorys.add(new MsgBoxExecutorFactory());
 		ExecutorFactory.factorys.add(new LoggerExecutorFactory());
 		ExecutorFactory.factorys.add(new TableExecutorFactory());
@@ -168,7 +176,28 @@ public class FBEApp {
 		}
 		FBEFormatApp.defaultFormat = formats[0] ;
 
+		boolean flg = true ;
+		String[] needDirs = {"./work","./file","./export"} ;
+		try {
+			for(String dir:needDirs) {
+				boolean dirNotExists = !(Files.exists(Paths.get(dir)) && Files.isDirectory(Paths.get(dir))) ;
+				if(dirNotExists && flg) {
+					FBEApp.msgBox("初期化します");
+					flg = false ;
+				}
+				if(dirNotExists) Files.createDirectory(Paths.get(dir));
+			}
+		}catch(Exception exc) {
+			FBEApp.msgBox("初期化に失敗しました。エラーが発生する可能性があります。");
+			exc.printStackTrace();
+		}
+
 	}
+
+	public static Matcher matcher(String regex, String str) {
+		return Pattern.compile(regex).matcher(str) ;
+	}
+
 
 }
 

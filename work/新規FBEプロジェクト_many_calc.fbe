@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<FBE>
+    <Flow round="false" tag="">
+        <Terminal return="" text="" type="はじめ"/>
+        <Calc formula="0" variable="v1"/>
+        <Calc formula="0" variable="v2"/>
+        <Calc formula="0" variable="v3"/>
+        <Calc formula="0" variable="v4"/>
+        <Terminal return="" text="" type="おわり"/>
+    </Flow>
+</FBE>

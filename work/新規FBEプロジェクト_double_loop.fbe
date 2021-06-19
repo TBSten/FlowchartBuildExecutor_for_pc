@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<FBE>
+    <Flow round="false" tag="">
+        <Terminal return="" text="" type="はじめ"/>
+        <For condition="y &lt; 10" start="0" up="1" variable="y">
+            <Flow round="true" tag="">
+                <For condition="x &lt; 3" start="0" up="1" variable="x">
+                    <Flow round="true" tag=""/>
+                </For>
+            </Flow>
+        </For>
+        <Terminal return="" text="" type="おわり"/>
+    </Flow>
+</FBE>

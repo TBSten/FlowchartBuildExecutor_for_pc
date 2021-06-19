@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<FBE>
+    <Flow round="false" tag="">
+        <Terminal return="" text="" type="はじめ"/>
+        <Prepare counts="10" start="0" target="ARR" type="1次元配列"/>
+        <Calc formula="99" variable="ARR[0]"/>
+        <Data target="ARR[0]" type="出力"/>
+        <Terminal return="" text="" type="おわり"/>
+    </Flow>
+</FBE>

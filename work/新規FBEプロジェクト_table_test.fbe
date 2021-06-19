@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<FBE>
+    <Flow round="false" tag="">
+        <Terminal return="" text="" type="はじめ"/>
+        <For condition="CNT &lt; 10" start="0" up="1" variable="CNT">
+            <Flow round="true" tag="">
+                <Data target="CNT,CNT+1,CNT+2" type="出力"/>
+            </Flow>
+        </For>
+        <Data target="&quot;OK&quot;" type="出力"/>
+        <Terminal return="" text="" type="おわり"/>
+    </Flow>
+</FBE>

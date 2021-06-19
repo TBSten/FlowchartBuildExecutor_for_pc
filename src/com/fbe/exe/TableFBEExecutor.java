@@ -22,6 +22,7 @@ public class TableFBEExecutor extends FBEExecutor {
 	protected String[] heads ;
 	protected int rowCnt = 0 ;
 	protected boolean isBorder ;
+	protected String align = "RIGHT" ;
 
 	public TableFBEExecutor(Flow mainFlow, List<Flow> flows,String[] heads) {
 		super(mainFlow, flows);
@@ -43,6 +44,8 @@ public class TableFBEExecutor extends FBEExecutor {
 			Label lb = lbs[i] ;
 			lb.setStyle("-fx-border-color:black;-fx-border-width:0 1 3 1;");
 			lb.setPadding(new Insets(5,0,5,0));
+			lb.setTextAlignment(TextAlignment.CENTER);
+			lb.setAlignment(Pos.CENTER);
 		}
 		ScrollPane root = new ScrollPane(gp) ;
 		root.viewportBoundsProperty().addListener(e->{
@@ -64,8 +67,6 @@ public class TableFBEExecutor extends FBEExecutor {
 		Label[] lbs = addMultiColumnLine(arr);
 		if(arr.length != this.heads.length) {
 			for(Label lb:lbs) {
-				lb.setAlignment(Pos.BASELINE_LEFT);
-				lb.setTextAlignment(TextAlignment.LEFT);
 				if(this.isBorder()) {
 					lb.setStyle(lb.getStyle()+";-fx-border-width:0;");
 				}
@@ -99,16 +100,24 @@ public class TableFBEExecutor extends FBEExecutor {
 		if(this.isBorder()) {
 			lb.setStyle("-fx-border-color:black;-fx-border-width:1 1 1 1;");
 		}
+		if(this.align.equals("LEFT")) {
+			lb.setAlignment(Pos.BASELINE_LEFT);
+			lb.setTextAlignment(TextAlignment.LEFT);
+		}else if(this.align.equals("CENTER")) {
+			lb.setAlignment(Pos.BASELINE_CENTER);
+			lb.setTextAlignment(TextAlignment.CENTER);
+		}else if(this.align.equals("RIGHT")) {
+			lb.setAlignment(Pos.BASELINE_RIGHT);
+			lb.setTextAlignment(TextAlignment.RIGHT);
+		}
 		lb.setMaxWidth(Double.MAX_VALUE);
-		lb.setTextAlignment(TextAlignment.CENTER);
-		lb.setAlignment(Pos.CENTER);
 		GridPane.setFillWidth(lb, true);
 		GridPane.setFillHeight(lb, true);
 		GridPane.setValignment(lb,VPos.CENTER );
 		GridPane.setVgrow(lb, Priority.ALWAYS);
 		GridPane.setHalignment(lb,HPos.CENTER );
 		GridPane.setHgrow(lb, Priority.ALWAYS);
-		lb.setMinWidth(70);
+		lb.setMinWidth(50);
 	}
 
 	public String[] getHeads() {
@@ -122,6 +131,12 @@ public class TableFBEExecutor extends FBEExecutor {
 	}
 	public void setIsBorder(boolean border) {
 		this.isBorder = border;
+	}
+	public String getAlign() {
+		return align;
+	}
+	public void setAlign(String align) {
+		this.align = align;
 	}
 
 }

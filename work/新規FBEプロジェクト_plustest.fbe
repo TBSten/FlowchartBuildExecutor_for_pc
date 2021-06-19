@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<FBE>
+    <Flow round="false" tag="">
+        <Terminal return="" text="" type="はじめ"/>
+        <Calc formula="0" variable="v1"/>
+        <Calc formula="&quot;1&quot;" variable="v2"/>
+        <Data target="v1+v2" type="出力"/>
+        <Terminal return="" text="" type="おわり"/>
+    </Flow>
+</FBE>

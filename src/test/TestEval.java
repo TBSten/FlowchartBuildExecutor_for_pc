@@ -14,11 +14,35 @@ import jp.hishidama.eval.lex.LexFactory;
 import jp.hishidama.eval.lex.comment.CommentLex;
 import jp.hishidama.eval.lex.comment.LineComment;
 import jp.hishidama.eval.oper.JavaExOperator;
+import jp.hishidama.eval.ref.RefactorVarName;
 import jp.hishidama.eval.var.MapVariable;
 
 public class TestEval {
 
 	public static void main(String[] args) {
+		MapVariable<String,Object> vars = new MapVariable<>(String.class,Object.class) ;
+		vars.put("v1", 0);
+		vars.put("v2", 0);
+		vars.put("v3", 0);
+		vars.put("合計", 0);
+		String[] formulas = {"v1+v2","v3","合計+v3"} ;
+		for(String fo:formulas) {
+			Rule rule = ExpRuleFactory.getJavaRule();
+			Expression exp = rule.parse(fo);
+			exp.setVariable(vars);
+
+			for(String key:vars.getMap().keySet()) {
+				System.out.println("  "+key);
+			}
+			System.out.println("変更前：" + exp.toString());
+			exp.refactorName(new RefactorVarName(null, "合計", "v4"));	//変数名bbをfooに変更
+			System.out.println("変更後：" + exp.toString());
+			for(String key:vars.getMap().keySet()) {
+				System.out.println("  "+key);
+			}
+			System.out.println("=================");
+		}
+
 		String regex = "\\s*\\[(.*)\\]\\s*" ;
 		String formula = "  [10,[20,[80,90],30],40]   " ;
 		/*

@@ -49,17 +49,6 @@
                             <MenuItem fx:id="menu_check" mnemonicParsing="false" text="フローチャートをチェックする" />
                           </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="&lt; DEVELOP &gt;">
-                           <items>
-                              <MenuItem fx:id="menu_test1" mnemonicParsing="false" text="test1" />
-                              <MenuItem fx:id="menu_test2" mnemonicParsing="false" text="test2" />
-                              <MenuItem fx:id="menu_test3" mnemonicParsing="false" text="test3" />
-                              <MenuItem fx:id="menu_test4" mnemonicParsing="false" text="test4" />
-                              <MenuItem fx:id="menu_test5" mnemonicParsing="false" text="test5" />
-                              <MenuItem fx:id="menu_test6" mnemonicParsing="false" text="test6" />
-                              <MenuItem fx:id="menu_test7" mnemonicParsing="false" text="test7" />
-                           </items>
-                        </Menu>
                     </menus>
                   </MenuBar>
                </children>

@@ -30,7 +30,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import jp.hishidama.eval.ExpRuleFactory;
 import jp.hishidama.eval.Expression;
 import jp.hishidama.eval.Rule;
 import jp.hishidama.eval.exp.AbstractExpression;
@@ -45,6 +44,7 @@ import jp.hishidama.eval.lex.LexFactory;
 import jp.hishidama.eval.lex.comment.CommentLex;
 import jp.hishidama.eval.lex.comment.LineComment;
 import jp.hishidama.eval.oper.JavaExOperator;
+import jp.hishidama.eval.rule.JavaRuleFactory;
 import jp.hishidama.eval.var.MapVariable;
 
 /**
@@ -67,7 +67,6 @@ public class FBEExecutor extends FBERunnable {
 		ERROR_FINISHED(true),	//エラーで終了時
 		WARN_FINISHED(true);		//警告付き終了時（停止ボタンで停止など）
 
-
 		boolean finish = false ;
 		Status(boolean finish){
 			this.finish = finish ;
@@ -77,11 +76,12 @@ public class FBEExecutor extends FBERunnable {
 	public static ExecutorFactory<?> factory = null ;
 	public static FBEExecutor runningExecutor = null ;
 
+
 	//変数一覧
 //	protected Map<String,Object> vars = new LinkedHashMap<>();
 	protected MapVariable<String,Object> vars = new MapVariable<>(String.class,Object.class){
 		@Override public Object getFieldValue(Object obj , String objName,String field,AbstractExpression exp) {
-			System.out.println("  getFieldValue ::"+obj+" "+objName+" "+field+" "+exp);
+		//	System.out.println("  getFieldValue ::"+obj+" "+objName+" "+field+" "+exp);
 			if(obj.getClass().isArray() && field.matches("length|len|LENGTH|LEN|")) {
 				return java.lang.reflect.Array.getLength(obj) ;
 			}
@@ -111,9 +111,9 @@ public class FBEExecutor extends FBERunnable {
 		Pattern p = Pattern.compile(regex) ;
 		Matcher m = p.matcher(formula);
 		if(m.matches()) {
-			System.out.println("配列");
+		//	System.out.println("配列");
 			String f = m.group(1) ;
-			System.out.println(f);
+		//	System.out.println(f);
 			//,で分割
 			List<String> ans = new ArrayList<>();
 			int kakko = 0 ;
@@ -206,6 +206,7 @@ public class FBEExecutor extends FBERunnable {
 		public Object string(String word, AbstractExpression exp) {
 			return word;
 		}
+
 		//数値はすべてdoubleで返す
 		public Object number(String word, AbstractExpression exp) {
 			return Double.parseDouble(word) ;
@@ -213,12 +214,13 @@ public class FBEExecutor extends FBERunnable {
 
 	}
 
-	private static class FBERuleFactory extends ExpRuleFactory {
+//	private static class FBERuleFactory extends ExpRuleFactory {
+	private static class FBERuleFactory extends JavaRuleFactory {
 
 		public FBERuleFactory() {
 			super();
-		}
 
+		}
 		@Override
 		protected AbstractExpression createAndExpression() {
 			AbstractExpression e = new AndExpression() ;
@@ -304,7 +306,7 @@ public class FBEExecutor extends FBERunnable {
 	}
 	//プログラム実行中の表示
 	public void print(String formula,Object...args) {
-		System.out.println("print:"+formula+","+args);
+	//	System.out.println("print:"+formula+","+args);
 		String data = String.valueOf(this.eval(formula)) ;
 		this.msgBox(data);
 	}
@@ -412,7 +414,7 @@ public class FBEExecutor extends FBERunnable {
 		SplitPane sp = FBEApp.app.getMainSplitPane() ;
 		if(FBEExecutor.variablePane != null) {
 			sp.getItems().remove(FBEExecutor.variablePane);
-			System.out.println("Delete variablePane");
+		//	System.out.println("Delete variablePane");
 		}
 
 		/*
@@ -441,7 +443,7 @@ public class FBEExecutor extends FBERunnable {
 			FBEExecutable s =  executeList.get(0);
 			if(s != null) {
 				try {
-					System.out.println("実行:"+s);
+				//	System.out.println("実行:"+s);
 					if(beforeExeSym != null) {
 					beforeExeSym.toBaseLook();
 						beforeExeSym.redraw();
@@ -451,7 +453,7 @@ public class FBEExecutor extends FBERunnable {
 					beforeExeSym = s ;
 					s.execute(this);
 					executeList.remove(s);
-					System.out.println("実行終了:"+s);
+				//	System.out.println("実行終了:"+s);
 					if(executeList.size() <= 0) {
 						this.msgBox("実行が終了しました");
 						this.finish();
@@ -520,7 +522,7 @@ public class FBEExecutor extends FBERunnable {
 
 	//メッセージボックスで表示
 	protected void msgBox(String data) {
-		System.out.println("表示:"+data);
+	//	System.out.println("表示:"+data);
 		Stage st = new Stage();
 		st.setTitle("データの表示");
 		st.initOwner(getOwner());
@@ -592,8 +594,8 @@ public class FBEExecutor extends FBERunnable {
 	public Object getVar(String name) {
 		Map<String, Object> vars = this.vars.getMap();
 		if(!vars.containsKey(name) ) {
-			System.out.println("non contains var :"+name);
-			System.out.println("  contains test :"+vars.containsKey(name));
+		//	System.out.println("non contains var :"+name);
+		//	System.out.println("  contains test :"+vars.containsKey(name));
 			return null ;
 		}
 		return vars.get(name);
