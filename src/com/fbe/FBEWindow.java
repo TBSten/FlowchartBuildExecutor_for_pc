@@ -1,11 +1,10 @@
 package com.fbe;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.fbe.item.Flow;
 import com.fbe.item.GettableFlow;
-import com.fbe.sym.Sym;
-import com.fbe.sym.TerminalSym;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -26,7 +25,7 @@ public class FBEWindow extends Application implements GettableFlow{
 	/**
 	 * 最初と最後が必ずTerminalSymの1処理（関数）を表すフローの集まり。実行時はflows.get(0)を実行する。
 	 */
-	public final ArrayList<Flow> flows = new ArrayList<>();
+	public final List<Flow> flows = new ArrayList<>();
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -59,19 +58,10 @@ public class FBEWindow extends Application implements GettableFlow{
 				flowHb.setMinSize(sp.getViewportBounds().getWidth()+base,sp.getViewportBounds().getHeight()+base);
 			});
 
-
+/*
 			Flow f = new Flow() ;
 			addFlow(f);
 
-			/*
-			Sym[] syms = {
-					new TerminalSym(TerminalSym.Type.START),
-					new DataSym("キーボード入力","変数") ,
-					new CalcSym("変数*3","変数") ,
-					new DataSym("ダイアログで表示","\"3倍は\"+変数") ,
-					new TerminalSym(TerminalSym.Type.END),
-			};
-			*/
 			Sym[] syms = {
 					new TerminalSym(TerminalSym.Type.START),
 					new TerminalSym(TerminalSym.Type.END),
@@ -79,12 +69,18 @@ public class FBEWindow extends Application implements GettableFlow{
 			for(int i = 0;i < syms.length;i++) {
 				f.addSym(i, syms[i]);
 			}
+
+*/
+
+
 //			syms[0].requestFocus();
 
 
 			primaryStage.show();
 
 			primaryStage.setOnHidden(e->{
+				FBEApp.shutdown();
+
 				System.out.printf("app end [startTime=%d]\n",System.currentTimeMillis()) ;
 			});
 

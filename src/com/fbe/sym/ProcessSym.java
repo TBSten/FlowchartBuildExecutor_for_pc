@@ -1,6 +1,7 @@
 package com.fbe.sym;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +15,25 @@ import com.fbe.option.OptionTable;
 import javafx.scene.canvas.GraphicsContext;
 
 public class ProcessSym extends Sym {
+
+	public static List<Flow> defaultFunctions = new ArrayList<>();
+	static {
+		//sleepF
+		Flow sleepF = new Flow() ;
+		TerminalSym sleepTS = new TerminalSym() {
+			@Override public void execute(FBEExecutor exe) {
+				super.execute(exe);
+				System.out.println("sleep :"+exe.getVar("_sleeptime"));
+				FBEApp.sleep((long)Double.parseDouble(String.valueOf(exe.getVar("_sleeptime"))));
+			}
+		} ;
+		sleepTS.optionPut("タイプ", "はじめ");
+		sleepTS.optionPut("テキスト", "sleep(_sleeptime)");
+		sleepF.addSym(sleepTS);
+		defaultFunctions.add(sleepF);
+
+
+	}
 
 	public ProcessSym(String processName) {
 		super();
@@ -31,34 +51,33 @@ public class ProcessSym extends Sym {
 			name = m.group(1);
 			args = m.group(2).split(",");
 		}
+		boolean flg = false ;
 		final String[] ARGS = args ;
-		for(Flow flow : FBEApp.app.flows) {
+		List<Flow> flows = FBEApp.app.flows ;
+		flows.addAll(ProcessSym.defaultFunctions);
+		for(Flow flow : flows) {
 			if(flow.getSyms().get(0) instanceof TerminalSym) {
 				TerminalSym first = (TerminalSym) flow.getSyms().get(0) ;
+				System.out.println(first+">>"+first.getProcessName()+"("+Arrays.toString(first.getArgNames())+")");
 				if(name.equals(first.getProcessName())) {
 					List<FBEExecutable> list = new ArrayList<>() ;
-/*
-					list.add(ex->{
-						String[] argNames = first.getArgNames() ;
-						for(int i = 0;i < argNames.length;i++) {
-
-							ex.putVar(argNames[i], ex.eval(ARGS[i]));
-						}
-					});
-
-*/
 					String[] argNames = first.getArgNames() ;
 					for(int i = 0;i < argNames.length;i++) {
 						exe.putVar(argNames[i].replace(" ", ""), exe.eval(ARGS[i]));
-						System.out.println(argNames[i].replace(" ", "")+" :: "+exe.eval(ARGS[i]));
+					//	System.out.println(argNames[i].replace(" ", "")+" :: "+exe.eval(ARGS[i]));
 					}
 					list.addAll(flow.getSyms());
 					exe.getExecuteList().addAll(exeList.indexOf(this)+1 , list);
 					System.out.println(first.getProcessName()+"を実行");
+					flg = true ;
 					break ;
 				}
 			}
 		}
+		if(!flg) {
+			System.out.println("ProcessSymで処理が見つからなかった");
+		}
+
 	}
 
 	@Override public void reflectOption() {

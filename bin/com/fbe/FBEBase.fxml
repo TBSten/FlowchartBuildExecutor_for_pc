@@ -35,6 +35,7 @@
                       <Menu mnemonicParsing="false" text="実行">
                         <items>
                           <MenuItem fx:id="menu_exe" mnemonicParsing="false" text="実行" />
+                              <MenuItem fx:id="menu_template" mnemonicParsing="false" text="配列テンプレートの作成" />
                         </items>
                       </Menu>
                       <Menu mnemonicParsing="false" text="コード変換">

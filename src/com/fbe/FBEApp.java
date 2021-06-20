@@ -144,6 +144,7 @@ public class FBEApp {
 			st.setScene(new Scene(root));
 			st.showAndWait();
 			*/
+			System.out.println("FBEApp.msgBox :"+msg);
 			Alert alert = new Alert(Alert.AlertType.INFORMATION,msg);
 			alert.showAndWait()
 		      .filter(response -> response == ButtonType.OK)
@@ -152,6 +153,7 @@ public class FBEApp {
 	}
 
 	public static void init() {
+		SaveApp.init();
 
 		ExecutorFactory.factorys.add(new MsgBoxExecutorFactory());
 		ExecutorFactory.factorys.add(new LoggerExecutorFactory());
@@ -193,7 +195,10 @@ public class FBEApp {
 			FBEApp.msgBox("初期化に失敗しました。エラーが発生する可能性があります。");
 			exc.printStackTrace();
 		}
+	}
 
+	public static void shutdown() {
+		SaveApp.shutdown();
 	}
 
 	public static Matcher matcher(String regex, String str) {

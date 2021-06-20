@@ -53,6 +53,7 @@ public class BaseController implements Initializable{
 	@FXML MenuItem menu_newFlow ;
 	@FXML MenuItem menu_loopNumber ;
 	@FXML MenuItem menu_exe ;
+	@FXML MenuItem menu_template ;
 	@FXML MenuItem menu_java ;
 	@FXML MenuItem menu_javascript ;
 	@FXML MenuItem menu_python ;
@@ -245,8 +246,9 @@ public class BaseController implements Initializable{
 				exc.printStackTrace();
 			}
 		});
-
-
+		menu_template.setOnAction(e->{
+			//配列テンプレートを作成・管理する画面を表示
+		});
 
 
 

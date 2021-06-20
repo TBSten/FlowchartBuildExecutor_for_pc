@@ -2,6 +2,7 @@ package com.fbe.item;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.fbe.FBEApp;
 import com.fbe.sym.Sym;
@@ -72,7 +73,12 @@ public class Flow extends Item {
 				ContextMenu menu = new ContextMenu() ;
 				MenuItem mi1 = new MenuItem("フローを削除する");
 				mi1.setOnAction(ev->{
-					this.disable();
+					Alert al = new Alert(AlertType.CONFIRMATION) ;
+					al.setContentText("フローを削除してもいいですか？水色で囲われている範囲のすべてが削除されます。");
+					Optional<ButtonType> result = al.showAndWait();
+					if(result.get() == ButtonType.OK) {
+						this.disable();
+					}
 				});
 				if(this.isAbleToDisable()) {
 					menu.getItems().addAll(mi1);
@@ -90,7 +96,9 @@ public class Flow extends Item {
 					Button okB = new Button("OK");
 					Button canB = new Button("キャンセル");
 					okB.setOnAction(eve->{
-						this.setTag(tf.getText());
+						if(tf.getText() != null) {
+							this.setTag(tf.getText());
+						}
 						st.hide();
 						this.redraw();
 					});
@@ -103,7 +111,9 @@ public class Flow extends Item {
 					st.setScene(new Scene(root));
 					st.showAndWait();
 					Flow.this.redraw();
-					Flow.this.getParentFlow().redraw();
+					if(Flow.this.getParentFlow() != null) {
+						Flow.this.getParentFlow().redraw();
+					}
 				});
 				menu.getItems().add(mi2);
 

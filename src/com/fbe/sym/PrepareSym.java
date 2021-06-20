@@ -1,6 +1,8 @@
 package com.fbe.sym;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.fbe.exe.FBEExecutor;
 import com.fbe.option.OptionTable;
@@ -8,6 +10,7 @@ import com.fbe.option.OptionTable;
 import javafx.scene.canvas.GraphicsContext;
 
 public class PrepareSym extends Sym {
+	public static Map<String,ArrayTemplate> templates = new LinkedHashMap<>() ;
 
 	public PrepareSym(String type,String counts,String target,String start) {
 		this.optionPut("タイプ", "準備するものの種類を指定します。", OptionTable.Type.COMBOBOX, type);

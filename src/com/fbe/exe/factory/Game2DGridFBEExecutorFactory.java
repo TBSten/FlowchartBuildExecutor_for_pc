@@ -30,6 +30,13 @@ public class Game2DGridFBEExecutorFactory extends ExecutorFactory<Game2DGridFBEE
 	@Override
 	public FBEExecutor createExecutor(Flow mainFlow, List<Flow> flows) {
 		Game2DGridFBEExecutor ans = new Game2DGridFBEExecutor(mainFlow,flows) ;
+		if("1つずつ実行".equals(this.options.get("実行タイプ"))) {
+			ans.setExecuteAll(false);
+		}else if("すべて実行する".equals(this.options.get("実行タイプ"))){
+			ans.setExecuteAll(true);
+		}else {
+			//エラー
+		}
 		ans.setArrName(this.options.get("配列名")) ;
 		ans.setRowCnt(Integer.parseInt(this.options.get("配列の縦幅")));
 		ans.setColumnCnt(Integer.parseInt(this.options.get("配列の横幅")));

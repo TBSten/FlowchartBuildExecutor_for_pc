@@ -1,19 +1,23 @@
 package com.fbe.exe;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fbe.item.Flow;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Game2DGridFBEExecutor extends FBEExecutor {
@@ -23,10 +27,25 @@ public class Game2DGridFBEExecutor extends FBEExecutor {
 	String initValueFormula ;
 	Map<String,String> outputRules = new HashMap<>() ;
 
-	Label[][] labels ;
+	private Label[][] labels ;
+	private FlowPane fp ;
+	private Map<String,Label> status = new LinkedHashMap<>();
+
 
 	public Game2DGridFBEExecutor(Flow mainFlow, List<Flow> flows) {
 		super(mainFlow, flows);
+	}
+
+	private class LbClickListener implements EventHandler<MouseEvent>{
+		int x,y ;
+		LbClickListener(int x,int y){
+			this.x = x ;
+			this.y = y ;
+		}
+		@Override public void handle(MouseEvent arg0) {
+			putVar("mouseX",this.x);
+			putVar("mouseY",this.y);
+		}
 	}
 	@Override
 	public void onInit() {
@@ -36,7 +55,7 @@ public class Game2DGridFBEExecutor extends FBEExecutor {
 		gp.setAlignment(Pos.CENTER);
 		gp.setStyle("-fx-background-color:black;-fx-border-color:white;-fx-border-width:2;");
 		root.setCenter(gp);
-		FlowPane fp = new FlowPane() ;
+		fp = new FlowPane(10,5) ;
 		fp.setMinHeight(100);
 		root.setBottom(fp);
 		labels = new Label[rowCnt][columnCnt] ;
@@ -54,11 +73,15 @@ public class Game2DGridFBEExecutor extends FBEExecutor {
 				lb.setTextFill(Color.WHITE);
 				lb.setAlignment(Pos.CENTER);
 				lb.setPadding(new Insets(3,3,3,3));
+				lb.setOnMouseClicked(new LbClickListener(x,y));
 				labels[y][x] = lb ;
 			}
 		}
 		st.setScene(new Scene(root));
 		this.putArrVar(arrName, arr);
+		this.putVar("mouseX", -1);
+		this.putVar("mouseY", -1);
+
 		st.show();
 	}
 	@Override
@@ -83,6 +106,35 @@ public class Game2DGridFBEExecutor extends FBEExecutor {
 			return valueStr ;
 		}
 	}
+	@Override public void print(String formula,Object...args) {
+		if(formula.replace("\\s", "").equals("")) {
+			//更新
+		}else {
+			String[] arg = formula.split(",");
+			for(String str:arg) {
+				putStatus(str,String.valueOf(eval(str)));
+			}
+		}
+	}
+	public void putStatus(String name,String text) {
+		if(!this.status.containsKey(name)) {
+			Label lb = new Label(text) ;
+			lb.setAlignment(Pos.CENTER);
+			lb.setFont(Font.font(30));
+			this.status.put(name, lb);
+			Label titleLb = new Label(name);
+			titleLb.setAlignment(Pos.CENTER);
+			titleLb.setFont(Font.font(20));
+			BorderPane bp = new BorderPane();
+			bp.setStyle("-fx-border-color:black;-fx-border-width:5;-fx-background-color:white;");
+			bp.setCenter(lb);
+			bp.setLeft(titleLb);
+			fp.getChildren().add(bp);
+		}else {
+			this.status.get(name).setText(text);
+		}
+	}
+
 	public void outputOnStatusZone(String name,Object value) {
 	}
 	public String getArrName() {
@@ -115,15 +167,6 @@ public class Game2DGridFBEExecutor extends FBEExecutor {
 	public void setOutputRules(Map<String, String> outputRules) {
 		this.outputRules = outputRules;
 	}
-
-	/*
-	 * onInit()						初期化時
-	 * onPutVar(name,value)			変数代入時
-	 * print(value)					出力時
-	 * input(value)					入力時
-	 * onDiscard()					終了時
-	 */
-
 
 
 
