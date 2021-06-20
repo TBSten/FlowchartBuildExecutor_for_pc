@@ -64,7 +64,7 @@ public abstract class ExecutorFactory<E extends FBEExecutor> extends Button {
 		for(Map.Entry<String, String> ent:options.entrySet()) {
 			try {
 				String name = ent.getKey();
-				String value = ent.getValue();
+				Object value = ent.getValue();
 				String desc = this.optionDescriptions.get(name);
 				OptionTable.Type type = this.optionTypes.get(name);
 				List<String> list = this.optionValueLists.get(name) ;

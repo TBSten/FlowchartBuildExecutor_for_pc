@@ -355,7 +355,7 @@ public class Flow extends Item {
 	}
 
 	@Override public void toBaseLook() {
-		this.setStyle("-fx-border-color:#00000000;");
+		this.setStyle("-fx-border-color:#00000000;-fx-border-width:3;");
 	}
 	@Override public void toSelectLook() {
 		this.setStyle("-fx-border-color:cyan;");

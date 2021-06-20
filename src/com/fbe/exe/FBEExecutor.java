@@ -57,6 +57,14 @@ import jp.hishidama.eval.var.MapVariable;
  * このクラスを継承してオリジナルの出力方法（例えば事前に設定された配列を使って2D表示をするなど）を実装する。
  * 後々各表示タイプをFactory(extends Button)で生成できるようにする。→設定ウィンドウで選択できる。
  *
+ * イベントドリブンなメソッド（サブクラスでオーバーライドすることでその時に実行できる）
+ * onInit()						初期化時
+ * onPutVar(name,value)			変数代入時
+ * print(value)					出力時
+ * input(value)					入力時
+ * onDiscard()					終了時
+ *
+ * サブクラスでの新規ウィンドウ作成はcreateStageを推奨
  */
 public class FBEExecutor extends FBERunnable {
 	public enum Status{
@@ -304,6 +312,9 @@ public class FBEExecutor extends FBERunnable {
 	//Executor終了時の挙動
 	public void onDiscard() {
 	}
+	//executable実行後
+	public void onExecuted(FBEExecutable executable) {
+	}
 	//プログラム実行中の表示
 	public void print(String formula,Object...args) {
 	//	System.out.println("print:"+formula+","+args);
@@ -470,6 +481,7 @@ public class FBEExecutor extends FBERunnable {
 					t.printStackTrace();
 					this.msgBox("エラーが発生しました");
 				}
+				this.onExecuted(s);
 			}
 			if(this.status.finish) {
 				//処理終了

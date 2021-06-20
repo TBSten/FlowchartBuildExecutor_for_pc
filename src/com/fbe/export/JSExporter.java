@@ -179,7 +179,9 @@ public class JSExporter extends FBEExporter{
 				String valiVar = this.toValidVarName(sym.optionGet("対象")) ;
 				this.addLine(this.letExpression(valiVar, "input() ;"));
 			}else if(sym.optionGet("タイプ").equals("出力")) {
-				String valiVar = this.toValidVarName(sym.optionGet("対象")) ;
+				System.out.println(" :: output :"+sym.optionGet("対象"));
+				String valiVar = this.toValidFormula(sym.optionGet("対象")) ;
+				System.out.println("    output :"+valiVar);
 				this.addLine(String.format("output(%s) ;", valiVar));
 			}else {
 				throw new FBEExportException("データ記号のタイプに対応していません："+sym.optionGet("タイプ")) ;
@@ -330,7 +332,7 @@ public class JSExporter extends FBEExporter{
 			en += String.format("|\\Q%s\\E", e) ;
 		}
 		String[] work1 = formula.split(en);
-		System.out.println(Arrays.toString(work1));
+//		System.out.println(Arrays.toString(work1));
 		String[] work2 = new String[work1.length];
 		for(int i = 0;i < work1.length;i++) {
 			if(!work1[i].equals("")) {

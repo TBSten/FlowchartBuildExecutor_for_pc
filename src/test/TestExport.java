@@ -19,7 +19,7 @@ public class TestExport {
 				"bcd < 30",
 				"ふつう または いいね",
 				"ふつう かつ いいね",
-				"ふつう = いいね"
+				"ふつう = いいね,CNT < 10 ,100+305"
 			} ;
 		for(String f :fs) {
 			ex.init();

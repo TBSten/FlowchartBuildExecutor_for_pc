@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fbe.exe.factory.ExecutorFactory;
+import com.fbe.exe.factory.Game2DGridFBEExecutorFactory;
 import com.fbe.exe.factory.LoggerExecutorFactory;
 import com.fbe.exe.factory.MsgBoxExecutorFactory;
 import com.fbe.exe.factory.TableExecutorFactory;
@@ -155,6 +156,7 @@ public class FBEApp {
 		ExecutorFactory.factorys.add(new MsgBoxExecutorFactory());
 		ExecutorFactory.factorys.add(new LoggerExecutorFactory());
 		ExecutorFactory.factorys.add(new TableExecutorFactory());
+		ExecutorFactory.factorys.add(new Game2DGridFBEExecutorFactory());
 
 		//SymFacotoryを登録
 		Arrow.factorys.add(new CalcSymFactory());
