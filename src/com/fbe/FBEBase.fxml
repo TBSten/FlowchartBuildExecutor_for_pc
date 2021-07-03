@@ -22,8 +22,6 @@
                           <MenuItem fx:id="menu_new" mnemonicParsing="false" text="新規作成" />
                               <MenuItem fx:id="menu_import" mnemonicParsing="false" text="インポート" />
                               <MenuItem fx:id="menu_save" mnemonicParsing="false" text="保存" />
-                              <MenuItem fx:id="menu_print" mnemonicParsing="false" text="印刷" />
-                              <MenuItem fx:id="menu_toImage" mnemonicParsing="false" text="画像にして保存" />
                         </items>
                       </Menu>
                         <Menu mnemonicParsing="false" text="編集">
@@ -36,6 +34,7 @@
                         <items>
                           <MenuItem fx:id="menu_exe" mnemonicParsing="false" text="実行" />
                               <MenuItem fx:id="menu_template" mnemonicParsing="false" text="配列テンプレートの作成" />
+                              <MenuItem fx:id="menu_files" mnemonicParsing="false" text="ファイルを管理する" />
                         </items>
                       </Menu>
                       <Menu mnemonicParsing="false" text="コード変換">

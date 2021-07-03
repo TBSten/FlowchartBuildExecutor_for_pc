@@ -1,5 +1,8 @@
 package com.fbe.exe;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,6 +110,8 @@ public class FBEExecutor extends FBERunnable {
 	protected Status status = Status.BEFORE_START ;
 	protected boolean executeAll = true ;
 	public Map<Sym,Object> executeOptions = new HashMap<>();
+	protected Map<String,BufferedReader> fileReader = new HashMap<>();
+	protected Map<String,String> fileLastLine = new HashMap<>();
 
 	public FBEExecutor(Flow mainFlow,List<Flow> flows ){
 		this.mainFlow = mainFlow ;
@@ -331,8 +336,16 @@ public class FBEExecutor extends FBERunnable {
 	}
 	//ファイルから読み込む
 	public String inputFile(String fileName) {
-		//ファイルなどから入力する
-		return "#DEVELOPPING..." ;
+		try {
+			String ans = fileLastLine.get(fileName);
+			//ファイルなどから入力する
+			String line = fileReader.get(fileName).readLine();
+			this.fileLastLine.put(fileName, line) ;
+			return ans ;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null ;
+		}
 	}
 
 	//実行制御（コントロール）メソッド。ControlController等から呼ばれる。
@@ -426,6 +439,9 @@ public class FBEExecutor extends FBERunnable {
 		if(FBEExecutor.variablePane != null) {
 			sp.getItems().remove(FBEExecutor.variablePane);
 		//	System.out.println("Delete variablePane");
+		}
+		for(File f:FileApp.getInstance().getFiles()) {
+			this.addFile(f.getName());
 		}
 
 		/*
@@ -695,6 +711,24 @@ public class FBEExecutor extends FBERunnable {
 	public Stage createStage() {
 		Stage ans = new Stage();
 		ans.initOwner(getOwner());
+		return ans ;
+	}
+
+	protected BufferedReader addFile(String name) {
+		try {
+			BufferedReader ans = new BufferedReader(new FileReader(FileApp.getInstance().getFile(name)));
+			String first = ans.readLine() ;
+			this.fileReader.put(name, ans);
+			this.fileLastLine.put(name, first) ;
+			return ans ;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null ;
+		}
+	}
+
+	public boolean isFileEnded(String fileName) {
+		boolean ans = this.fileLastLine.get(fileName) == null ;
 		return ans ;
 	}
 

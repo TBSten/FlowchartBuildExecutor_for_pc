@@ -43,10 +43,13 @@ public class OptionTable extends AnchorPane {
 //		vb.setStyle("-fx-background-color:green;");
 
 		this.getChildren().add(vb);
+		vb.setFillWidth(true);
 		vb.prefWidthProperty().bind(this.widthProperty());
 		vb.prefHeightProperty().bind(this.heightProperty());
 
 		HBox hb = new HBox();
+		hb.setFillHeight(true);
+		hb.prefWidthProperty().bind(vb.widthProperty());
 		Label l1 = new Label("プロパティ");
 		Label l2 = new Label("説明");
 		Label l3 = new Label("値");
@@ -59,6 +62,9 @@ public class OptionTable extends AnchorPane {
 		l1.prefHeightProperty().bind(hb.heightProperty());
 		l2.prefHeightProperty().bind(hb.heightProperty());
 		l3.prefHeightProperty().bind(hb.heightProperty());
+		l1.minWidthProperty().set(0);
+		l2.minWidthProperty().set(0);
+		l3.minWidthProperty().set(0);
 		hb.getChildren().addAll(l1,l2,l3);
 		l1.setStyle("-fx-border-style: none none solid none; -fx-border-width: 2; -fx-border-color: black;");
 		l2.setStyle("-fx-border-style: none none solid none; -fx-border-width: 2; -fx-border-color: black;");

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<FBE>
+    <Flow round="false" tag="">
+        <Terminal return="" text="" type="はじめ"/>
+        <Data target="&quot;doing ...&quot;" type="出力"/>
+        <Process name="sleep(3000)"/>
+        <Data target="変数" type="出力"/>
+        <Data target="&quot;ok&quot;" type="出力"/>
+        <Terminal return="" text="" type="おわり"/>
+    </Flow>
+</FBE>

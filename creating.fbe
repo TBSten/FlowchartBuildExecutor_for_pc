@@ -2,25 +2,14 @@
 <FBE>
     <Flow round="false" tag="">
         <Terminal return="" text="" type="はじめ"/>
-        <Calc formula="0" variable="変数"/>
-        <While condition="変数 &lt; 10" type="前判定">
+        <Calc formula="0" variable="sum"/>
+        <While condition="売上.csv" type="データがある間">
             <Flow round="true" tag="">
-                <Data target="変数" type="キーボード入力"/>
-                <DoubleBranch condition="変数 &lt; 10">
-                    <Flow round="true" tag="Yes"/>
-                    <Flow round="true" tag="No"/>
-                </DoubleBranch>
+                <Data target="売上.csv" type="ファイル入力"/>
+                <Calc formula="sum+数量" variable="sum"/>
             </Flow>
         </While>
-        <For condition="CNT &lt; 10" start="0" up="1" variable="CNT">
-            <Flow round="true" tag="">
-                <Data target="変数" type="出力"/>
-            </Flow>
-        </For>
-        <Terminal return="" text="" type="おわり"/>
-    </Flow>
-    <Flow round="false" tag="">
-        <Terminal return="" text="" type="はじめ"/>
+        <Data target="sum" type="出力"/>
         <Terminal return="" text="" type="おわり"/>
     </Flow>
 </FBE>

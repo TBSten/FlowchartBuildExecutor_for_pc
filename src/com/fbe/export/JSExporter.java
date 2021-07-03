@@ -12,7 +12,9 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
+import com.fbe.FBEApp;
 import com.fbe.exe.FBEExecutor;
 import com.fbe.exe.SettingController;
 import com.fbe.exe.factory.ExecutorFactory;
@@ -131,7 +133,6 @@ public class JSExporter extends FBEExporter{
 			this.addLine("");
 			this.writeItem(mainFlow);
 			this.addLine("");
-			this.addLine("main();");
 
 			bw.flush();
 			bw.close() ;
@@ -287,13 +288,20 @@ public class JSExporter extends FBEExporter{
 			}
 		}else if(item instanceof ProcessSym) {
 			ProcessSym sym = (ProcessSym)item ;
-			this.addLine(String.format("%s();", toValidFuncName(sym.optionGet("処理名"))));
+			String name = sym.getProcessName() ;
+			String args = "" ;
+			String valiName = toValidFuncName(name) ;
+			Matcher m = FBEApp.matcher("(.*)\\((.*)\\)",sym.optionGet("処理名"));
+			if(m.matches()) {
+				args = m.group(2) ;
+			}
+			this.addLine(String.format("await %s(%s);", valiName,args));
 		}else if(item instanceof Flow) {
 			Flow fl = (Flow)item ;
 			//flowに含まれるならfunction ***(){
 			Sym s = fl.getSyms().get(0) ;
 			if(fl == this.mainFlow){
-				this.addLine("function main() {");
+				this.addLine("async function main() {");
 				this.indent++;
 			}else  if(this.flows.contains(fl) && s instanceof TerminalSym) {
 				TerminalSym ter = (TerminalSym)s ;

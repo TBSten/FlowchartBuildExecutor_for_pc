@@ -21,6 +21,7 @@ import com.fbe.format.FBEFormatApp;
 import com.fbe.item.Arrow;
 import com.fbe.item.Flow;
 import com.fbe.item.Item;
+import com.fbe.sym.ArrayTemplate;
 import com.fbe.sym.factory.CalcSymFactory;
 import com.fbe.sym.factory.DoubleBranchSymFactory;
 import com.fbe.sym.factory.ForSymFactory;
@@ -155,6 +156,7 @@ public class FBEApp {
 	public static void init() {
 		SaveApp.init();
 
+		//ExecutorFactoryを登録
 		ExecutorFactory.factorys.add(new MsgBoxExecutorFactory());
 		ExecutorFactory.factorys.add(new LoggerExecutorFactory());
 		ExecutorFactory.factorys.add(new TableExecutorFactory());
@@ -170,6 +172,14 @@ public class FBEApp {
 		Arrow.factorys.add(new MultiBranchSymFactory());
 		Arrow.factorys.add(new ProcessSymFactory());
 		Arrow.factorys.add(new PrepareSymFactory());
+
+		//ArrayTemplateを登録
+		ArrayTemplate tem1 = new ArrayTemplate() ;
+			tem1.setName("1次元配列のテンプレート例"); tem1.setType("1次元配列"); tem1.setSize("5"); tem1.setOperations("0=>(all)");
+		ArrayTemplate tem2 = new ArrayTemplate() ;
+			tem2.setName("2次元配列のテンプレート例"); tem2.setType("2次元配列"); tem2.setSize("5,3"); tem2.setOperations("0=>(all)");
+		ArrayTemplate.putTemplate(tem1);
+		ArrayTemplate.putTemplate(tem2);
 
 		//FBEFormatAppにFBEFormatを登録 , defaultFormatに代入
 		FBEFormat[] formats = {

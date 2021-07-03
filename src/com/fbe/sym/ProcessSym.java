@@ -74,6 +74,7 @@ public class ProcessSym extends Sym {
 				}
 			}
 		}
+		flows.removeAll(ProcessSym.defaultFunctions);
 		if(!flg) {
 			System.out.println("ProcessSymで処理が見つからなかった");
 		}
@@ -86,6 +87,17 @@ public class ProcessSym extends Sym {
 			this.setText(name);
 		}
 	}
+
+	public String getProcessName() {
+		String name = this.optionGet("処理名");
+		Pattern p = Pattern.compile("(.*)\\((.*)\\)");
+		Matcher m = p.matcher(name);
+		if(m.matches()) {
+			name = m.group(1);
+		}
+		return name ;
+	}
+
 
 	@Override
 	public void draw() {

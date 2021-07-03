@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fbe.sym.TemplateNewController">
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <Label text="配列テンプレートのタイプ" />
+            <ComboBox fx:id="cb" maxWidth="1.7976931348623157E308" prefWidth="150.0" />
+            <Label text="サイズ（配列の要素数を指定）" />
+            <TextField fx:id="tf" />
+         </children>
+      </VBox>
+   </center>
+   <bottom>
+      <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <buttons>
+          <Button fx:id="okB" mnemonicParsing="false" text="設定に進む" />
+            <Button fx:id="canB" mnemonicParsing="false" text="キャンセル" />
+        </buttons>
+      </ButtonBar>
+   </bottom>
+</BorderPane>

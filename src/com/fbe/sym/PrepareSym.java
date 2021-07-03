@@ -1,8 +1,6 @@
 package com.fbe.sym;
 
 import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.fbe.exe.FBEExecutor;
 import com.fbe.option.OptionTable;
@@ -10,8 +8,6 @@ import com.fbe.option.OptionTable;
 import javafx.scene.canvas.GraphicsContext;
 
 public class PrepareSym extends Sym {
-	public static Map<String,ArrayTemplate> templates = new LinkedHashMap<>() ;
-
 	public PrepareSym(String type,String counts,String target,String start) {
 		this.optionPut("タイプ", "準備するものの種類を指定します。", OptionTable.Type.COMBOBOX, type);
 		getOptionsValueList().put("タイプ",Arrays.asList("1次元配列","2次元配列","3次元配列"));
@@ -19,6 +15,7 @@ public class PrepareSym extends Sym {
 				OptionTable.Type.TEXTFIELD, counts);
 		this.optionPut("対象", "準備する配列名などを指定します。",OptionTable.Type.TEXTFIELD, target);
 		this.optionPut("初期値", "配列の各要素などの初期値を設定します。",OptionTable.Type.TEXTFIELD, start);
+		this.optionPut("配列テンプレート", "配列テンプレートを使用する場合はテンプレート名を指定します。使用しない場合は何も入力しないでください。",OptionTable.Type.TEXTFIELD,"");
 	}
 
 	@Override
@@ -30,33 +27,40 @@ public class PrepareSym extends Sym {
 	public void execute(FBEExecutor exe) {
 		String type = optionGet("タイプ");
 		String[] argsStr = optionGet("要素数").split(",");
+		String temp = optionGet("配列テンプレート") ;
 		int[] args = new int[argsStr.length] ;
 		for(int i = 0;i < args.length;i++) {
 			args[i] = Integer.parseInt(argsStr[i].replace(" ", ""));
 		}
-		if("1次元配列".equals(type)) {
-			Object[] ans = new Object[args[0]] ;
-			for(int i = 0;i < ans.length;i++) {
-				ans[i] = exe.eval(optionGet("初期値"));
-			}
-			exe.putVar(optionGet("対象"), ans);
-		}else if("2次元配列".equals(type)) {
-			Object[][] ans = new Object[args[0]][args[1]] ;
-			for(int i = 0;i < ans.length;i++) {
-				for(int j = 0;j < ans[i].length;j++) {
-					ans[i][j] = exe.eval(optionGet("初期値"));
+		if(temp.matches("\\s*")) {
+			if("1次元配列".equals(type)) {
+				Object[] ans = new Object[args[0]] ;
+				for(int i = 0;i < ans.length;i++) {
+					ans[i] = exe.eval(optionGet("初期値"));
 				}
-			}
-			exe.putVar(optionGet("対象"), ans);
-		}else if("3次元配列".equals(type)) {
-			Object[][][] ans = new Object[args[0]][args[1]][args[2]] ;
-			for(int i = 0;i < ans.length;i++) {
-				for(int j = 0;j < ans[i].length;j++) {
-					for(int k = 0;k < ans[i][j].length;k++) {
-						ans[i][j][k] = exe.eval(optionGet("初期値"));
+				exe.putVar(optionGet("対象"), ans);
+			}else if("2次元配列".equals(type)) {
+				Object[][] ans = new Object[args[0]][args[1]] ;
+				for(int i = 0;i < ans.length;i++) {
+					for(int j = 0;j < ans[i].length;j++) {
+						ans[i][j] = exe.eval(optionGet("初期値"));
 					}
 				}
+				exe.putVar(optionGet("対象"), ans);
+			}else if("3次元配列".equals(type)) {
+				Object[][][] ans = new Object[args[0]][args[1]][args[2]] ;
+				for(int i = 0;i < ans.length;i++) {
+					for(int j = 0;j < ans[i].length;j++) {
+						for(int k = 0;k < ans[i][j].length;k++) {
+							ans[i][j][k] = exe.eval(optionGet("初期値"));
+						}
+					}
+				}
+				exe.putVar(optionGet("対象"), ans);
 			}
+		}else {
+			//配列テンプレート使用
+			Object ans = ArrayTemplate.getTemplate(this.optionGet("配列テンプレート")).createArray() ;
 			exe.putVar(optionGet("対象"), ans);
 		}
 	}

@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.fbe.item.Flow;
 import com.fbe.item.GettableFlow;
+import com.fbe.sym.Sym;
+import com.fbe.sym.TerminalSym;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -109,4 +111,17 @@ public class FBEWindow extends Application implements GettableFlow{
 	public SplitPane getMainSplitPane() {
 		return mainSplitPane;
 	}
+
+	public Flow defaultFlow() {
+		Flow f = new Flow();
+		Sym[] syms = {
+				new TerminalSym(TerminalSym.Type.START),
+				new TerminalSym(TerminalSym.Type.END),
+		};
+		for(int i = 0;i < syms.length;i++) {
+			f.addSym(i, syms[i]);
+		}
+		return f ;
+	}
+
 }

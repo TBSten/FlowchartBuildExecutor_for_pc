@@ -133,11 +133,13 @@ public class FBEFormat1_0 extends FBEFormat {
 			String v2 = sym.optionGet("要素数") ;
 			String v3 = sym.optionGet("対象") ;
 			String v4 = sym.optionGet("初期値") ;
+			String v5 = sym.optionGet("配列テンプレート");
 			ans = doc.createElement("Prepare") ;
 			ans.setAttribute("type", v1);
 			ans.setAttribute("counts", v2);
 			ans.setAttribute("target", v3);
 			ans.setAttribute("start", v4);
+			ans.setAttribute("template", v5);
 		}else if(item instanceof ProcessSym){
 			ProcessSym sym = (ProcessSym)item;
 			String v1 = sym.optionGet("処理名") ;
@@ -275,6 +277,7 @@ public class FBEFormat1_0 extends FBEFormat {
 			}
 		}else if(ele.getTagName().equals("Prepare")){
 			PrepareSym ter = new PrepareSym(ele.getAttribute("type"),ele.getAttribute("counts"),ele.getAttribute("target"),ele.getAttribute("start"));
+			ter.optionPut("配列テンプレート", ele.getAttribute("template"));
 			ans = ter ;
 		}else if(ele.getTagName().equals("Process")){
 			ProcessSym ter = new ProcessSym(ele.getAttribute("name")) ;

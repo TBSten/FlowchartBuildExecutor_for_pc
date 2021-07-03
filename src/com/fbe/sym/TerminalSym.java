@@ -103,6 +103,7 @@ public class TerminalSym extends Sym {
 		if(m.matches()) {
 			ans = m.group(1);
 		}
+		System.out.println(this.optionGet("テキスト")+"'s ProcessName = "+ans);
 		return ans ;
 
 	}

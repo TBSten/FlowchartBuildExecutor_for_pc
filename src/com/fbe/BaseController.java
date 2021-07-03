@@ -6,29 +6,26 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.imageio.ImageIO;
-
 import com.fbe.exe.FBEExecutor;
+import com.fbe.exe.FileApp;
 import com.fbe.export.JSExporter;
 import com.fbe.format.FBEFormat;
 import com.fbe.format.FBEFormatApp;
 import com.fbe.item.Flow;
 import com.fbe.option.OptionTable;
+import com.fbe.sym.ArrayTemplate;
 import com.fbe.sym.TerminalSym;
 
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.print.PrinterJob;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -48,16 +45,24 @@ public class BaseController implements Initializable{
 	@FXML MenuItem menu_new ;
 	@FXML MenuItem menu_import ;
 	@FXML MenuItem menu_save ;
+	/*
 	@FXML MenuItem menu_print ;
 	@FXML MenuItem menu_toImage ;
+	*/
+
 	@FXML MenuItem menu_newFlow ;
 	@FXML MenuItem menu_loopNumber ;
+
 	@FXML MenuItem menu_exe ;
 	@FXML MenuItem menu_template ;
+	@FXML MenuItem menu_files ;
+
 	@FXML MenuItem menu_java ;
 	@FXML MenuItem menu_javascript ;
 	@FXML MenuItem menu_python ;
+
 	@FXML MenuItem menu_check ;
+
 	@FXML AnchorPane mainPane ;
 	@FXML ScrollPane mainSp ;
 	@FXML SplitPane mainSplitPane ;
@@ -70,24 +75,25 @@ public class BaseController implements Initializable{
 		FBEApp.controllers.put("Base",this);
 
 		menu_new.setOnAction((ActionEvent)->{
-			System.out.println("新規作成");
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"現在のプロジェクトを閉じますか？");
+			alert.showAndWait()
+				.filter(response -> response == ButtonType.OK)
+				.ifPresent(response -> {
+			    	FBEWindow app = FBEApp.app ;
+			    	List<Flow> flows = List.copyOf(FBEApp.app.flows);
+					for(Flow f :flows) {
+						app.removeFlow(f);
+					}
+			    	app.addFlow(app.defaultFlow());
+			});
 		});
-
+/*
 		menu_print.setOnAction((ae)->{
 
 			//今は簡易的に全てをスナップしているが、本番はアイテムをいい感じに区切ってイメージを作る。
 			WritableImage img = FBEApp.app.ap.snapshot(new SnapshotParameters(), null);
 			Canvas node = new Canvas(img.getWidth(),img.getHeight());
 			node.getGraphicsContext2D().drawImage(img, 0,0);
-
-//			AnchorPane node = FBEApp.app.ap ;
-/*
-			VBox node = new VBox();
-			for(int i = 0;i < 500;i++) {
-				node.getChildren().add(new Button("test-"+i));
-			}
-*/
-
 
 
 			System.out.println("EXPORT:"+node);
@@ -106,18 +112,10 @@ public class BaseController implements Initializable{
 			}else {
 				System.out.println("印刷キャンセル");
 			}
-			/*
-			if(job != null) {
-				boolean success = job.printPage(node);
-				if(success) {
-					System.out.println("終了 ");
-					job.endJob();
-				}
-			}
-			*/
 			System.out.println("----");
 		});
-
+*/
+/*
 		menu_toImage.setOnAction((ae)->{
 			WritableImage img = FBEApp.app.ap.snapshot(new SnapshotParameters(), null);
 		    try{
@@ -132,7 +130,7 @@ public class BaseController implements Initializable{
 		    }
 		    System.out.println("OK");
 		});
-
+*/
 		menu_exe.setOnAction( e ->{
 			//
 //			FBEApp.executeFlows(FBEApp.app.flows);
@@ -248,7 +246,13 @@ public class BaseController implements Initializable{
 		});
 		menu_template.setOnAction(e->{
 			//配列テンプレートを作成・管理する画面を表示
+			ArrayTemplate.openManageStage();
 		});
+		menu_files.setOnAction(e->{
+			//ファイル管理ウィンドウを表示
+			FileApp.getInstance().openManageWindow();
+		});
+
 
 
 

@@ -23,7 +23,7 @@ public class WhileSym extends Sym {
 	public static int cnt = 1 ;
 
 	public RoundFlow flow ;
-	Label bottomLabel = new Label("TEST");
+	Label bottomLabel = new Label("#ERROR");
 	int num ;
 
 	public WhileSym(String condition,RoundFlow flow) {
@@ -39,10 +39,10 @@ public class WhileSym extends Sym {
 	protected void init(String condition) {
 		this.num = cnt ;
 		this.optionPut("条件", "繰り返し処理の条件式を指定します。", OptionTable.Type.TEXTFIELD, condition);
-		this.optionPut("タイプ", "どのタイミングで条件を判定するかを指定します。", OptionTable.Type.COMBOBOX, "前判定");
-		this.getOptionsValueList().put("タイプ",Arrays.asList("前判定","後判定"));
+		this.optionPut("タイプ", "どのタイミングで条件を判定するかを指定します。ファイルを使ってデータがある間に繰り返したい場合はデータがある間を選び、ファイル名を条件に指定してください。", OptionTable.Type.COMBOBOX, "前判定");
+		this.getOptionsValueList().put("タイプ",Arrays.asList("前判定","後判定","データがある間"));
 
-		//		this.setStyle("-fx-background-color:red;");
+//		this.setStyle("-fx-background-color:red;");
 //		this.flow.setStyle("-fx-background-color:yellow;");
 //		this.symLabel.setStyle("-fx-background-color:gray;");
 //		flow.addSym(0, new CalcSym("0","x"));
@@ -116,8 +116,8 @@ public class WhileSym extends Sym {
 
 	@Override
 	public void execute(FBEExecutor exe) {
-		Object con = exe.eval(this.optionGet("条件"));
 		if(optionGet("タイプ").equals("前判定")) {
+			Object con = exe.eval(this.optionGet("条件"));
 			if((boolean)con) {
 				List<FBEExecutable> exeList = exe.getExecuteList() ;
 				int idx = exeList.indexOf(this);
@@ -127,6 +127,7 @@ public class WhileSym extends Sym {
 				exeList.addAll(idx+1, list);
 			}
 		}else if(optionGet("タイプ").equals("後判定")) {
+			Object con = exe.eval(this.optionGet("条件"));
 			if((boolean)con || exe.executeOptions.get(this) == null) {
 				exe.executeOptions.put(this,"前判定");
 				List<FBEExecutable> exeList = exe.getExecuteList() ;
@@ -136,7 +137,17 @@ public class WhileSym extends Sym {
 				list.add(this);
 				exeList.addAll(idx+1,list);
 			}
+		}else if(optionGet("タイプ").equals("データがある間")){
+			if(!exe.isFileEnded(this.optionGet("条件"))) {
+				List<FBEExecutable> exeList = exe.getExecuteList() ;
+				int idx = exeList.indexOf(this);
+				List<FBEExecutable> list = new ArrayList<>() ;
+				list.addAll(this.getFlow().getSyms());
+				list.add(this );
+				exeList.addAll(idx+1, list);
+			}
 		}else {
+			//エラー
 		}
 
 	}
@@ -148,6 +159,9 @@ public class WhileSym extends Sym {
 			this.symLabel.setText("ループ"+this.num);
 			this.bottomLabel.setText(lbText);
 		}else {
+			if(this.optionGet("タイプ").equals("データがある間")) {
+				lbText = String.format("ループ%d\nデータがある間", this.num) ;
+			}
 			this.symLabel.setText(lbText);
 			this.bottomLabel.setText("ループ"+this.num);
 		}

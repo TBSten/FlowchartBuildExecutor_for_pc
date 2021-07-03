@@ -3,6 +3,7 @@ package com.fbe.sym;
 import java.util.Arrays;
 
 import com.fbe.exe.FBEExecutor;
+import com.fbe.exe.FileApp;
 import com.fbe.option.OptionTable;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -16,7 +17,6 @@ public class DataSym extends Sym {
 		optionPut("タイプ", "入出力の種類を指定します。", OptionTable.Type.COMBOBOX, type);
 		optionPut("対象", "入力なら何に入力するか、出力なら何を出力するかを指定します。", OptionTable.Type.TEXTFIELD, target);
 		this.getOptionsValueList().put("タイプ",Arrays.asList("キーボード入力","ファイル入力","出力","ダイアログで表示"));
-
 
 		redraw();
 	}
@@ -38,7 +38,15 @@ public class DataSym extends Sym {
 			exe.putVar(tar, input);
 		}else if(typ.equals("ファイル入力")) {
 			String input = exe.inputFile(tar);
-			exe.putVar(tar, input);
+			String[] columns = FileApp.getInstance().getColumns(tar).split(",");
+			String[] values = input.split(",");
+			for(int i = 0;i < columns.length;i++) {
+				Object v = values[i] ;
+				if(values[i].matches("[0-9]+")) {
+					v = Double.parseDouble(values[i]);
+				}
+				exe.putVar(columns[i], v);
+			}
 		}
 	}
 
@@ -49,7 +57,7 @@ public class DataSym extends Sym {
 		if(type.equals("キーボード入力")) {
 			this.setText(target+"を入力");
 		}else if(type.equals("ファイル入力")){
-			this.setText("ファイルから"+target+"を読む");
+			this.setText(target+"からデータを読む");
 		}else if(type.equals("出力")){
 			this.setText(target+"を出力");
 		}else if(type.equals("ダイアログで表示")){
